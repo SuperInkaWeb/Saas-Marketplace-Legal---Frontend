@@ -73,6 +73,7 @@ export default function ForgotPasswordPage() {
                 aria-invalid={errors.email ? "true" : "false"}
                 aria-describedby={errors.email ? "email-error" : undefined}
                 required
+                autoFocus
               />
               {errors.email && (
                 <p id="email-error" className="text-xs text-red-600 font-medium mt-1.5">
