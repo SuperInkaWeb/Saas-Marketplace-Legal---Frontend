@@ -21,3 +21,37 @@ export interface ClientRegistrationRequest {
   companyName?: string;
   billingAddress?: string;
 }
+
+export interface LawyerRegistrationRequest {
+  firstName: string;
+  lastNameFather: string;
+  lastNameMother: string;
+  email: string;
+  password: string;
+  phoneNumber?: string;
+  city: string;
+  country: string;
+  documentType: string;
+  documentNumber: string;
+  documentCountryCode: string;
+}
+
+export interface OtpVerificationRequest {
+  email: string;
+  code: string;
+}
+
+export interface ResendOtpRequest {
+  email: string;
+  purpose: "ACCOUNT_VERIFICATION" | "PASSWORD_RESET";
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  code: string;
+  newPassword: string;
+}

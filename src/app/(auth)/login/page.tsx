@@ -7,7 +7,7 @@ import { loginSchema, type LoginFormData } from "../../../modules/auth/schemas";
 import { useLogin, extractApiError } from "../../../modules/auth/hooks";
 import { FormAlert } from "../components/FormAlert";
 import Link from "next/link";
-import Image from "next/image";
+import RightHero from "../components/RighHero";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,7 +31,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex bg-white font-['Inter',sans-serif]">
       
-      {/* Lado Izquierdo - Panel de Autenticación */}
+      {/* Lado Izquierdo */}
       <div className="w-full lg:w-1/2 xl:w-5/12 flex flex-col justify-center px-8 sm:px-16 lg:px-24 bg-white z-10">
         <div className="w-full max-w-sm mx-auto">
           
@@ -166,31 +166,8 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Lado Derecho - Imagen y Copy Inclusivo */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-7/12 relative bg-slate-900 items-center justify-center p-12 overflow-hidden">
-        {/* Imagen de fondo */}
-        <Image
-          src="/banner-login.jpg" 
-          alt="banner-login"
-          fill
-          className="object-cover opacity-40 mix-blend-overlay"
-          priority
-        />
-        
-        {/* Degradado para mejorar legibilidad */}
-        <div className="absolute inset-0 bg-linear-to-tr to-transparent"></div>
-
-        {/* Contenido de la derecha */}
-        <div className="relative z-10 max-w-xl text-left">
-          <div className="w-12 h-1 bg-blue-500 mb-6 rounded-full"></div>
-          <h2 className="text-4xl lg:text-5xl font-extrabold text-white mb-6 leading-tight tracking-tight">
-            Transparencia y excelencia <br />en cada paso legal.
-          </h2>
-          <p className="text-lg text-gray-300 font-light leading-relaxed max-w-md">
-            Conectamos a profesionales del derecho y clientes en un entorno seguro. Gestiona documentos, comunícate fácilmente y haz seguimiento a tus procesos en tiempo real.
-          </p>
-        </div>
-      </div>
+      {/* Lado Derecho */}
+      <RightHero />
 
     </div>
   );
