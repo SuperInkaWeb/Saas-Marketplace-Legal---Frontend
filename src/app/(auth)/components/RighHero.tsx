@@ -6,8 +6,9 @@ export default function RightHero() {
             <div className="hidden lg:flex lg:w-1/2 xl:w-7/12 relative bg-slate-900 items-center justify-center p-12 overflow-hidden">
                 <Image
                     src="/banner-login.jpg"
-                    alt="banner-login"
+                    alt="Banner de plataforma legal"
                     fill
+                    sizes="(min-width: 1280px) 58vw, (min-width: 1024px) 50vw, 0vw"
                     className="object-cover opacity-40 mix-blend-overlay"
                     priority
                 />
