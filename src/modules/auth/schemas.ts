@@ -5,26 +5,36 @@ export const loginSchema = z.object({
   password: z.string().min(1, "La contraseña es obligatoria"),
 });
 
-export const clientRegisterSchema = z.object({
+export const registerSchema = z.object({
   firstName: z.string().min(1, "El nombre es obligatorio"),
   lastNameFather: z.string().min(1, "El apellido paterno es obligatorio"),
   lastNameMother: z.string().min(1, "El apellido materno es obligatorio"),
   email: z.email("Formato de email inválido"),
   password: z.string().min(8, "Mínimo 8 caracteres"),
-  phoneNumber: z.string().optional(),
+  phoneNumber: z.string()
+    .min(1, "El teléfono es obligatorio")
+    .regex(/^\+?[0-9\s-]{7,15}$/, "Formato de teléfono inválido"),
+});
+
+const roles = ["CLIENT", "LAWYER"] as const;
+
+export const selectRoleSchema = z.object({
+  role: z.enum(roles, {
+    message: "Debes seleccionar un rol",
+  }),
+});
+
+export const clientProfileSchema = z.object({
   companyName: z.string().optional(),
   billingAddress: z.string().optional(),
 });
 
-export const lawyerRegisterSchema = z.object({
-  firstName: z.string().min(1, "El nombre es obligatorio"),
-  lastNameFather: z.string().min(1, "El apellido paterno es obligatorio"),
-  lastNameMother: z.string().min(1, "El apellido materno es obligatorio"),
-  email: z.email("Formato de email inválido"),
-  password: z.string().min(8, "Mínimo 8 caracteres"),
-  phoneNumber: z.string().optional(),
+export const lawyerProfileSchema = z.object({
   city: z.string().min(1, "La ciudad es obligatoria"),
   country: z.string().min(1, "El país es obligatorio"),
+});
+
+export const kycDocumentSchema = z.object({
   documentType: z.string().min(1, "El tipo de documento es obligatorio"),
   documentNumber: z.string().min(1, "El número de documento es obligatorio"),
   documentCountryCode: z.string().min(1, "El código de país es obligatorio"),
@@ -50,8 +60,11 @@ export const resetPasswordSchema = z.object({
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
-export type ClientRegisterFormData = z.infer<typeof clientRegisterSchema>;
-export type LawyerRegisterFormData = z.infer<typeof lawyerRegisterSchema>;
+export type RegisterFormData = z.infer<typeof registerSchema>;
+export type SelectRoleFormData = z.infer<typeof selectRoleSchema>;
+export type ClientProfileFormData = z.infer<typeof clientProfileSchema>;
+export type LawyerProfileFormData = z.infer<typeof lawyerProfileSchema>;
+export type KycDocumentFormData = z.infer<typeof kycDocumentSchema>;
 export type VerifyOtpFormData = z.infer<typeof verifyOtpSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;

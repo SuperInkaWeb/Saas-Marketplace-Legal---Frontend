@@ -27,18 +27,18 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen flex bg-white font-['Inter',sans-serif]">
-      
+
       {/* Lado Izquierdo: Formulario */}
       <div className="w-full lg:w-1/2 xl:w-5/12 flex flex-col justify-center px-8 sm:px-16 lg:px-24 bg-white z-10">
         <div className="w-full max-w-sm mx-auto">
-          
+
           {/* Header de la sección */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
               ¿Olvidaste tu contraseña?
             </h1>
             <p className="text-gray-500 mt-2 text-sm leading-relaxed">
-              Ingresa tu correo y te enviaremos las instrucciones para restablecerla.
+              Ingresa tu correo electrónico para recibir instrucciones de recuperación de contraseña.
             </p>
           </div>
 
@@ -55,7 +55,7 @@ export default function ForgotPasswordPage() {
 
           {/* Formulario */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            
+
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1.5">
                 Correo electrónico
@@ -63,17 +63,22 @@ export default function ForgotPasswordPage() {
               <input
                 id="email"
                 {...register("email")}
-                className={`w-full px-4 py-3 rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm ${
-                  errors.email 
-                    ? "border-red-500 focus:ring-2 focus:ring-red-200" 
-                    : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
-                }`}
+                className={`w-full px-4 py-3 rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm ${errors.email
+                  ? "border-red-500 focus:ring-2 focus:ring-red-200"
+                  : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
+                  }`}
                 type="email"
-                placeholder="nombre@empresa.com"
+                placeholder="correo@ejemplo.com"
                 autoComplete="email"
+                aria-invalid={errors.email ? "true" : "false"}
+                aria-describedby={errors.email ? "email-error" : undefined}
+                required
+                autoFocus
               />
               {errors.email && (
-                <p className="text-xs text-red-600 font-medium mt-1.5">{errors.email.message}</p>
+                <p id="email-error" className="text-xs text-red-600 font-medium mt-1.5">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -85,7 +90,7 @@ export default function ForgotPasswordPage() {
               {isPending ? (
                 <>
                   <i className="fas fa-circle-notch animate-spin mr-2"></i>
-                  Enviando instrucciones...
+                  Enviando correo...
                 </>
               ) : (
                 "Enviar enlace de recuperación"
@@ -95,8 +100,8 @@ export default function ForgotPasswordPage() {
 
           {/* Navegación de retorno */}
           <div className="mt-8 text-center pt-6 border-t border-gray-100">
-            <Link 
-              href="/login" 
+            <Link
+              href="/login"
               className="group flex items-center justify-center text-sm font-semibold text-slate-700 hover:text-black transition-colors"
             >
               <i className="fas fa-arrow-left mr-2 text-xs transition-transform group-hover:-translate-x-1"></i>

@@ -95,11 +95,10 @@ export default function ResetPasswordPage() {
                 <input
                   id="code"
                   {...register("code")}
-                  className={`w-full px-4 py-3 text-center tracking-widest text-xl rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white ${
-                    errors.code
-                      ? "border-red-500 focus:ring-2 focus:ring-red-200"
-                      : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
-                  }`}
+                  className={`w-full px-4 py-3 text-center tracking-widest text-xl rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white ${errors.code
+                    ? "border-red-500 focus:ring-2 focus:ring-red-200"
+                    : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
+                    }`}
                   type="text"
                   maxLength={6}
                   placeholder="••••••"
@@ -115,7 +114,7 @@ export default function ResetPasswordPage() {
                   type="button"
                   onClick={handleNextStep}
                   disabled={!codeInput || codeInput.length !== 6}
-                  className="w-full mt-6 bg-slate-900 text-white py-3.5 rounded-lg font-semibold text-sm hover:bg-slate-800 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-slate-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center shadow-sm"
+                  className="w-full mt-6 bg-slate-900 text-white py-3.5 rounded-lg font-semibold text-sm hover:bg-slate-800 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-slate-200 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center shadow-sm"
                 >
                   Continuar
                   <i className="fas fa-arrow-right ml-2 text-xs"></i>
@@ -134,11 +133,10 @@ export default function ResetPasswordPage() {
                     <input
                       id="newPassword"
                       {...register("newPassword")}
-                      className={`w-full px-4 py-3 rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm ${
-                        errors.newPassword
-                          ? "border-red-500 focus:ring-2 focus:ring-red-200"
-                          : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
-                      }`}
+                      className={`w-full px-4 py-3 rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm ${errors.newPassword
+                        ? "border-red-500 focus:ring-2 focus:ring-red-200"
+                        : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
+                        }`}
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
                       autoComplete="new-password"
@@ -165,11 +163,10 @@ export default function ResetPasswordPage() {
                     <input
                       id="confirmPassword"
                       {...register("confirmPassword")}
-                      className={`w-full px-4 py-3 rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm ${
-                        errors.confirmPassword
-                          ? "border-red-500 focus:ring-2 focus:ring-red-200"
-                          : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
-                      }`}
+                      className={`w-full px-4 py-3 rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm ${errors.confirmPassword
+                        ? "border-red-500 focus:ring-2 focus:ring-red-200"
+                        : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
+                        }`}
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="••••••••"
                       autoComplete="new-password"

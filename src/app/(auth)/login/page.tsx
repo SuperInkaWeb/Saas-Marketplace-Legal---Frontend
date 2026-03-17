@@ -15,18 +15,37 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
   const { mutate: login, isPending, error } = useLogin();
+  const emailVal = watch("email");
 
   const onSubmit = (data: LoginFormData) => {
     login(data);
   };
 
   const apiError = error ? extractApiError(error) : null;
+
+  const renderErrorHelp = () => {
+    if (apiError?.isUnverified) {
+      return (
+        <span>
+          {apiError.message}{" "}
+          <Link
+            href={`/verificar-cuenta?email=${encodeURIComponent(emailVal)}`}
+            className="font-bold underline hover:text-red-700 transition-colors"
+          >
+            Verificar ahora
+          </Link>
+        </span>
+      );
+    }
+    return apiError?.help || null;
+  };
 
   return (
     <div className="min-h-screen flex bg-white font-['Inter',sans-serif]">
@@ -49,8 +68,8 @@ export default function LoginPage() {
           {apiError && (
             <div className="mb-6">
               <FormAlert
-                message={apiError.message}
-                help={apiError.help}
+                message={apiError.isUnverified ? "Verificación Requerida" : apiError.message}
+                help={renderErrorHelp()}
                 type="error"
               />
             </div>
