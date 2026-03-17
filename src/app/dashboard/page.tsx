@@ -10,8 +10,12 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (user?.onboardingStep && user.onboardingStep !== "COMPLETED") {
-       // Si de alguna forma llegó aquí sin terminar el onboarding, lo devolvemos
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
+    if (user.onboardingStep !== "COMPLETED") {
        router.replace("/onboarding/rol");
     }
   }, [user, router]);

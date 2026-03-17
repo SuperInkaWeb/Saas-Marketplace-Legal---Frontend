@@ -11,7 +11,9 @@ export const registerSchema = z.object({
   lastNameMother: z.string().min(1, "El apellido materno es obligatorio"),
   email: z.email("Formato de email inválido"),
   password: z.string().min(8, "Mínimo 8 caracteres"),
-  phoneNumber: z.string().optional(),
+  phoneNumber: z.string()
+    .min(1, "El teléfono es obligatorio")
+    .regex(/^\+?[0-9\s-]{7,15}$/, "Formato de teléfono inválido"),
 });
 
 const roles = ["CLIENT", "LAWYER"] as const;

@@ -1,6 +1,6 @@
 interface FormAlertProps {
   message: string;
-  help?: string | null;
+  help?: React.ReactNode;
   type?: "error" | "success";
 }
 

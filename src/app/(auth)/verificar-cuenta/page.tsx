@@ -86,7 +86,11 @@ export default function VerifyAccountPage() {
           {/* Alerta de Error */}
           {apiError && (
             <div className="mb-6">
-              <FormAlert message={apiError.message} help={apiError.help} type="error" />
+              <FormAlert 
+                message={apiError.isGone ? "El código ha expirado" : apiError.message} 
+                help={apiError.isGone ? "Por favor, usa el botón de abajo para solicitar uno nuevo." : apiError.help} 
+                type="error" 
+              />
             </div>
           )}
 

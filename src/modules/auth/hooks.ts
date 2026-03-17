@@ -203,13 +203,15 @@ export function extractApiError(error: unknown) {
   if (error instanceof AxiosError) {
     const data = error.response?.data as ApiErrorResponse;
     const isGone = error.response?.status === 410;
+    const isUnverified = data?.detail?.includes("verificada") || false;
 
     return {
       message: data?.detail || "Ocurrió un error inesperado",
       help: data?.ayuda || null,
-      isGone
+      isGone,
+      isUnverified
     };
   }
 
-  return { message: "Error de conexión con el servidor", isGone: false };
+  return { message: "Error de conexión con el servidor", isGone: false, isUnverified: false };
 }
