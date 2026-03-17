@@ -96,8 +96,8 @@ export default function ResetPasswordPage() {
                   id="code"
                   {...register("code")}
                   className={`w-full px-4 py-3 text-center tracking-widest text-xl rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white ${errors.code
-                      ? "border-red-500 focus:ring-2 focus:ring-red-200"
-                      : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
+                    ? "border-red-500 focus:ring-2 focus:ring-red-200"
+                    : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
                     }`}
                   type="text"
                   maxLength={6}
@@ -134,8 +134,8 @@ export default function ResetPasswordPage() {
                       id="newPassword"
                       {...register("newPassword")}
                       className={`w-full px-4 py-3 rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm ${errors.newPassword
-                          ? "border-red-500 focus:ring-2 focus:ring-red-200"
-                          : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
+                        ? "border-red-500 focus:ring-2 focus:ring-red-200"
+                        : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
                         }`}
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
@@ -164,8 +164,8 @@ export default function ResetPasswordPage() {
                       id="confirmPassword"
                       {...register("confirmPassword")}
                       className={`w-full px-4 py-3 rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm ${errors.confirmPassword
-                          ? "border-red-500 focus:ring-2 focus:ring-red-200"
-                          : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
+                        ? "border-red-500 focus:ring-2 focus:ring-red-200"
+                        : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
                         }`}
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="••••••••"
