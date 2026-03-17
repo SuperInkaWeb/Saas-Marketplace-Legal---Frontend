@@ -8,6 +8,7 @@ interface AuthState {
   hydrated: boolean;
 
   setAuth: (response: AuthResponse) => void;
+  updateUser: (user: Partial<Omit<AuthResponse, "accessToken">>) => void;
   logout: () => void;
   setHydrated: (state: boolean) => void;
 }
@@ -21,6 +22,11 @@ export const useAuthStore = create<AuthState>()(
 
       setAuth: ({ accessToken, ...user }) =>
         set({ token: accessToken, user }),
+
+      updateUser: (userData) =>
+        set((state) => ({
+          user: state.user ? { ...state.user, ...userData } : null,
+        })),
 
       logout: () =>
         set({ token: null, user: null }),
