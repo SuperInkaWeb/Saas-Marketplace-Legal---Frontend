@@ -10,6 +10,7 @@ import { FormAlert } from "../components/FormAlert";
 import RightHero from "../components/RighHero";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
+import AuthInput from "../components/AuthInput";
 
 export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
@@ -39,9 +40,9 @@ export default function RegisterPage() {
 
   const apiError = error
     ? {
-        message: error,
-        help: "Si ya tienes una cuenta, intenta iniciar sesión.",
-      }
+      message: error,
+      help: "Si ya tienes una cuenta, intenta iniciar sesión.",
+    }
     : null;
 
   return (
@@ -77,115 +78,47 @@ export default function RegisterPage() {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Nombre */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5 tracking-tight">
-                Nombre
-              </label>
-              <input
-                {...registerField("firstName")}
-                placeholder="Gabriel"
-                className={`w-full px-4 py-3 rounded-xl border bg-gray-50/50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm shadow-sm ${
-                  errors.firstName
-                    ? "border-red-500 focus:ring-2 focus:ring-red-100"
-                    : "border-gray-200 focus:border-slate-800 focus:ring-4 focus:ring-slate-50"
-                }`}
-              />
-              {errors.firstName && (
-                <p className="text-[11px] text-red-600 font-bold mt-1.5 px-1 italic tracking-tight">
-                  {errors.firstName.message}
-                </p>
-              )}
-            </div>
+            <AuthInput
+              label="Nombre"
+              {...registerField("firstName")}
+              placeholder="Gabriel"
+              error={errors.firstName}
+            />
 
             {/* Apellidos */}
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5 tracking-tight">
-                  Ap. paterno
-                </label>
-                <input
-                  {...registerField("lastNameFather")}
-                  placeholder="García"
-                  className={`w-full px-4 py-3 rounded-xl border bg-gray-50/50 text-sm focus:outline-none focus:bg-white shadow-sm transition-all ${
-                    errors.lastNameFather
-                      ? "border-red-500 focus:ring-2 focus:ring-red-100"
-                      : "border-gray-200 focus:border-slate-800 focus:ring-4 focus:ring-slate-50"
-                  }`}
-                />
-                {errors.lastNameFather && (
-                  <p className="text-[11px] text-red-600 font-bold mt-1.5 px-1 italic tracking-tight">
-                    {errors.lastNameFather.message}
-                  </p>
-                )}
-  </div>
+              <AuthInput
+                label="Ap. paterno"
+                {...registerField("lastNameFather")}
+                placeholder="García"
+                error={errors.lastNameFather}
+              />
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5 tracking-tight">
-                  Ap. materno
-                </label>
-                <input
-                  {...registerField("lastNameMother")}
-                  placeholder="López"
-                  className={`w-full px-4 py-3 rounded-xl border bg-gray-50/50 text-sm focus:outline-none focus:bg-white shadow-sm transition-all ${
-                    errors.lastNameMother
-                      ? "border-red-500 focus:ring-2 focus:ring-red-100"
-                      : "border-gray-200 focus:border-slate-800 focus:ring-4 focus:ring-slate-50"
-                  }`}
-                />
-                {errors.lastNameMother && (
-                  <p className="text-[11px] text-red-600 font-bold mt-1.5 px-1 italic tracking-tight">
-                    {errors.lastNameMother.message}
-                  </p>
-                )}
-  </div>
+              <AuthInput
+                label="Ap. materno"
+                {...registerField("lastNameMother")}
+                placeholder="López"
+                error={errors.lastNameMother}
+              />
             </div>
 
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5 tracking-tight">
-                Correo electrónico
-              </label>
-              <input
-                {...registerField("email")}
-                type="email"
-                placeholder="correo@ejemplo.com"
-                autoComplete="email"
-                className={`w-full px-4 py-3 rounded-xl border bg-gray-50/50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm shadow-sm ${
-                  errors.email
-                    ? "border-red-500 focus:ring-2 focus:ring-red-100"
-                    : "border-gray-200 focus:border-slate-800 focus:ring-4 focus:ring-slate-50"
-                }`}
-              />
-              {errors.email && (
-                <p className="text-[11px] text-red-600 font-bold mt-1.5 px-1 italic tracking-tight">
-                  {errors.email.message}
-                </p>
-              )}
-</div>
+            <AuthInput
+              label="Correo electrónico"
+              {...registerField("email")}
+              type="email"
+              placeholder="correo@ejemplo.com"
+              autoComplete="email"
+              error={errors.email}
+            />
 
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5 tracking-tight">
-                Contraseña
-              </label>
-              <input
-                {...registerField("password")}
-                type="password"
-                placeholder="Mínimo 8 caracteres"
-                autoComplete="new-password"
-                className={`w-full px-4 py-3 rounded-xl border bg-gray-50/50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm shadow-sm ${
-                  errors.password
-                    ? "border-red-500 focus:ring-2 focus:ring-red-100"
-                    : "border-gray-200 focus:border-slate-800 focus:ring-4 focus:ring-slate-50"
-                }`}
-              />
-              {errors.password && (
-                <p className="text-[11px] text-red-600 font-bold mt-1.5 px-1 italic tracking-tight">
-                  {errors.password.message}
-                </p>
-              )}
-</div>
+            <AuthInput
+              label="Contraseña"
+              {...registerField("password")}
+              type="password"
+              placeholder="Mínimo 8 caracteres"
+              autoComplete="new-password"
+              error={errors.password}
+            />
 
             {/* Teléfono Profesional */}
             <div>
@@ -202,15 +135,13 @@ export default function RegisterPage() {
                     value={field.value}
                     onChange={field.onChange}
                     className="w-full"
-                    inputClassName={`!w-full !h-[48px] !px-4 !rounded-xl !border !bg-gray-50/50 !text-gray-900 !text-sm !transition-all !duration-200 focus:!bg-white !shadow-sm focus:!ring-4 focus:!ring-slate-50 ${
-                      errors.phoneNumber 
-                        ? "!border-red-500 focus:!ring-red-100" 
+                    inputClassName={`!w-full !h-[48px] !px-4 !rounded-xl !border !bg-gray-50/50 !text-gray-900 !text-sm !transition-all !duration-200 focus:!bg-white !shadow-sm focus:!ring-4 focus:!ring-slate-50 ${errors.phoneNumber
+                        ? "!border-red-500 focus:!ring-red-100"
                         : "!border-gray-200 focus:!border-slate-800"
-                    }`}
+                      }`}
                     countrySelectorStyleProps={{
-                      buttonClassName: `!h-[48px] !rounded-xl !border !bg-gray-50/50 !mr-2 !transition-all ${
-                        errors.phoneNumber ? "!border-red-500" : "!border-gray-200 hover:!border-slate-300"
-                      }`,
+                      buttonClassName: `!h-[48px] !rounded-xl !border !bg-gray-50/50 !mr-2 !transition-all ${errors.phoneNumber ? "!border-red-500" : "!border-gray-200 hover:!border-slate-300"
+                        }`,
                       dropdownStyleProps: {
                         className: "!rounded-xl !shadow-xl !border-gray-100",
                       },
@@ -223,7 +154,7 @@ export default function RegisterPage() {
                   {errors.phoneNumber.message}
                 </p>
               )}
-</div>
+            </div>
 
             {/* Botón */}
             <button
