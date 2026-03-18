@@ -1,21 +1,65 @@
 export interface AuthResponse {
   publicId: string;
   email: string;
+  firstName: string;
+  lastNameFather: string;
+  lastNameMother: string;
+  phoneNumber: string;
+  slug?: string;
   fullName: string;
   role: string | null;
   onboardingStep: string;
   accessToken: string;
+  avatarUrl?: string;
+  
+  // Profile fields
+  companyName?: string;
+  billingAddress?: string;
+  companyLogoUrl?: string;
+  bio?: string;
+  city?: string;
+  country?: string;
+  hourlyRate?: number;
+  currency?: string;
+  barRegistrationNumber?: string;
+  barAssociation?: string;
+  
+  // Law Firm fields
+  lawFirmLogoUrl?: string;
+  lawFirmCoverUrl?: string;
 }
 
 export interface UserMeResponse {
   publicId: string;
   email: string;
+  firstName: string;
+  lastNameFather: string;
+  lastNameMother: string;
+  phoneNumber: string;
+  slug?: string;
   fullName: string;
   role: string | null;
   onboardingStep: string;
   accountStatus: string;
   hasProfile: boolean;
   isVerified: boolean;
+  avatarUrl?: string;
+
+  // Profile fields
+  companyName?: string;
+  billingAddress?: string;
+  companyLogoUrl?: string;
+  bio?: string;
+  city?: string;
+  country?: string;
+  hourlyRate?: number;
+  currency?: string;
+  barRegistrationNumber?: string;
+  barAssociation?: string;
+
+  // Law Firm fields
+  lawFirmLogoUrl?: string;
+  lawFirmCoverUrl?: string;
 }
 
 export interface LoginRequest {
