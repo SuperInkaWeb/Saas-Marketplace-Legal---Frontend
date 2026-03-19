@@ -134,14 +134,14 @@ export default function DebugProfilePage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm">Avatar (General)</label>
-                {user.avatarUrl && <img src={user.avatarUrl} alt="Avatar" className="w-16 h-16 rounded-full mb-1" />}
+                {user.avatarUrl && <img src={user.avatarUrl} alt="Avatar" crossOrigin="anonymous" className="w-16 h-16 rounded-full mb-1" />}
                 <input type="file" onChange={(e) => e.target.files && handleFileUpload("avatar", e.target.files[0])} />
               </div>
 
               {user.role === "CLIENT" && (
                 <div>
                   <label className="block text-sm text-blue-600">Company Logo (Client Only)</label>
-                  {user.companyLogoUrl && <img src={user.companyLogoUrl} alt="Logo" className="w-24 h-12 object-contain mb-1" />}
+                  {user.companyLogoUrl && <img src={user.companyLogoUrl} alt="Logo" crossOrigin="anonymous" className="w-24 h-12 object-contain mb-1" />}
                   <input type="file" onChange={(e) => e.target.files && handleFileUpload("client-logo", e.target.files[0])} />
                 </div>
               )}

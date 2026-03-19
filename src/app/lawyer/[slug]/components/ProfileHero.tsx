@@ -1,7 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ShieldCheck } from 'lucide-react';
 import { PublicProfile } from '../types';
+import Image from "next/image";
 
 interface ProfileHeroProps {
   profile: PublicProfile;
@@ -15,10 +13,13 @@ export const ProfileHero: React.FC<ProfileHeroProps> = ({ profile }) => {
           
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-full blur opacity-15 group-hover:opacity-25 transition duration-1000"></div>
-            <img 
+            <Image 
+              src={profile.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName)}&background=1e293b&color=fff&size=200`}
               alt={profile.fullName} 
+              width={224} 
+              height={224} 
               className="relative w-48 h-48 lg:w-56 lg:h-56 rounded-full border-4 border-white object-cover shadow-xl" 
-              src={profile.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName)}&background=1e293b&color=fff&size=200`} 
+              priority
             />
             {profile.isVerified !== false && (
               <div className="absolute bottom-4 right-4 bg-blue-600 text-white p-2 rounded-full border-4 border-white shadow-lg" title="Verified Professional">

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((s) => s.user);
@@ -74,7 +75,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="flex items-center gap-4 bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
           <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center shrink-0 overflow-hidden border-2 border-emerald-500/20">
             {user.avatarUrl ? (
-              <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              <Image 
+                src={user.avatarUrl} 
+                alt="Avatar" 
+                width={48} 
+                height={48} 
+                className="w-full h-full object-cover"
+                priority
+              />
             ) : (
               <UserCircle className="w-8 h-8 text-emerald-600" />
             )}
