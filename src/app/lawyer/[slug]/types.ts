@@ -10,6 +10,7 @@ export interface Schedule {
 }
 
 export interface PublicProfile {
+  publicId: string;
   fullName: string;
   avatarUrl: string;
   bio: string;

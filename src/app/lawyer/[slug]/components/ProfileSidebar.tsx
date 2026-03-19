@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Schedule } from '../types';
+import { BookingModal } from './BookingModal';
 
 interface ProfileSidebarProps {
   schedules: Schedule[];
+  lawyerPublicId: string;
 }
 
-export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ schedules }) => {
+export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ schedules, lawyerPublicId }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <aside className="lg:col-span-4" data-purpose="sidebar-appointment">
       <div className="bg-white p-8 sticky top-32 border border-slate-200 rounded-sm shadow-xl">
@@ -38,7 +42,10 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ schedules }) => 
         </div>
 
         {/* Booking Button */}
-        <button className="w-full bg-slate-900 hover:bg-black text-white text-sm font-bold tracking-widest py-5 rounded-sm transition-all shadow-lg active:scale-[0.98] uppercase">
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="w-full bg-slate-900 hover:bg-black text-white text-sm font-bold tracking-widest py-5 rounded-sm transition-all shadow-lg active:scale-[0.98] uppercase"
+        >
           Agendar Consulta
         </button>
         <p className="mt-8 text-center text-[10px] text-slate-400 uppercase tracking-widest font-medium">
@@ -46,6 +53,13 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ schedules }) => 
         </p>
 
       </div>
+
+      <BookingModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        schedules={schedules} 
+        lawyerPublicId={lawyerPublicId} 
+      />
     </aside>
   );
 };

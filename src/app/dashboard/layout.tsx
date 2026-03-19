@@ -12,11 +12,16 @@ import {
   Menu, 
   X,
   ShieldCheck,
-  Scale
+  Scale,
+  Calendar,
+  Briefcase,
+  FileText,
+  CreditCard
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const user = useAuthStore((s) => s.user);
@@ -68,6 +73,30 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       label: "Configuración de Perfil",
       href: "/dashboard/profile",
       icon: Settings,
+      show: user.role === "LAWYER",
+    },
+    {
+      label: "Mis Citas",
+      href: "/dashboard/appointments",
+      icon: Calendar,
+      show: true,
+    },
+    {
+      label: "Marketplace",
+      href: "/dashboard/marketplace",
+      icon: Briefcase,
+      show: user.role === "LAWYER",
+    },
+    {
+      label: "Mis Documentos",
+      href: "/dashboard/documents",
+      icon: FileText,
+      show: true,
+    },
+    {
+      label: "Ingresos y Pagos",
+      href: "/dashboard/payments",
+      icon: CreditCard,
       show: user.role === "LAWYER",
     },
     {

@@ -99,7 +99,10 @@ export default function LawyerPublicProfile() {
             </div>
 
             {/* Sidebar Section */}
-            <ProfileSidebar schedules={profile.schedules} />
+            <ProfileSidebar 
+              schedules={profile.schedules} 
+              lawyerPublicId={profile.publicId} 
+            />
           </div>
         </main>
       </div>
