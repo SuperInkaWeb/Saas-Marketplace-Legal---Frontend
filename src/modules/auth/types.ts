@@ -1,3 +1,15 @@
+export interface SpecialtyInfo {
+  id: number;
+  name: string;
+}
+
+export interface ScheduleInfo {
+  id: number;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+}
+
 export interface AuthResponse {
   publicId: string;
   email: string;
@@ -11,6 +23,7 @@ export interface AuthResponse {
   onboardingStep: string;
   accessToken: string;
   avatarUrl?: string;
+  isVerified?: boolean;
   
   // Profile fields
   companyName?: string;
@@ -23,10 +36,9 @@ export interface AuthResponse {
   currency?: string;
   barRegistrationNumber?: string;
   barAssociation?: string;
-  
-  // Law Firm fields
-  lawFirmLogoUrl?: string;
-  lawFirmCoverUrl?: string;
+  // Specialties & Schedules
+  specialties?: SpecialtyInfo[];
+  schedules?: ScheduleInfo[];
 }
 
 export interface UserMeResponse {
@@ -57,9 +69,10 @@ export interface UserMeResponse {
   barRegistrationNumber?: string;
   barAssociation?: string;
 
-  // Law Firm fields
-  lawFirmLogoUrl?: string;
-  lawFirmCoverUrl?: string;
+
+  // Specialties & Schedules
+  specialties?: SpecialtyInfo[];
+  schedules?: ScheduleInfo[];
 }
 
 export interface LoginRequest {

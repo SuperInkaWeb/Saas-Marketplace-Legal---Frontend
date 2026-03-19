@@ -19,9 +19,8 @@ export interface PublicProfile {
   currency: string;
   barAssociation: string;
   barRegistrationNumber: string;
-  lawFirmName: string;
-  lawFirmLogoUrl: string;
-  lawFirmCoverUrl: string;
+
   specialties: Specialty[];
   schedules: Schedule[];
+  isVerified?: boolean;
 }

@@ -7,41 +7,44 @@ interface ProfileSidebarProps {
 
 export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ schedules }) => {
   return (
-    <aside className="lg:col-span-4">
+    <aside className="lg:col-span-4" data-purpose="sidebar-appointment">
       <div className="bg-white p-8 sticky top-32 border border-slate-200 rounded-sm shadow-xl">
-        <div className="flex items-center justify-between mb-10">
-          <h3 className="text-lg font-bold text-slate-900 uppercase tracking-widest">Horarios</h3>
-          <div className="flex items-center gap-2 text-[10px] text-green-600 font-bold uppercase tracking-tighter">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            Disponible ahora
-          </div>
+        
+        <div className="mb-10">
+          <h3 className="text-lg font-bold text-slate-900 uppercase tracking-widest border-b border-slate-100 pb-4">Horarios</h3>
         </div>
 
-        {/* Schedule List */}
-        <div className="space-y-4 mb-10">
+        {/* Dynamic Schedule List styled as time slots */}
+        <div className="mb-10">
+          <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Disponibilidad Regular</span>
           {schedules.length > 0 ? (
-            schedules.map((s, idx) => (
-              <div key={idx} className="flex justify-between text-sm py-2 border-b border-slate-50">
-                <span className="text-slate-400 font-medium">
-                  {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'][s.dayOfWeek - 1]}
-                </span>
-                <span className="text-slate-900 font-bold">{s.startTime} - {s.endTime}</span>
-              </div>
-            ))
+            <div className="space-y-3">
+              {schedules.map((s, idx) => (
+                <div key={idx} className="flex justify-between items-center py-2 border-b border-slate-100">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'][s.dayOfWeek - 1]}
+                  </span>
+                  <span className="text-xs font-semibold text-slate-900 bg-slate-50 px-2 py-1 rounded-sm border border-slate-200">
+                    {s.startTime} - {s.endTime}
+                  </span>
+                </div>
+              ))}
+            </div>
           ) : (
-            <p className="text-slate-400 text-sm italic">Sin horarios definidos</p>
+            <div className="text-center py-6 bg-slate-50 border border-slate-100 rounded-sm">
+              <p className="text-slate-400 text-sm font-medium">Horarios no configurados</p>
+            </div>
           )}
         </div>
 
+        {/* Booking Button */}
         <button className="w-full bg-slate-900 hover:bg-black text-white text-sm font-bold tracking-widest py-5 rounded-sm transition-all shadow-lg active:scale-[0.98] uppercase">
-          Reservar Cita
+          Agendar Consulta
         </button>
         <p className="mt-8 text-center text-[10px] text-slate-400 uppercase tracking-widest font-medium">
           Se aplican acuerdos de confidencialidad
         </p>
+
       </div>
     </aside>
   );

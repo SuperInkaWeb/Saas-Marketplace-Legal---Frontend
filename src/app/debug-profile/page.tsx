@@ -22,15 +22,13 @@ export default function DebugProfilePage() {
     }
   };
 
-  const handleFileUpload = async (type: "avatar" | "client-logo" | "lawyer-logo" | "lawyer-cover", file: File) => {
+  const handleFileUpload = async (type: "avatar" | "client-logo", file: File) => {
     setLoading(true);
     setStatus(`Subiendo ${type}...`);
     try {
       let res;
       if (type === "avatar") res = await profileService.updateAvatar(file);
       else if (type === "client-logo") res = await profileService.updateClientLogo(file);
-      else if (type === "lawyer-logo") res = await profileService.updateLawFirmLogo(file);
-      else if (type === "lawyer-cover") res = await profileService.updateLawFirmCover(file);
       
       setStatus(`Éxito al subir ${type}: ${JSON.stringify(res)}`);
       await refreshUser();
@@ -148,20 +146,7 @@ export default function DebugProfilePage() {
                 </div>
               )}
 
-              {user.role === "LAWYER" && (
-                <>
-                  <div>
-                    <label className="block text-sm text-green-600">Law Firm Logo (Lawyer Only)</label>
-                    {user.lawFirmLogoUrl && <img src={user.lawFirmLogoUrl} alt="Firm Logo" className="w-24 h-12 object-contain mb-1" />}
-                    <input type="file" onChange={(e) => e.target.files && handleFileUpload("lawyer-logo", e.target.files[0])} />
-                  </div>
-                  <div>
-                    <label className="block text-sm text-green-600">Law Firm Cover (Lawyer Only)</label>
-                    {user.lawFirmCoverUrl && <img src={user.lawFirmCoverUrl} alt="Cover" className="w-full h-20 object-cover rounded mb-1" />}
-                    <input type="file" onChange={(e) => e.target.files && handleFileUpload("lawyer-cover", e.target.files[0])} />
-                  </div>
-                </>
-              )}
+
             </div>
           </section>
         </div>
