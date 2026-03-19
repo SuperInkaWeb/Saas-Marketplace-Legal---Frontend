@@ -1,3 +1,4 @@
+import React from 'react';
 import { PublicProfile } from '../types';
 import Image from "next/image";
 
@@ -10,15 +11,15 @@ export const ProfileHero: React.FC<ProfileHeroProps> = ({ profile }) => {
     <header className="hero-border pt-16 pb-20 relative overflow-hidden" data-purpose="profile-header">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
         <div className="flex flex-col lg:flex-row items-center lg:items-start gap-12">
-          
+
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-full blur opacity-15 group-hover:opacity-25 transition duration-1000"></div>
-            <Image 
+            <Image
               src={profile.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName)}&background=1e293b&color=fff&size=200`}
-              alt={profile.fullName} 
-              width={224} 
-              height={224} 
-              className="relative w-48 h-48 lg:w-56 lg:h-56 rounded-full border-4 border-white object-cover shadow-xl" 
+              alt={profile.fullName}
+              width={224}
+              height={224}
+              className="relative w-48 h-48 lg:w-56 lg:h-56 rounded-full border-4 border-white object-cover shadow-xl"
               priority
             />
             {profile.isVerified !== false && (
@@ -42,7 +43,7 @@ export const ProfileHero: React.FC<ProfileHeroProps> = ({ profile }) => {
                 <span>{profile.city}, {profile.country}</span>
               </p>
             </div>
-            
+
             <div className="flex justify-center lg:justify-start pt-4 border-t border-slate-100">
               <div className="text-center lg:text-left">
                 <div className="text-2xl font-bold text-slate-900">{profile.hourlyRate} <span className="text-sm font-normal text-slate-500">{profile.currency}</span></div>
@@ -53,7 +54,7 @@ export const ProfileHero: React.FC<ProfileHeroProps> = ({ profile }) => {
 
         </div>
       </div>
-      
+
       {/* Decorative subtle line */}
       <div className="absolute bottom-0 left-0 w-32 h-1 bg-blue-600 ml-[10%]"></div>
     </header>

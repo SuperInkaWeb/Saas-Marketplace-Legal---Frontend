@@ -2,7 +2,7 @@
 
 import { useAuthStore } from "@/modules/auth/store";
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import Link from "next/link";
 import { 
   Home, 
@@ -18,8 +18,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: ReactNode }) {
   const user = useAuthStore((s) => s.user);
+  const hydrated = useAuthStore((s) => s.hydrated);
   const logout = useAuthStore((s) => s.logout);
   const router = useRouter();
   const pathname = usePathname();
@@ -27,16 +28,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    if (!hydrated) return; // Wait for rehydration
+
     if (!user) {
       router.replace("/login");
       return;
     }
+    
     if (user.onboardingStep !== "COMPLETED") {
       router.replace("/onboarding/rol");
     }
-  }, [user, router]);
+  }, [user, router, hydrated]);
 
-  if (!user) return null;
+  if (!hydrated || !user) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center gap-4">
+        <Scale className="w-12 h-12 text-emerald-500 animate-pulse" />
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "-0.3s" }}></div>
+          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "-0.15s" }}></div>
+          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce"></div>
+        </div>
+      </div>
+    );
+  }
 
   const handleLogout = () => {
     logout();
