@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { User, Save, Loader2, MapPin, DollarSign, BookOpen } from "lucide-react";
@@ -9,6 +9,8 @@ import { lawyerConfigService } from "@/modules/profile/services/lawyerConfigServ
 import { profileService } from "@/modules/profile/services/profileService";
 import { UpdateLawyerProfileRequest } from "@/modules/profile/types";
 import { useAuthStore } from "@/modules/auth/store";
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
 
 const schema = z.object({
   firstName: z.string().min(2, "Nombre requerido"),
@@ -30,7 +32,7 @@ export default function GeneralInfoForm() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  
+
   const updateUser = useAuthStore((s) => s.updateUser);
   const user = useAuthStore((s) => s.user);
 
@@ -38,6 +40,7 @@ export default function GeneralInfoForm() {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
@@ -74,7 +77,7 @@ export default function GeneralInfoForm() {
       };
       await profileService.updateLawyerProfile(payload);
       setMessage({ type: "success", text: "Información actualizada correctamente." });
-      
+
       // Update global store
       if (user) {
         updateUser({
@@ -121,7 +124,7 @@ export default function GeneralInfoForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        
+
         {/* Basic Personal Info */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
@@ -162,13 +165,39 @@ export default function GeneralInfoForm() {
                 className={`w-full px-4 py-2 bg-slate-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all resize-none ${errors.bio ? "border-red-300" : "border-slate-200"}`}
               />
             </div>
-            
+
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700">Teléfono</label>
-              <input
-                {...register("phoneNumber")}
-                className={`w-full px-4 py-2 bg-slate-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.phoneNumber ? "border-red-300" : "border-slate-200"}`}
+              <label className="block text-sm font-medium text-slate-700 flex items-center justify-between">
+                Teléfono
+              </label>
+              <Controller
+                name="phoneNumber"
+                control={control}
+                render={({ field }) => (
+                  <PhoneInput
+                    defaultCountry="pe"
+                    value={field.value}
+                    onChange={field.onChange}
+                    className="w-full"
+                    inputClassName={`!w-full !h-[48px] !px-4 !rounded-xl !border !bg-gray-50/50 !text-gray-900 !text-sm !transition-all !duration-200 focus:!bg-white !shadow-sm focus:!ring-4 focus:!ring-slate-50 ${errors.phoneNumber
+                      ? "!border-red-500 focus:!ring-red-100"
+                      : "!border-gray-200 focus:!border-slate-800"
+                      }`}
+                    countrySelectorStyleProps={{
+                      buttonClassName: `!h-[48px] !rounded-xl !border !bg-gray-50/50 !mr-2 !transition-all ${errors.phoneNumber ? "!border-red-500" : "!border-gray-200 hover:!border-slate-300"
+                        }`,
+                      dropdownStyleProps: {
+                        className: "!rounded-xl !shadow-xl !border-gray-100",
+                      },
+                    }}
+                  />
+                )}
               />
+              {errors.phoneNumber && (
+                <p className="text-[11px] text-red-600 font-bold mt-1.5 px-1 italic tracking-tight">
+                  {errors.phoneNumber.message}
+                </p>
+              )}
             </div>
           </div>
 
