@@ -16,7 +16,9 @@ import {
   Calendar,
   Briefcase,
   FileText,
-  CreditCard
+  CreditCard,
+  Send,
+  Star
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -92,6 +94,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       href: "/dashboard/documents",
       icon: FileText,
       show: true,
+    },
+    {
+      label: "Mis Propuestas",
+      href: "/dashboard/proposals",
+      icon: Send,
+      show: user.role === "LAWYER",
+    },
+    {
+      label: "Mis Reseñas",
+      href: "/dashboard/reviews",
+      icon: Star,
+      show: user.role === "LAWYER",
     },
     {
       label: "Ingresos y Pagos",

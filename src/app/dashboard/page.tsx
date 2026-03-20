@@ -16,10 +16,15 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { lawyerConfigService } from "@/modules/profile/services/lawyerConfigService";
+import { DashboardStatsResponse } from "@/modules/marketplace/types";
+
 export default function DashboardPage() {
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
   const [greeting, setGreeting] = useState("Hola");
+  const [stats, setStats] = useState<DashboardStatsResponse | null>(null);
+  const [loadingStats, setLoadingStats] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -34,17 +39,27 @@ export default function DashboardPage() {
     if (hour < 12) setGreeting("Buenos días");
     else if (hour < 19) setGreeting("Buenas tardes");
     else setGreeting("Buenas noches");
+
+    if (user.role === "LAWYER") {
+      loadStats();
+    }
   }, [user, router]);
+
+  const loadStats = async () => {
+    try {
+      setLoadingStats(true);
+      const data = await lawyerConfigService.getDashboardStats();
+      setStats(data);
+    } catch (e) {
+      console.error("Error loading stats", e);
+    } finally {
+      setLoadingStats(false);
+    }
+  };
 
   if (!user) return null;
 
   const isLawyer = user.role === "LAWYER";
-
-  // Fake stats / derived stats
-  const profileViews = isLawyer ? 142 : 0;
-  const rating = isLawyer ? 4.8 : 0;
-  const schedulesCount = user.schedules?.length || 0;
-  const specialtiesCount = user.specialties?.length || 0;
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 lg:p-10">
@@ -111,7 +126,7 @@ export default function DashboardPage() {
         )}
 
         {/* Stats Grid (Lawyers only for now) */}
-        {isLawyer && (
+        {isLawyer && stats && !loadingStats && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -121,12 +136,21 @@ export default function DashboardPage() {
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <div className="bg-blue-50 p-2.5 rounded-xl">
-                  <Eye className="w-5 h-5 text-blue-600" />
+                  <Clock className="w-5 h-5 text-blue-600" />
                 </div>
-                <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">+12% este mes</span>
               </div>
-              <p className="text-slate-500 text-sm font-medium">Búsquedas y Visitas</p>
-              <h4 className="text-3xl font-bold text-slate-900 mt-1">{profileViews}</h4>
+              <p className="text-slate-500 text-sm font-medium">Citas Pendientes</p>
+              <h4 className="text-3xl font-bold text-slate-900 mt-1">{stats.pendingAppointments}</h4>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-emerald-50 p-2.5 rounded-xl">
+                  <Briefcase className="w-5 h-5 text-emerald-600" />
+                </div>
+              </div>
+              <p className="text-slate-500 text-sm font-medium">Propuestas Enviadas</p>
+              <h4 className="text-3xl font-bold text-slate-900 mt-1">{stats.totalProposals}</h4>
             </div>
 
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
@@ -136,27 +160,17 @@ export default function DashboardPage() {
                 </div>
               </div>
               <p className="text-slate-500 text-sm font-medium">Calificación Media</p>
-              <h4 className="text-3xl font-bold text-slate-900 mt-1">{rating.toFixed(1)}</h4>
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <div className="bg-emerald-50 p-2.5 rounded-xl">
-                  <Clock className="w-5 h-5 text-emerald-600" />
-                </div>
-              </div>
-              <p className="text-slate-500 text-sm font-medium">Bloques de Horario</p>
-              <h4 className="text-3xl font-bold text-slate-900 mt-1">{schedulesCount}</h4>
+              <h4 className="text-3xl font-bold text-slate-900 mt-1">{stats.ratingAvg?.toFixed(1) || "N/A"}</h4>
             </div>
 
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <div className="bg-purple-50 p-2.5 rounded-xl">
-                  <Briefcase className="w-5 h-5 text-purple-600" />
+                  <Eye className="w-5 h-5 text-purple-600" />
                 </div>
               </div>
-              <p className="text-slate-500 text-sm font-medium">Especialidades</p>
-              <h4 className="text-3xl font-bold text-slate-900 mt-1">{specialtiesCount}</h4>
+              <p className="text-slate-500 text-sm font-medium">Total Reseñas</p>
+              <h4 className="text-3xl font-bold text-slate-900 mt-1">{stats.reviewCount}</h4>
             </div>
           </motion.div>
         )}

@@ -37,4 +37,24 @@ export const lawyerConfigService = {
   deleteSchedule: async (id: number): Promise<void> => {
     await api.delete(`${BASE_URL}/schedules/${id}`);
   },
+
+  // Nuevos Endpoints
+  updateProfile: async (payload: any): Promise<void> => {
+    await api.put(`${BASE_URL}/update`, payload);
+  },
+
+  getMyReviews: async (): Promise<any[]> => {
+    const { data } = await api.get(`${BASE_URL}/reviews`);
+    return data;
+  },
+
+  getMyProposals: async (): Promise<any[]> => {
+    const { data } = await api.get(`${BASE_URL}/proposals`);
+    return data;
+  },
+
+  getDashboardStats: async (): Promise<any> => {
+    const { data } = await api.get(`${BASE_URL}/dashboard`);
+    return data;
+  },
 };
