@@ -44,10 +44,30 @@ export const ProfileHero: React.FC<ProfileHeroProps> = ({ profile }) => {
               </p>
             </div>
 
-            <div className="flex justify-center lg:justify-start pt-4 border-t border-slate-100">
+            <div className="flex flex-wrap justify-center lg:justify-start gap-8 pt-6 mt-4 border-t border-slate-100">
               <div className="text-center lg:text-left">
                 <div className="text-2xl font-bold text-slate-900">{profile.hourlyRate} <span className="text-sm font-normal text-slate-500">{profile.currency}</span></div>
-                <div className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold">Tarifa por Hora</div>
+                <div className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mt-1">Tarifa por Hora</div>
+              </div>
+              
+              <div className="w-px bg-slate-100 hidden sm:block"></div>
+
+              <div className="text-center lg:text-left">
+                <div className="flex items-center justify-center lg:justify-start gap-1">
+                  <div className="text-2xl font-bold text-slate-900">
+                    {profile.reviewCount && profile.reviewCount > 0 ? profile.ratingAvg?.toFixed(1) : "Nuevo"}
+                  </div>
+                  {profile.reviewCount && profile.reviewCount > 0 ? (
+                    <svg className="w-5 h-5 text-amber-500 fill-amber-500 pb-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                  ) : (
+                    <span className="text-sm text-slate-400 ml-1"></span>
+                  )}
+                </div>
+                <div className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mt-1">
+                  {profile.reviewCount && profile.reviewCount > 0 ? `Basado en ${profile.reviewCount} reseñas` : "Sin reseñas aún"}
+                </div>
               </div>
             </div>
           </div>

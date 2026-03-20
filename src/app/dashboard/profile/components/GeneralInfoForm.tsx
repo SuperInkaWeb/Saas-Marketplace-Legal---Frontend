@@ -12,12 +12,14 @@ import { useAuthStore } from "@/modules/auth/store";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 
+import RichTextEditor from "./RichTextEditor";
+
 const schema = z.object({
   firstName: z.string().min(2, "Nombre requerido"),
   lastNameFather: z.string().min(2, "Apellido requerido"),
   lastNameMother: z.string().min(2, "Apellido requerido"),
   phoneNumber: z.string().min(6, "Teléfono inválido"),
-  bio: z.string().max(1500, "La biografía es muy larga").optional(),
+  bio: z.string().max(10000, "La biografía es muy larga").optional(), // Increased max length because HTML tags add length
   city: z.string().min(2, "Ciudad requerida"),
   country: z.string().min(2, "País requerido"),
   hourlyRate: z.number().min(1, "Tarifa mínima es 1"),
@@ -112,64 +114,56 @@ export default function GeneralInfoForm() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-          <User className="w-5 h-5 text-emerald-600" />
+    <div className="w-full">
+      <div className="mb-8 border-b border-slate-100 pb-6">
+        <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+          <User className="w-6 h-6 text-emerald-600" />
           Información General
         </h2>
-        <p className="text-slate-500 text-sm mt-1">
-          Tus datos personales, biografía profesional y detalles de honorarios.
+        <p className="text-slate-500 text-sm mt-1.5 leading-relaxed max-w-2xl">
+          Tus datos personales, biografía profesional e información de valor que verán tus clientes al visitar tu perfil público. Asegúrate de incluir palabras clave relevantes.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
 
         {/* Basic Personal Info */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-700">Nombre</label>
-            <input
-              {...register("firstName")}
-              className={`w-full px-4 py-2 bg-slate-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.firstName ? "border-red-300" : "border-slate-200"}`}
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-700">Apellido Paterno</label>
-            <input
-              {...register("lastNameFather")}
-              className={`w-full px-4 py-2 bg-slate-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.lastNameFather ? "border-red-300" : "border-slate-200"}`}
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-slate-700">Apellido Materno</label>
-            <input
-              {...register("lastNameMother")}
-              className={`w-full px-4 py-2 bg-slate-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.lastNameMother ? "border-red-300" : "border-slate-200"}`}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Bio & Contact */}
-          <div className="space-y-6">
+        <section>
+          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Datos Personales</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700 flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-emerald-600" />
-                Biografía Profesional
-              </label>
-              <textarea
-                {...register("bio")}
-                rows={5}
-                placeholder="Cuenta tu experiencia y tu enfoque principal..."
-                className={`w-full px-4 py-2 bg-slate-50 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all resize-none ${errors.bio ? "border-red-300" : "border-slate-200"}`}
+              <label className="block text-sm font-medium text-slate-700">Nombre(s)</label>
+              <input
+                {...register("firstName")}
+                className={`w-full px-4 py-2.5 bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.firstName ? "border-red-300 ring-red-100" : "border-slate-200"}`}
               />
+              {errors.firstName && <p className="text-xs text-red-500">{errors.firstName.message}</p>}
             </div>
-
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700 flex items-center justify-between">
-                Teléfono
-              </label>
+              <label className="block text-sm font-medium text-slate-700">Apellido Paterno</label>
+              <input
+                {...register("lastNameFather")}
+                className={`w-full px-4 py-2.5 bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.lastNameFather ? "border-red-300 ring-red-100" : "border-slate-200"}`}
+              />
+              {errors.lastNameFather && <p className="text-xs text-red-500">{errors.lastNameFather.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700">Apellido Materno</label>
+              <input
+                {...register("lastNameMother")}
+                className={`w-full px-4 py-2.5 bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.lastNameMother ? "border-red-300 ring-red-100" : "border-slate-200"}`}
+              />
+              {errors.lastNameMother && <p className="text-xs text-red-500">{errors.lastNameMother.message}</p>}
+            </div>
+          </div>
+        </section>
+
+        {/* Contact & Location Info */}
+        <section>
+          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Contacto y Ubicación</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700">Teléfono</label>
               <Controller
                 name="phoneNumber"
                 control={control}
@@ -179,114 +173,139 @@ export default function GeneralInfoForm() {
                     value={field.value}
                     onChange={field.onChange}
                     className="w-full"
-                    inputClassName={`!w-full !h-[48px] !px-4 !rounded-xl !border !bg-gray-50/50 !text-gray-900 !text-sm !transition-all !duration-200 focus:!bg-white !shadow-sm focus:!ring-4 focus:!ring-slate-50 ${errors.phoneNumber
-                      ? "!border-red-500 focus:!ring-red-100"
-                      : "!border-gray-200 focus:!border-slate-800"
-                      }`}
+                    inputClassName={`!w-full !h-[44px] !px-4 !rounded-r-xl !border-y !border-r !border-l-0 !bg-slate-50 !text-slate-900 !text-sm !transition-all !duration-200 focus:!bg-white focus:!ring-2 focus:!ring-emerald-500/50 ${
+                      errors.phoneNumber ? "!border-red-400" : "!border-slate-200"
+                    }`}
                     countrySelectorStyleProps={{
-                      buttonClassName: `!h-[48px] !rounded-xl !border !bg-gray-50/50 !mr-2 !transition-all ${errors.phoneNumber ? "!border-red-500" : "!border-gray-200 hover:!border-slate-300"
-                        }`,
-                      dropdownStyleProps: {
-                        className: "!rounded-xl !shadow-xl !border-gray-100",
-                      },
+                      buttonClassName: `!h-[44px] !rounded-l-xl !border !bg-slate-50 !transition-all ${
+                        errors.phoneNumber ? "!border-red-400" : "!border-slate-200 hover:!border-slate-300"
+                      }`,
                     }}
                   />
                 )}
               />
-              {errors.phoneNumber && (
-                <p className="text-[11px] text-red-600 font-bold mt-1.5 px-1 italic tracking-tight">
-                  {errors.phoneNumber.message}
-                </p>
-              )}
+              {errors.phoneNumber && <p className="text-xs text-red-500 mt-1">{errors.phoneNumber.message}</p>}
+            </div>
+            
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600" /> Ciudad
+              </label>
+              <input
+                {...register("city")}
+                className={`w-full px-4 py-2.5 bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.city ? "border-red-300" : "border-slate-200"}`}
+              />
+              {errors.city && <p className="text-xs text-red-500">{errors.city.message}</p>}
+            </div>
+            
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700">País</label>
+              <input
+                {...register("country")}
+                className={`w-full px-4 py-2.5 bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.country ? "border-red-300" : "border-slate-200"}`}
+              />
+              {errors.country && <p className="text-xs text-red-500">{errors.country.message}</p>}
             </div>
           </div>
+        </section>
 
-          {/* Rates, Location & Bar Info */}
-          <div className="space-y-6 bg-slate-50/50 p-6 rounded-xl border border-slate-100 shadow-sm">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-slate-700 flex items-center gap-1">
-                  <MapPin className="w-4 h-4 text-emerald-600" /> Ciudad
-                </label>
-                <input
-                  {...register("city")}
-                  className={`w-full px-3 py-2 bg-white border rounded-md focus:ring-2 focus:ring-emerald-500/50 outline-none ${errors.city ? "border-red-300" : "border-slate-200"}`}
+        {/* Bio (Rich Text Editor) */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-emerald-600" />
+              Biografía Profesional
+            </h3>
+          </div>
+          <Controller
+            name="bio"
+            control={control}
+            render={({ field }) => (
+              <div className={errors.bio ? "ring-2 ring-red-400/50 rounded-lg" : ""}>
+                <RichTextEditor
+                  value={field.value || ""}
+                  onChange={field.onChange}
+                  className="shadow-sm border border-slate-200 rounded-lg"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-slate-700">País</label>
-                <input
-                  {...register("country")}
-                  className={`w-full px-3 py-2 bg-white border rounded-md focus:ring-2 focus:ring-emerald-500/50 outline-none ${errors.country ? "border-red-300" : "border-slate-200"}`}
-                />
-              </div>
+            )}
+          />
+          {errors.bio && <p className="text-xs text-red-500 mt-2">{errors.bio.message}</p>}
+        </section>
+
+        {/* Rates & Bar Info */}
+        <section className="bg-slate-50/50 p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm mt-8">
+          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-6">Honorarios y Colegiatura</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="space-y-2 col-span-1">
+              <label className="block text-sm font-medium text-slate-700 flex items-center gap-1">
+                <DollarSign className="w-4 h-4 text-emerald-600" /> Tarifa Base / hora
+              </label>
+              <input
+                type="number"
+                {...register("hourlyRate", { valueAsNumber: true })}
+                className={`w-full px-4 py-2.5 bg-white border rounded-xl focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all ${errors.hourlyRate ? "border-red-300" : "border-slate-200"}`}
+              />
+              {errors.hourlyRate && <p className="text-xs text-red-500">{errors.hourlyRate.message}</p>}
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-slate-700 flex items-center gap-1">
-                  <DollarSign className="w-4 h-4 text-emerald-600" /> Tarifa Base /hr
-                </label>
-                <input
-                  type="number"
-                  {...register("hourlyRate", { valueAsNumber: true })}
-                  className={`w-full px-3 py-2 bg-white border rounded-md focus:ring-2 focus:ring-emerald-500/50 outline-none ${errors.hourlyRate ? "border-red-300" : "border-slate-200"}`}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-slate-700">Moneda</label>
-                <select
-                  {...register("currency")}
-                  className={`w-full px-3 py-2 bg-white border rounded-md focus:ring-2 focus:ring-emerald-500/50 outline-none ${errors.currency ? "border-red-300" : "border-slate-200"}`}
-                >
-                  <option value="USD">USD ($)</option>
-                  <option value="MXN">MXN ($)</option>
-                  <option value="EUR">EUR (€)</option>
-                  <option value="COP">COP ($)</option>
-                  <option value="PEN">SOL (S/.)</option>
-                </select>
-              </div>
+            
+            <div className="space-y-2 col-span-1">
+              <label className="block text-sm font-medium text-slate-700">Moneda</label>
+              <select
+                {...register("currency")}
+                className={`w-full px-4 py-2.5 bg-white border rounded-xl focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all ${errors.currency ? "border-red-300" : "border-slate-200"}`}
+              >
+                <option value="USD">USD ($)</option>
+                <option value="MXN">MXN ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="COP">COP ($)</option>
+                <option value="PEN">SOL (S/.)</option>
+              </select>
             </div>
-
-            <div className="space-y-4 pt-4 border-t border-slate-200/60">
-              <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Colegiatura Num.
-                </label>
-                <input
-                  {...register("barRegistrationNumber")}
-                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md focus:ring-2 focus:ring-emerald-500/50 outline-none"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Colegio de Abogados
-                </label>
-                <input
-                  {...register("barAssociation")}
-                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md focus:ring-2 focus:ring-emerald-500/50 outline-none"
-                />
-              </div>
+            
+            <div className="space-y-2 col-span-1">
+              <label className="block text-sm font-medium text-slate-700">
+                N° Colegiatura
+              </label>
+              <input
+                {...register("barRegistrationNumber")}
+                placeholder="Ej. CAL 12345"
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
+              />
+            </div>
+            
+            <div className="space-y-2 col-span-1">
+              <label className="block text-sm font-medium text-slate-700">
+                Colegio de Abogados
+              </label>
+              <input
+                {...register("barAssociation")}
+                placeholder="Ej. Ilustre Colegio..."
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
+              />
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Actions */}
-        <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-sm order-2 sm:order-1">
             {message && (
-              <span className={message.type === "success" ? "text-emerald-600 font-medium" : "text-red-600 font-medium"}>
+              <div className={`px-4 py-2 rounded-lg font-medium ${message.type === "success" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
                 {message.text}
-              </span>
+              </div>
             )}
             {Object.keys(errors).length > 0 && !message && (
-              <span className="text-red-600">Por favor corrige los errores del formulario.</span>
+              <span className="text-red-500 bg-red-50 border border-red-200 px-4 py-2 rounded-lg inline-block">
+                Por favor corrige los errores resaltados en el formulario.
+              </span>
             )}
           </div>
           <button
             type="submit"
             disabled={isSaving}
-            className="w-full sm:w-auto order-1 sm:order-2 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50"
+            className="w-full sm:w-auto order-1 sm:order-2 flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3 rounded-xl font-medium transition-all shadow-md shadow-slate-900/10 hover:shadow-lg disabled:opacity-50"
           >
             {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
             Guardar Cambios

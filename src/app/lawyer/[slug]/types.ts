@@ -24,4 +24,6 @@ export interface PublicProfile {
   specialties: Specialty[];
   schedules: Schedule[];
   isVerified?: boolean;
+  ratingAvg?: number;
+  reviewCount?: number;
 }
