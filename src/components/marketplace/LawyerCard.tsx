@@ -81,7 +81,7 @@ export function LawyerCard({ lawyer }: LawyerCardProps) {
             </span>
           </div>
           <Link
-            href={`/profile/${lawyer.publicId}`}
+            href={`/lawyer/${lawyer.slug}`}
             className="px-6 py-3 bg-primary-container text-on-primary text-xs font-black uppercase tracking-widest rounded-lg hover:bg-primary transition-all shadow-md hover:shadow-lg"
           >
             Ver Perfil

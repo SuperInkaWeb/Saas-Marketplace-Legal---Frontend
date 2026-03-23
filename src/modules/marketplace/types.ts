@@ -36,3 +36,21 @@ export interface PageResponse<T> {
   size: number;
   number: number;
 }
+
+export interface ReviewDTO {
+  publicId: string;
+  lawyerPublicId: string;
+  appointmentPublicId: string;
+  clientName: string;
+  score: number;
+  content: string;
+  isAnonymous: boolean;
+  createdAt: string;
+}
+
+export interface ReviewCreateRequest {
+  appointmentPublicId: string;
+  score: number;
+  content: string;
+  isAnonymous?: boolean;
+}

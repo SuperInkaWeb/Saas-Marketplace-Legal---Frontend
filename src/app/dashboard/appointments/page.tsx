@@ -6,17 +6,19 @@ import { appointmentService } from "@/modules/appointment/services/appointmentSe
 import { AppointmentResponse } from "@/modules/appointment/types";
 import { format, isSameDay } from "date-fns";
 import { es } from "date-fns/locale";
-import { Calendar, Clock, Video, CheckCircle, XCircle, User, Info, ArrowRight } from "lucide-react";
+import { Calendar, Clock, Video, CheckCircle, XCircle, User, Info, ArrowRight, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { CalendarGrid } from "@/modules/appointment/components/CalendarGrid";
+import { ReviewModal } from "@/modules/appointment/components/ReviewModal";
 
 export default function AppointmentsPage() {
   const user = useAuthStore((s) => s.user);
   const [appointments, setAppointments] = useState<AppointmentResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [reviewModal, setReviewModal] = useState<{ isOpen: boolean; appointment?: AppointmentResponse }>({ isOpen: false });
 
   useEffect(() => {
     fetchAppointments();
@@ -69,6 +71,14 @@ export default function AppointmentsPage() {
 
   return (
     <div className="p-6 md:p-8 max-w-[1600px] mx-auto min-h-screen">
+      <ReviewModal
+        isOpen={reviewModal.isOpen}
+        onClose={() => setReviewModal({ isOpen: false })}
+        appointmentPublicId={reviewModal.appointment?.publicId || ""}
+        lawyerName={reviewModal.appointment?.lawyerName || ""}
+        onSuccess={fetchAppointments}
+      />
+      
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900">
@@ -174,6 +184,15 @@ export default function AppointmentsPage() {
                           >
                             <Video className="w-4 h-4" /> Unirse
                           </a>
+                        )}
+
+                        {user?.role === "CLIENT" && apt.status === "COMPLETED" && (
+                          <button
+                            onClick={() => setReviewModal({ isOpen: true, appointment: apt })}
+                            className="flex-1 bg-amber-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-amber-600 transition-colors shadow-lg shadow-amber-100 flex items-center justify-center gap-2"
+                          >
+                            <Star className="w-4 h-4 fill-white" /> Valorar Servicio
+                          </button>
                         )}
 
                         {user?.role === "LAWYER" && apt.status === "PENDING" && (
