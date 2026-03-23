@@ -71,12 +71,12 @@ export const authApi = {
   },
 
   createLawyerProfile: async (data: CreateLawyerProfileRequest): Promise<UserMeResponse> => {
-    const res = await api.post<UserMeResponse>("/profiles/lawyer", data);
+    const res = await api.post<UserMeResponse>("/lawyer-profile", data);
     return res.data;
   },
 
   getOnboardingStatus: async (): Promise<UserMeResponse> => {
-    const res = await api.get<UserMeResponse>("/profiles/lawyer/status");
+    const res = await api.get<UserMeResponse>("/lawyer-profile/status");
     return res.data;
   },
 
