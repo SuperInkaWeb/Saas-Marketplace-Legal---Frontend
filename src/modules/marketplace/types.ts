@@ -1,48 +1,10 @@
-export interface CaseRequestResponse {
-  publicId: string;
-  clientName: string;
-  title: string;
-  description: string;
-  budget: number;
-  specialtyName?: string;
-  status: 'OPEN' | 'IN_PROGRESS' | 'CLOSED';
-  createdAt: string;
-}
-
-export interface CreateProposalRequest {
-  proposalText: string;
-  proposedFee: number;
-}
-
-export interface LawyerProposalResponse {
-  id: number;
-  lawyerName: string;
-  lawyerPublicId: string;
-  proposalText: string;
-  proposedFee: number;
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
-  createdAt: string;
-}
-
-export interface DashboardStatsResponse {
-  pendingAppointments: number;
-  totalProposals: number;
-  ratingAvg: number;
-  reviewCount: number;
-}
-
-export interface ReviewResponse {
-  clientName: string;
-  rating: number;
-  comment: string;
-  createdAt: string;
-}
+import { UUID } from "crypto";
 
 export interface LawyerSearchResponse {
   publicId: string;
   slug: string;
   fullName: string;
-  avatarUrl?: string;
+  avatarUrl: string;
   city: string;
   country: string;
   hourlyRate: number;
@@ -53,7 +15,13 @@ export interface LawyerSearchResponse {
   specialties: string[];
 }
 
-export interface LawyerSearchParams {
+export interface SpecialtyResponse {
+  id: number;
+  name: string;
+  description: string;
+}
+
+export interface SearchParams {
   city?: string;
   specialtyId?: number;
   minRating?: number;
@@ -63,10 +31,8 @@ export interface LawyerSearchParams {
 
 export interface PageResponse<T> {
   content: T[];
-  totalElements: number;
   totalPages: number;
-  number: number;
+  totalElements: number;
   size: number;
-  first: boolean;
-  last: boolean;
+  number: number;
 }

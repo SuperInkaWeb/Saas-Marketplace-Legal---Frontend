@@ -1,1 +1,33 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary: #000000;
+  --color-secondary: #3755c3;
+  --color-tertiary: #000000;
+  --color-background: #faf8ff;
+  --color-surface: #faf8ff;
+  --color-on-surface: #141a32;
+  --color-on-surface-variant: #46464d;
+  --color-primary-container: #141a32;
+  --color-on-primary: #ffffff;
+  --color-surface-container-low: #f3f2ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-highest: #dce1ff;
+  --color-surface-container-high: #e3e7ff;
+  
+  --font-manrope: "Manrope", sans-serif;
+  --font-inter: "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply font-inter bg-surface text-on-surface;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-manrope;
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
