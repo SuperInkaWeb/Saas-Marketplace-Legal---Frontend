@@ -16,10 +16,10 @@ export function SearchFilters({ params, setParams, specialties, userCity }: Sear
   };
 
   const toggleMyCity = () => {
-    if (params.city === userCity) {
-      setParams((prev) => ({ ...prev, city: undefined, page: 0 }));
+    if (params.query === userCity) {
+      setParams((prev) => ({ ...prev, query: undefined, page: 0 }));
     } else {
-      setParams((prev) => ({ ...prev, city: userCity, page: 0 }));
+      setParams((prev) => ({ ...prev, query: userCity, page: 0 }));
     }
   };
 
@@ -30,7 +30,7 @@ export function SearchFilters({ params, setParams, specialties, userCity }: Sear
           <h2 className="font-manrope text-sm font-black uppercase tracking-[0.2em] text-secondary">Filtros</h2>
           <p className="text-[10px] text-on-surface-variant font-bold uppercase mt-1">Refina tu búsqueda</p>
         </div>
-        {(params.city || params.specialtyId || params.minRating) && (
+        {(params.query || params.specialtyId || params.minRating) && (
           <button
             onClick={clearFilters}
             className="p-1.5 hover:bg-error-container hover:text-on-error-container rounded-lg transition-colors text-on-surface-variant"
@@ -45,22 +45,22 @@ export function SearchFilters({ params, setParams, specialties, userCity }: Sear
         {/* City Section */}
         <div className="space-y-3">
           <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
-            <span className="material-symbols-outlined text-sm">location_on</span>
-            Ubicación
+            <span className="material-symbols-outlined text-sm">search</span>
+            Búsqueda
           </label>
           
           {userCity && (
             <button
               onClick={toggleMyCity}
               className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all font-inter text-xs font-bold ${
-                params.city === userCity
+                params.query === userCity
                   ? "bg-secondary text-white shadow-md ring-2 ring-secondary/20"
                   : "bg-surface-container-lowest text-on-surface hover:bg-surface-container-high border border-surface-container-highest"
               }`}
             >
               <span>En {userCity}</span>
-              <span className={`material-symbols-outlined text-sm ${params.city === userCity ? "text-white" : "text-secondary"}`}>
-                {params.city === userCity ? "check_circle" : "radio_button_unchecked"}
+              <span className={`material-symbols-outlined text-sm ${params.query === userCity ? "text-white" : "text-secondary"}`}>
+                {params.query === userCity ? "check_circle" : "radio_button_unchecked"}
               </span>
             </button>
           )}
@@ -68,9 +68,9 @@ export function SearchFilters({ params, setParams, specialties, userCity }: Sear
           <div className="relative group">
             <input 
               type="text" 
-              placeholder="Otra ciudad..." 
-              value={params.city && params.city !== userCity ? params.city : ""}
-              onChange={(e) => setParams(p => ({...p, city: e.target.value || undefined, page: 0}))}
+              placeholder="Nombre o ciudad..." 
+              value={params.query && params.query !== userCity ? params.query : ""}
+              onChange={(e) => setParams(p => ({...p, query: e.target.value || undefined, page: 0}))}
               className="w-full bg-surface-container-lowest border border-surface-container-highest rounded-xl px-4 py-3 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-all placeholder:text-on-surface-variant/50"
             />
           </div>

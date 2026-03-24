@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/modules/auth/store";
 import { marketplaceService } from "@/modules/marketplace/services/marketplaceService";
-import { CaseRequestResponse } from "@/modules/marketplace/types";
+import type { CaseRequestResponse } from "@/modules/marketplace/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Briefcase, DollarSign, Send, FileText, UserCircle, X } from "lucide-react";

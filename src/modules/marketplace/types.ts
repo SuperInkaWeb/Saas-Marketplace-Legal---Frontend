@@ -1,4 +1,3 @@
-import { UUID } from "crypto";
 
 export interface LawyerSearchResponse {
   publicId: string;
@@ -22,7 +21,7 @@ export interface SpecialtyResponse {
 }
 
 export interface SearchParams {
-  city?: string;
+  query?: string;
   specialtyId?: number;
   minRating?: number;
   page?: number;
@@ -53,4 +52,45 @@ export interface ReviewCreateRequest {
   rating: number;
   comment: string;
   isAnonymous?: boolean;
+}
+
+export interface ReviewResponse {
+  publicId: string;
+  clientName: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+
+export interface CaseRequestResponse {
+  publicId: string;
+  title: string;
+  description: string;
+  budget?: number;
+  specialtyName?: string;
+  clientName: string;
+  createdAt: string;
+}
+
+export interface CreateProposalRequest {
+  proposalText: string;
+  proposedFee: number;
+}
+
+export interface LawyerProposalResponse {
+  id: string;
+  publicId: string;
+  casePublicId: string;
+  lawyerPublicId: string;
+  proposalText: string;
+  proposedFee: number;
+  status: string;
+  createdAt: string;
+}
+
+export interface DashboardStatsResponse {
+  pendingAppointments: number;
+  totalProposals: number;
+  ratingAvg: number;
+  reviewCount: number;
 }

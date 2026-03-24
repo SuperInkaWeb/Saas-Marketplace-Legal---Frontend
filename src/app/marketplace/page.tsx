@@ -6,8 +6,7 @@ import { LawyerCard } from "@/components/marketplace/LawyerCard";
 import { useSearchLawyers, useSpecialties } from "@/modules/marketplace/hooks";
 import { useMe } from "@/modules/auth/hooks";
 import { SearchParams } from "@/modules/marketplace/types";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, Loader2, Users, AlertCircle } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 
@@ -98,7 +97,7 @@ export default function MarketplacePage() {
                       <span className="material-symbols-outlined text-6xl text-surface-container-highest mb-4">search_off</span>
                       <h3 className="text-2xl font-black text-primary tracking-tight">Vaya, no hay resultados exactos</h3>
                       <p className="text-on-surface-variant mt-2 max-w-sm mx-auto text-sm font-bold">
-                        No encontramos abogados en <span className="text-secondary">{params.city || "tu ubicación"}</span> con los filtros actuales.
+                        No encontramos resultados para <span className="text-secondary">"{params.query || "tu búsqueda"}"</span> con los filtros actuales.
                       </p>
                       <button
                         onClick={() => setParams({ page: 0, size: 10 })}

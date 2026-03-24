@@ -6,6 +6,7 @@ import {
   ScheduleRequest,
   ScheduleResponse
 } from "../types";
+import { DashboardStatsResponse } from "@/modules/marketplace/types";
 
 const BASE_URL = "/lawyer-profile";
 
@@ -53,7 +54,7 @@ export const lawyerConfigService = {
     return data;
   },
 
-  getDashboardStats: async (): Promise<any> => {
+  getDashboardStats: async (): Promise<DashboardStatsResponse> => {
     const { data } = await api.get(`${BASE_URL}/dashboard`);
     return data;
   },
