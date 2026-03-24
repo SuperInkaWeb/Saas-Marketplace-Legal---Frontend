@@ -16,7 +16,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     // Si ya hay token, no deberíamos estar en las páginas de auth (login/register/verify)
     // a menos que sea necesario completar el onboarding.
     if (hydrated && token && user) {
-      handleOnboardingRedirect(user.onboardingStep, router);
+      handleOnboardingRedirect(user.onboardingStep, router, user.role);
     }
   }, [hydrated, token, user, router]);
 
