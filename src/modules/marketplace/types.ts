@@ -42,15 +42,15 @@ export interface ReviewDTO {
   lawyerPublicId: string;
   appointmentPublicId: string;
   clientName: string;
-  score: number;
-  content: string;
+  rating: number;
+  comment: string;
   isAnonymous: boolean;
   createdAt: string;
 }
 
 export interface ReviewCreateRequest {
   appointmentPublicId: string;
-  score: number;
-  content: string;
+  rating: number;
+  comment: string;
   isAnonymous?: boolean;
 }

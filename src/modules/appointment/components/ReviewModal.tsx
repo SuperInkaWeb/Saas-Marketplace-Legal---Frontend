@@ -16,15 +16,15 @@ interface ReviewModalProps {
 }
 
 export function ReviewModal({ isOpen, onClose, appointmentPublicId, lawyerName, onSuccess }: ReviewModalProps) {
-  const [score, setScore] = useState(5);
-  const [content, setContent] = useState("");
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [hoveredScore, setHoveredScore] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (score < 1) {
+    if (rating < 1) {
       toast.error("Por favor selecciona una calificación");
       return;
     }
@@ -33,8 +33,8 @@ export function ReviewModal({ isOpen, onClose, appointmentPublicId, lawyerName, 
       setSubmitting(true);
       await marketplaceApi.createReview({
         appointmentPublicId,
-        score,
-        content,
+        rating,
+        comment,
         isAnonymous
       });
       toast.success("¡Gracias por tu valoración!");
@@ -98,13 +98,13 @@ export function ReviewModal({ isOpen, onClose, appointmentPublicId, lawyerName, 
                       type="button"
                       onMouseEnter={() => setHoveredScore(star)}
                       onMouseLeave={() => setHoveredScore(0)}
-                      onClick={() => setScore(star)}
+                      onClick={() => setRating(star)}
                       className="transition-transform active:scale-90 outline-none"
                     >
                       <Star
                         className={cn(
                           "w-10 h-10 transition-colors",
-                          (hoveredScore || score) >= star
+                          (hoveredScore || rating) >= star
                             ? "fill-amber-400 text-amber-400"
                             : "text-slate-200"
                         )}
@@ -113,10 +113,10 @@ export function ReviewModal({ isOpen, onClose, appointmentPublicId, lawyerName, 
                   ))}
                 </div>
                 <p className="text-sm font-black text-amber-600">
-                  {score === 5 ? "¡Excelente servicio!" : 
-                   score === 4 ? "Muy buen servicio" : 
-                   score === 3 ? "Servicio normal" : 
-                   score === 2 ? "Podría mejorar" : "Mala experiencia"}
+                  {rating === 5 ? "¡Excelente servicio!" : 
+                   rating === 4 ? "Muy buen servicio" : 
+                   rating === 3 ? "Servicio normal" : 
+                   rating === 2 ? "Podría mejorar" : "Mala experiencia"}
                 </p>
               </div>
 
@@ -127,8 +127,8 @@ export function ReviewModal({ isOpen, onClose, appointmentPublicId, lawyerName, 
                   Tu comentario (Opcional)
                 </label>
                 <textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
                   placeholder="Cuéntanos más sobre tu experiencia..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all resize-none h-32"
                 />
