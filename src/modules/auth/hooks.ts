@@ -25,7 +25,7 @@ export function useLogin() {
     mutationFn: (data: LoginRequest) => authApi.login(data),
     onSuccess: (response) => {
       setAuth(response);
-      handleOnboardingRedirect(response.onboardingStep, router);
+      handleOnboardingRedirect(response.onboardingStep, router, response.role);
     },
   });
 }
@@ -49,7 +49,7 @@ export function useVerifyOtp() {
     mutationFn: (data: OtpVerificationRequest) => authApi.verifyOtp(data),
     onSuccess: (response) => {
       setAuth(response);
-      handleOnboardingRedirect(response.onboardingStep, router);
+      handleOnboardingRedirect(response.onboardingStep, router, response.role);
     },
   });
 }
@@ -137,7 +137,11 @@ export function useKycStatus() {
 
 // ── HELPERS ────────────────────────────────────────────────────────
 
-export function handleOnboardingRedirect(step: string | undefined | null, router: any) {
+export function handleOnboardingRedirect(
+  step: string | undefined | null,
+  router: any,
+  role?: string | null
+) {
   if (!step) {
     router.push("/onboarding/rol");
     return;
@@ -156,9 +160,12 @@ export function handleOnboardingRedirect(step: string | undefined | null, router
     case "KYC_PENDING":
       router.push("/onboarding/verificacion");
       break;
-    case "COMPLETED":
-      router.push("/dashboard");
+    case "COMPLETED": {
+      const safeRole = role ? role.toUpperCase().trim() : "";
+      const isAdmin = safeRole === "ADMIN" || safeRole === "ROLE_ADMIN";
+      router.push(isAdmin ? "/admin" : "/dashboard");
       break;
+    }
     default:
       console.warn("Unknown onboarding step:", step);
       router.push("/onboarding/rol");

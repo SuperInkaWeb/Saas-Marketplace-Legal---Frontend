@@ -1,21 +1,78 @@
+export interface SpecialtyInfo {
+  id: number;
+  name: string;
+}
+
+export interface ScheduleInfo {
+  id: number;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+}
+
 export interface AuthResponse {
   publicId: string;
   email: string;
+  firstName: string;
+  lastNameFather: string;
+  lastNameMother: string;
+  phoneNumber: string;
+  slug?: string;
   fullName: string;
   role: string | null;
   onboardingStep: string;
   accessToken: string;
+  avatarUrl?: string;
+  isVerified?: boolean;
+  
+  // Profile fields
+  companyName?: string;
+  billingAddress?: string;
+  companyLogoUrl?: string;
+  bio?: string;
+  city?: string;
+  country?: string;
+  hourlyRate?: number;
+  currency?: string;
+  barRegistrationNumber?: string;
+  barAssociation?: string;
+  // Specialties & Schedules
+  specialties?: SpecialtyInfo[];
+  schedules?: ScheduleInfo[];
 }
 
 export interface UserMeResponse {
   publicId: string;
   email: string;
+  firstName: string;
+  lastNameFather: string;
+  lastNameMother: string;
+  phoneNumber: string;
+  slug?: string;
   fullName: string;
   role: string | null;
   onboardingStep: string;
   accountStatus: string;
   hasProfile: boolean;
   isVerified: boolean;
+  avatarUrl?: string;
+
+  // Profile fields
+  companyName?: string;
+  billingAddress?: string;
+  companyLogoUrl?: string;
+  bio?: string;
+  city?: string;
+  country?: string;
+  hourlyRate?: number;
+  currency?: string;
+  barRegistrationNumber?: string;
+  barAssociation?: string;
+
+
+  // Specialties & Schedules
+  specialties?: SpecialtyInfo[];
+  schedules?: ScheduleInfo[];
 }
 
 export interface LoginRequest {
