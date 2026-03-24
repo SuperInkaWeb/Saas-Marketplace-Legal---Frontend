@@ -76,7 +76,7 @@ export function LawyerCard({ lawyer }: LawyerCardProps) {
           <div>
             <span className="block text-[10px] uppercase font-bold tracking-widest text-on-surface-variant">Desde</span>
             <span className="text-lg font-black text-primary">
-              €{lawyer.hourlyRate || "150"}
+              {lawyer.currency || "USD"} {lawyer.hourlyRate || "150"}
               <small className="text-xs font-medium ml-1">/h</small>
             </span>
           </div>

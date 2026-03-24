@@ -1,18 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { User, Save, Loader2, MapPin, DollarSign, BookOpen } from "lucide-react";
+import { User, Save, Loader2, MapPin, DollarSign, BookOpen, Camera } from "lucide-react";
 import { lawyerConfigService } from "@/modules/profile/services/lawyerConfigService";
 import { profileService } from "@/modules/profile/services/profileService";
 import { UpdateLawyerProfileRequest } from "@/modules/profile/types";
 import { useAuthStore } from "@/modules/auth/store";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
+import { useUpdateAvatar } from "@/modules/profile/hooks";
 
 import RichTextEditor from "./RichTextEditor";
+import ImageCropperModal from "@/components/common/ImageCropperModal";
 
 const schema = z.object({
   firstName: z.string().min(2, "Nombre requerido"),
@@ -37,6 +39,41 @@ export default function GeneralInfoForm() {
 
   const updateUser = useAuthStore((s) => s.updateUser);
   const user = useAuthStore((s) => s.user);
+
+  const { mutate: updateAvatar, isPending: isUpdatingAvatar } = useUpdateAvatar();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageToCrop(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCropComplete = (croppedFile: File) => {
+    updateAvatar(croppedFile);
+    setImageToCrop(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleCropCancel = () => {
+    setImageToCrop(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const {
     register,
@@ -126,6 +163,50 @@ export default function GeneralInfoForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+
+        {/* Image Cropper Modal */}
+        {imageToCrop && (
+          <ImageCropperModal
+            image={imageToCrop}
+            onCropComplete={handleCropComplete}
+            onCancel={handleCropCancel}
+          />
+        )}
+
+        {/* Avatar Upload */}
+        <div className="flex items-center gap-6 mb-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+          <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
+            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-emerald-50 bg-slate-100 flex items-center justify-center relative shadow-sm">
+              {user?.avatarUrl ? (
+                <img src={user.avatarUrl} alt="Avatar" crossOrigin="anonymous" className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-10 h-10 text-slate-400" />
+              )}
+              {isUpdatingAvatar && (
+                <div className="absolute inset-0 bg-white/60 flex items-center justify-center backdrop-blur-sm">
+                  <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera className="w-6 h-6 text-white mb-1" />
+                <span className="text-[10px] text-white font-medium uppercase tracking-wider">Cambiar</span>
+              </div>
+            </div>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              className="hidden" 
+              accept="image/*" 
+              onChange={handleFileChange} 
+            />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">Foto de Perfil</h3>
+            <p className="text-sm text-slate-500 mt-1 max-w-sm leading-relaxed">
+              Sube una foto clara y profesional en la que te veas bien. Recomendado 400x400px.
+            </p>
+          </div>
+        </div>
 
         {/* Basic Personal Info */}
         <section>
