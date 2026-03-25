@@ -95,6 +95,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       show: true,
     },
     {
+      label: "Mis Casos",
+      href: "/dashboard/my-cases",
+      icon: Briefcase,
+      show: user.role === "CLIENT",
+    },
+    {
       label: "Marketplace",
       href: "/dashboard/marketplace",
       icon: Briefcase,

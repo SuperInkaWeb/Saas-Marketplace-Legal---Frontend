@@ -9,6 +9,11 @@ export const marketplaceService = {
     return data;
   },
 
+  getCaseDetail: async (publicId: string): Promise<any> => {
+    const { data } = await api.get(`${BASE_URL}/cases/${publicId}`);
+    return data;
+  },
+
   submitProposal: async (casePublicId: string, payload: CreateProposalRequest): Promise<LawyerProposalResponse> => {
     const { data } = await api.post(`${BASE_URL}/cases/${casePublicId}/proposals`, payload);
     return data;
