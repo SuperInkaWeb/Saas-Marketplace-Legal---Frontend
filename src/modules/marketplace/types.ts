@@ -82,6 +82,7 @@ export interface LawyerProposalResponse {
   publicId: string;
   casePublicId: string;
   lawyerPublicId: string;
+  lawyerSlug: string;
   proposalText: string;
   proposedFee: number;
   status: string;
@@ -120,6 +121,7 @@ export interface ClientProposalResponse {
   id: number;
   lawyerName: string;
   lawyerPublicId: string;
+  lawyerSlug: string;
   proposalText: string;
   proposedFee: number;
   status: ProposalStatus;

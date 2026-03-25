@@ -6,22 +6,19 @@ import { marketplaceService } from "@/modules/marketplace/services/marketplaceSe
 import { marketplaceApi } from "@/modules/marketplace/api";
 import type {
   CaseRequestResponse,
-  SpecialtyResponse,
-  CreateProposalRequest,
+  SpecialtyResponse
 } from "@/modules/marketplace/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
-  Briefcase,
   DollarSign,
   Send,
   FileText,
   UserCircle,
   X,
-  Clock,
   Search,
-  SlidersHorizontal,
   Plus,
+  ShieldCheck,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -45,73 +42,68 @@ function PublicCaseCard({
   });
 
   return (
-    <Link href={`/marketplace/cases/${caseData.publicId}`} className="block outline-none group">
+    <Link href={`/marketplace/cases/${caseData.publicId}`} className="block outline-none group h-full">
       <motion.article
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all duration-300 overflow-hidden"
+        className="bg-white p-6 md:p-8 rounded-xl border border-outline-variant/20 hover:shadow-2xl hover:shadow-on-surface/5 transition-all relative overflow-hidden h-full flex flex-col"
       >
-      {/* Card Body */}
-      <div className="p-6 md:p-7">
-        {/* Top row: Specialty + Budget */}
-        <div className="flex flex-wrap items-center gap-3 mb-4">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-secondary/10 text-secondary text-xs font-bold uppercase tracking-wider">
-            <Briefcase className="w-3.5 h-3.5" />
-            {caseData.specialtyName || "General"}
-          </span>
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 text-xs font-medium">
-            <Clock className="w-3.5 h-3.5" />
-            {timeAgo}
-          </span>
-          {caseData.budget != null && (
-            <span className="ml-auto inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 font-extrabold px-4 py-1.5 rounded-full text-sm border border-emerald-200/60">
-              <DollarSign className="w-4 h-4" />
-              {caseData.budget.toLocaleString("es-ES")} USD
-            </span>
-          )}
+        <div className="absolute top-0 left-0 w-1 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-6">
+          <div>
+            <div className="flex flex-wrap items-center gap-3 mb-2">
+              <span className="px-3 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold uppercase tracking-widest rounded-full">
+                {caseData.specialtyName || "General"}
+              </span>
+              <span className="text-xs font-medium text-on-surface-variant">Publicado el {timeAgo}</span>
+            </div>
+            <h2 className="text-2xl font-bold text-on-surface group-hover:text-primary transition-colors font-manrope">
+              {caseData.title}
+            </h2>
+          </div>
+          <div className="md:text-right shrink-0">
+            {caseData.budget != null ? (
+              <>
+                <span className="text-xl font-bold text-on-surface">${caseData.budget.toLocaleString("es-ES")}</span>
+                <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-semibold mt-1">
+                  Presupuesto
+                </p>
+              </>
+            ) : (
+              <span className="text-sm font-bold text-on-surface-variant mt-2 inline-block">Sin presupuesto</span>
+            )}
+          </div>
         </div>
-
-        {/* Title */}
-        <h3 className="text-xl font-black text-slate-900 tracking-tight mb-3 leading-tight group-hover:text-secondary transition-colors font-manrope">
-          {caseData.title}
-        </h3>
 
         {/* Render Quill HTML safely and apply line clamp */}
         <div 
-          className="text-slate-600 text-sm leading-relaxed line-clamp-4 mb-6 prose prose-sm prose-slate max-w-none [&>p]:mb-1 [&>p]:inline"
+          className="text-on-surface-variant font-body text-sm leading-relaxed mb-8 max-w-3xl line-clamp-3 prose prose-sm prose-slate max-w-none [&>p]:mb-1 [&>p]:inline"
           dangerouslySetInnerHTML={{ __html: caseData.description }}
         />
 
-        {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center border border-slate-200">
-              <UserCircle className="w-5 h-5 text-slate-400" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-slate-800">
-                {caseData.clientName}
-              </p>
-              <p className="text-[11px] text-slate-400 font-medium">
-                Cliente verificado
-              </p>
-            </div>
+        <div className="mt-auto flex flex-wrap items-center gap-6 md:gap-8 border-t border-surface-container-low pt-6">
+          <div className="flex items-center text-on-surface-variant">
+            <UserCircle className="w-4 h-4 mr-2" />
+            <span className="text-xs font-semibold uppercase tracking-tight truncate max-w-[120px]">
+              {caseData.clientName}
+            </span>
           </div>
-
-          {isLawyer && (
-            <button
-              onClick={(e) => {
-                e.preventDefault(); // Prevent navigating to the case detail
-                onSendProposal(caseData);
-              }}
-              className="bg-primary-container text-on-primary font-bold text-sm py-2.5 px-5 rounded-xl hover:opacity-90 transition-all active:scale-[0.97] flex items-center gap-2 shadow-md hover:shadow-lg"
-            >
-              <Send className="w-4 h-4" />
-              Enviar Propuesta
-            </button>
-          )}
+          <div className="flex items-center text-on-surface-variant">
+            <ShieldCheck className="w-4 h-4 mr-2 text-emerald-600" />
+            <span className="text-xs font-semibold uppercase tracking-tight text-emerald-700">Verificado</span>
+          </div>
+          
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              if (isLawyer) onSendProposal(caseData);
+            }}
+            className="ml-auto text-primary font-bold text-sm hover:underline transition-all"
+          >
+            {isLawyer ? "Enviar Propuesta" : "Ver Detalles"}
+          </button>
         </div>
-      </div>
       </motion.article>
     </Link>
   );
@@ -139,6 +131,12 @@ function ProposalModal({
       toast.error("Completa todos los campos");
       return;
     }
+    
+    if (proposalText.trim().length < 20) {
+      toast.error("El plan de acción debe tener al menos 20 caracteres.");
+      return;
+    }
+    
     try {
       setSubmitting(true);
       await marketplaceService.submitProposal(selectedCase.publicId, {
@@ -149,9 +147,19 @@ function ProposalModal({
       onSubmitted();
       onClose();
     } catch (error: any) {
-      toast.error(
-        error.response?.data?.message || "Error al enviar la propuesta"
-      );
+      const respData = error.response?.data;
+      let apiError = "Error al enviar la propuesta";
+      
+      if (respData) {
+         if (respData.detail) apiError = respData.detail;
+         else if (respData.title) apiError = respData.title;
+         else if (respData.message) apiError = respData.message;
+         
+         if (Array.isArray(respData.errors) && respData.errors.length > 0) {
+             apiError = respData.errors[0];
+         }
+      }
+      toast.error(apiError);
     } finally {
       setSubmitting(false);
     }
@@ -166,44 +174,44 @@ function ProposalModal({
         className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex items-center justify-between p-6 border-b border-surface-container-low bg-surface-container-lowest">
           <div className="min-w-0 pr-4">
-            <h2 className="text-xl font-black text-slate-900 tracking-tight font-manrope">
+            <h2 className="text-xl font-black text-on-surface tracking-tight font-manrope">
               Enviar Propuesta
             </h2>
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1 truncate">
+            <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mt-1 truncate">
               {selectedCase.title}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 bg-white shadow-sm p-2 rounded-full border border-slate-200 shrink-0"
+            className="text-on-surface-variant hover:text-on-surface bg-surface shadow-sm p-2 rounded-full border border-outline-variant/20 shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Form */}
-        <div className="p-6 overflow-y-auto space-y-6">
+        <div className="p-6 overflow-y-auto space-y-6 bg-surface-container-lowest">
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-2">
+            <label className="block text-sm font-semibold text-on-surface mb-2">
               Tu Plan de Acción
             </label>
             <textarea
               value={proposalText}
               onChange={(e) => setProposalText(e.target.value)}
               placeholder="Explícale al cliente cómo puedes ayudarle con su caso, tu experiencia relevante y plan de trabajo..."
-              className="w-full text-sm rounded-xl border border-slate-200 p-4 focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none resize-none h-40"
+              className="w-full text-sm rounded-xl border border-outline-variant/30 p-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none h-40"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-2">
+            <label className="block text-sm font-semibold text-on-surface mb-2">
               Honorarios Propuestos (USD)
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <DollarSign className="h-5 w-5 text-slate-400" />
+                <DollarSign className="h-5 w-5 text-outline" />
               </div>
               <input
                 type="number"
@@ -215,11 +223,11 @@ function ProposalModal({
                 }
                 placeholder="0.00"
                 min={0}
-                className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none font-medium"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border border-outline-variant/30 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none font-medium"
               />
             </div>
             {selectedCase.budget != null && (
-              <p className="text-xs text-slate-500 mt-2">
+              <p className="text-xs text-on-surface-variant mt-2">
                 Presupuesto del cliente:{" "}
                 <span className="font-bold text-emerald-600">
                   ${selectedCase.budget.toLocaleString("es-ES")} USD
@@ -230,11 +238,11 @@ function ProposalModal({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-100">
+        <div className="p-6 border-t border-surface-container-low bg-surface">
           <button
             disabled={submitting || !proposalText.trim() || !proposedFee}
             onClick={handleSubmit}
-            className="w-full bg-secondary hover:bg-secondary/90 text-white font-bold py-4 rounded-xl transition-all shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-br from-primary to-primary-dim text-on-primary font-bold py-4 rounded-xl transition-all shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {submitting ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
@@ -301,137 +309,158 @@ export default function PublicCaseBoardPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-surface selection:bg-secondary/30 pt-28 pb-20 px-6 sm:px-12">
-        {/* Hero Header */}
-        <header className="max-w-5xl mx-auto mb-12">
-          <nav className="flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-on-surface-variant mb-4">
-            <Link href="/" className="hover:text-secondary transition-colors">
+      <main className="bg-surface pt-32 pb-20 px-8 max-w-screen-2xl mx-auto min-h-screen">
+        
+        {/* Hero Title Section */}
+        <header className="mb-12 md:mb-16">
+          <nav className="flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-on-surface-variant mb-6">
+            <Link href="/" className="hover:text-primary transition-colors">
               Inicio
             </Link>
             <span className="material-symbols-outlined text-sm">
               chevron_right
             </span>
-            <span className="text-secondary font-bold">
-              Casos Legales Abiertos
+            <span className="text-primary font-bold">
+              Marketplace
             </span>
           </nav>
 
-          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-primary mb-3 font-manrope">
-            Tablero de Casos
-          </h1>
-          <p className="text-on-surface-variant font-medium text-lg max-w-2xl">
-            Necesidades legales publicadas por clientes verificados. Encuentra un
-            caso afín a tu especialidad y envía tu propuesta.
-          </p>
-
-          {/* CTA for clients */}
-          {isClient && (
-            <Link
-              href="/dashboard/my-cases"
-              className="mt-6 inline-flex items-center gap-2 bg-primary-container text-on-primary font-bold text-sm py-3 px-6 rounded-xl shadow-md hover:opacity-90 transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              Publicar mi caso
-            </Link>
-          )}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface mb-4 font-manrope">
+                Casos Legales
+              </h1>
+              <p className="text-on-surface-variant max-w-2xl font-body text-lg leading-relaxed">
+                Descubre mandatos legales de empresas y clientes verificados. Aplica a los casos que se ajusten a tu especialidad de experiencia.
+              </p>
+            </div>
+            
+            {isClient && (
+              <Link
+                href="/dashboard/my-cases"
+                className="shrink-0 bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary font-bold text-sm py-3 px-6 rounded-xl shadow-sm transition-all flex items-center gap-2"
+              >
+                <Plus className="w-5 h-5" />
+                Publicar un caso nuevo
+              </Link>
+            )}
+          </div>
 
           {!hydrated ? null : !user ? (
-            <div className="mt-6 p-4 bg-secondary/5 border border-secondary/15 rounded-xl inline-block">
-              <p className="text-sm text-on-surface-variant">
+            <div className="mt-8 p-4 bg-secondary-container/30 border border-secondary-container rounded-xl inline-block max-w-2xl">
+              <p className="text-sm font-medium text-on-secondary-container">
                 <Link
                   href="/register"
-                  className="text-secondary font-bold hover:underline"
+                  className="font-bold underline hover:text-primary transition-colors"
                 >
                   Regístrate como abogado
                 </Link>{" "}
-                para enviar propuestas o{" "}
+                para enviar propuestas, o{" "}
                 <Link
                   href="/register"
-                  className="text-secondary font-bold hover:underline"
+                  className="font-bold underline hover:text-primary transition-colors"
                 >
                   como cliente
                 </Link>{" "}
-                para publicar tu caso.
+                para publicar tu caso legal.
               </p>
             </div>
           ) : null}
         </header>
 
-        {/* Search & Filters */}
-        <div className="max-w-5xl mx-auto mb-8">
-          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar por título o descripción..."
-                className="w-full pl-12 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none font-medium"
-              />
-            </div>
-            <div className="relative flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-slate-400 shrink-0" />
-              <select
-                value={selectedSpecialty}
-                onChange={(e) => setSelectedSpecialty(e.target.value)}
-                className="appearance-none pl-2 pr-8 py-3 rounded-xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none font-medium min-w-[180px]"
-              >
-                <option value="">Todas las especialidades</option>
-                {specialties.map((s) => (
-                  <option key={s.id} value={s.name}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Cases Listing */}
-        <div className="max-w-5xl mx-auto">
-          {loading ? (
-            <div className="grid gap-6">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-52 bg-surface-container-low rounded-2xl animate-pulse"
-                />
-              ))}
-            </div>
-          ) : filteredCases.length === 0 ? (
-            <div className="text-center py-24 bg-white rounded-3xl border-2 border-dashed border-slate-200">
-              <FileText className="w-14 h-14 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-xl font-black text-primary tracking-tight font-manrope">
-                {cases.length === 0
-                  ? "No hay casos publicados aún"
-                  : "No se encontraron resultados"}
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 md:gap-12">
+          
+          {/* Sidebar Filters */}
+          <aside className="space-y-10">
+            <section>
+              <h3 className="text-xs uppercase tracking-widest font-semibold text-on-surface-variant mb-5">
+                Búsqueda Global
               </h3>
-              <p className="text-on-surface-variant mt-2 max-w-md mx-auto">
-                {cases.length === 0
-                  ? "Sé el primero en publicar una necesidad legal y recibe propuestas de abogados calificados."
-                  : "Intenta ajustar tus filtros de búsqueda para encontrar casos."}
-              </p>
-              {isClient && cases.length === 0 && (
-                <Link
-                  href="/dashboard/my-cases"
-                  className="mt-6 inline-flex items-center gap-2 bg-secondary text-white font-bold text-sm py-3 px-6 rounded-xl shadow-md hover:opacity-90 transition-all"
-                >
-                  <Plus className="w-4 h-4" />
-                  Publicar el primer caso
-                </Link>
-              )}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-outline" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Palabras clave..."
+                  className="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant/30 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 transition-all font-medium outline-none"
+                />
+              </div>
+            </section>
+
+            <section>
+              <h3 className="text-xs uppercase tracking-widest font-semibold text-on-surface-variant mb-5">
+                Especialidad
+              </h3>
+              <div className="space-y-3">
+                <label className="flex items-center group cursor-pointer">
+                  <input
+                    type="radio"
+                    name="specialty"
+                    checked={selectedSpecialty === ""}
+                    onChange={() => setSelectedSpecialty("")}
+                    className="rounded-full border-outline-variant text-primary focus:ring-primary/20 w-4 h-4 cursor-pointer"
+                  />
+                  <span className={`ml-3 text-sm font-medium transition-colors ${selectedSpecialty === "" ? 'text-primary' : 'text-on-surface-variant group-hover:text-primary'}`}>
+                    Cualquier Especialidad
+                  </span>
+                </label>
+                
+                {specialties.map((s) => (
+                  <label key={s.id} className="flex items-center group cursor-pointer">
+                    <input
+                      type="radio"
+                      name="specialty"
+                      checked={selectedSpecialty === s.name}
+                      onChange={() => setSelectedSpecialty(s.name)}
+                      className="rounded-full border-outline-variant text-primary focus:ring-primary/20 w-4 h-4 cursor-pointer"
+                    />
+                    <span className={`ml-3 text-sm font-medium transition-colors ${selectedSpecialty === s.name ? 'text-primary font-bold' : 'text-on-surface-variant group-hover:text-primary'}`}>
+                      {s.name}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </section>
+
+          </aside>
+
+          {/* Job Cards Section */}
+          <section className="space-y-6">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-on-surface font-manrope">
+                Resultados ({filteredCases.length})
+              </h2>
             </div>
-          ) : (
-            <>
-              <p className="text-sm font-bold text-on-surface-variant mb-6">
-                {filteredCases.length} caso
-                {filteredCases.length !== 1 && "s"} disponible
-                {filteredCases.length !== 1 && "s"}
-              </p>
+
+            {loading ? (
+              <div className="grid gap-6">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-64 bg-surface-container-low rounded-xl animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : filteredCases.length === 0 ? (
+              <div className="text-center py-20 bg-surface-container-lowest rounded-xl border border-outline-variant/20">
+                <FileText className="w-12 h-12 text-outline-variant mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-on-surface mb-2 font-manrope">
+                  {cases.length === 0
+                    ? "No hay casos disponibles"
+                    : "No se encontraron resultados"}
+                </h3>
+                <p className="text-on-surface-variant max-w-sm mx-auto text-sm">
+                  {cases.length === 0
+                    ? "Los clientes publicarán sus casos aquí. ¡Vuelve más tarde!"
+                    : "Intenta cambiar tus palabras de búsqueda o elige otra especialidad."}
+                </p>
+              </div>
+            ) : (
               <div className="grid gap-6">
                 <AnimatePresence mode="popLayout">
-                  {filteredCases.map((c, index) => (
+                  {filteredCases.map((c) => (
                     <PublicCaseCard
                       key={c.publicId}
                       caseData={c}
@@ -441,8 +470,21 @@ export default function PublicCaseBoardPage() {
                   ))}
                 </AnimatePresence>
               </div>
-            </>
-          )}
+            )}
+            
+            {/* Show More Indicator (Aesthetic only for now) */}
+            {filteredCases.length > 5 && (
+              <div className="pt-12 flex justify-center">
+                <div className="flex items-center gap-4">
+                  <div className="h-[1px] w-12 sm:w-24 bg-outline-variant/20"></div>
+                  <span className="text-[11px] uppercase tracking-[0.3em] font-extrabold text-on-surface-variant">
+                    Fin de los resultados
+                  </span>
+                  <div className="h-[1px] w-12 sm:w-24 bg-outline-variant/20"></div>
+                </div>
+              </div>
+            )}
+          </section>
         </div>
 
         {/* Proposal Modal */}
@@ -455,7 +497,7 @@ export default function PublicCaseBoardPage() {
             />
           )}
         </AnimatePresence>
-      </div>
+      </main>
       <Footer />
     </>
   );
