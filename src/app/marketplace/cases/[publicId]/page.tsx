@@ -359,7 +359,7 @@ export default function CaseDetailPage() {
                   </div>
                 </div>
 
-                {token && isLawyer && isOpen && (
+                {token && isLawyer && isOpen && user?.isVerified && (
                   <div className="pt-4">
                     <button 
                       onClick={() => setShowProposalModal(true)}
@@ -368,6 +368,16 @@ export default function CaseDetailPage() {
                       <Send className="w-5 h-5" /> Enviar Propuesta
                     </button>
                     <p className="text-center text-xs text-slate-400 mt-4 font-medium">Destácate enviando una propuesta formal</p>
+                  </div>
+                )}
+
+                {token && isLawyer && isOpen && !user?.isVerified && (
+                  <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 mt-4">
+                    <p className="text-[13px] text-amber-800 font-bold text-center leading-relaxed flex flex-col items-center gap-2">
+                       <ShieldCheck className="w-6 h-6 text-amber-500 opacity-80" />
+                       <span>Tu identidad aún no ha sido verificada.</span>
+                       <span className="font-medium text-amber-700 font-normal">Para enviar propuestas, debes completar el proceso de verificación.</span>
+                    </p>
                   </div>
                 )}
 
@@ -421,7 +431,7 @@ export default function CaseDetailPage() {
               <p className="text-slate-500 max-w-sm mx-auto text-[15px] font-medium leading-relaxed">
                 Los profesionales de la plataforma enviarán sus propuestas aquí.
               </p>
-              {isLawyer && isOpen && (
+              {isLawyer && isOpen && user?.isVerified && (
                 <button 
                   onClick={() => setShowProposalModal(true)}
                   className="mt-8 text-primary font-black hover:underline underline-offset-4"

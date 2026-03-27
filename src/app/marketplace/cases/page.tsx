@@ -32,10 +32,12 @@ function PublicCaseCard({
   caseData,
   onSendProposal,
   isLawyer,
+  isVerified,
 }: {
   caseData: CaseRequestResponse;
   onSendProposal: (c: CaseRequestResponse) => void;
   isLawyer: boolean;
+  isVerified: boolean;
 }) {
   const timeAgo = format(new Date(caseData.createdAt), "d 'de' MMMM, yyyy", {
     locale: es,
@@ -104,12 +106,14 @@ function PublicCaseCard({
           
           <button
             onClick={(e) => {
-              e.preventDefault();
-              if (isLawyer) onSendProposal(caseData);
+              if (isLawyer && isVerified) {
+                e.preventDefault();
+                onSendProposal(caseData);
+              }
             }}
             className="ml-auto text-primary font-bold text-sm hover:underline transition-all"
           >
-            {isLawyer ? "Enviar Propuesta" : "Ver Detalles"}
+            {isLawyer && isVerified ? "Enviar Propuesta" : "Ver Detalles"}
           </button>
         </div>
       </motion.article>
@@ -475,6 +479,7 @@ export default function PublicCaseBoardPage() {
                       caseData={c}
                       onSendProposal={setSelectedCase}
                       isLawyer={isLawyer}
+                      isVerified={user?.isVerified === true}
                     />
                   ))}
                 </AnimatePresence>
