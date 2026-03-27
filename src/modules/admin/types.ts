@@ -72,6 +72,21 @@ export interface VerifyLawyerRequest {
   rejectionReason?: string;
 }
 
+// ── Specialties ──────────────────────────────────────────────────────
+export interface SpecialtyResponse {
+  id: number;
+  name: string;
+  description: string;
+  isActive: boolean;
+  lawyerCount?: number; // Useful for the admin to see how many lawyers use it
+}
+
+export interface CreateSpecialtyRequest {
+  name: string;
+  description: string;
+  isActive?: boolean;
+}
+
 // ── Paginated response ───────────────────────────────────────────────
 export interface PaginatedResponse<T> {
   content: T[];

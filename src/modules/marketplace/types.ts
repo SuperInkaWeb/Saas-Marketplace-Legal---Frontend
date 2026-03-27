@@ -69,6 +69,7 @@ export interface CaseRequestResponse {
   budget?: number;
   specialtyName?: string;
   clientName: string;
+  clientAvatarUrl?: string;
   createdAt: string;
 }
 
@@ -82,9 +83,11 @@ export interface LawyerProposalResponse {
   publicId: string;
   casePublicId: string;
   lawyerPublicId: string;
+  lawyerSlug: string;
   proposalText: string;
   proposedFee: number;
   status: string;
+  lawyerAvatarUrl?: string;
   createdAt: string;
 }
 
@@ -93,4 +96,50 @@ export interface DashboardStatsResponse {
   totalProposals: number;
   ratingAvg: number;
   reviewCount: number;
+}
+
+// ── Client Case Flow Types ───────────────────────────────────────────
+
+export enum CaseRequestStatus {
+  OPEN = "OPEN",
+  IN_PROGRESS = "IN_PROGRESS",
+  CLOSED = "CLOSED",
+}
+
+export enum ProposalStatus {
+  PENDING = "PENDING",
+  ACCEPTED = "ACCEPTED",
+  REJECTED = "REJECTED",
+}
+
+export interface CreateCaseRequest {
+  title: string;
+  description: string;
+  specialtyId?: number;
+  budget?: number;
+}
+
+export interface ClientProposalResponse {
+  id: number;
+  lawyerName: string;
+  lawyerPublicId: string;
+  lawyerSlug: string;
+  proposalText: string;
+  proposedFee: number;
+  status: ProposalStatus;
+  lawyerAvatarUrl?: string;
+  createdAt: string;
+}
+
+export interface CaseWithProposalsResponse {
+  publicId: string;
+  title: string;
+  description: string;
+  budget?: number;
+  specialtyName?: string;
+  clientName: string;
+  clientAvatarUrl?: string;
+  status: CaseRequestStatus;
+  createdAt: string;
+  proposals: ClientProposalResponse[];
 }

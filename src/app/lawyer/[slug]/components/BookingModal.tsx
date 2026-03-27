@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Schedule } from '../types';
-import { X, Calendar as CalendarIcon, Clock } from 'lucide-react';
+import { X, Calendar as Clock } from 'lucide-react';
 import { useAuthStore } from '@/modules/auth/store';
 import { appointmentService } from '@/modules/appointment/services/appointmentService';
 import { toast } from 'sonner';

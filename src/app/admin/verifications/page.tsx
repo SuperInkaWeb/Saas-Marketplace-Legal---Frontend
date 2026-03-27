@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { formatDocumentType } from "@/lib/format";
 
 export default function AdminVerificationsPage() {
   const { data: lawyers, isLoading } = useAdminPendingLawyers();
@@ -147,7 +148,7 @@ export default function AdminVerificationsPage() {
                         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-4">
                           <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Documento KYC</h4>
                           <div className="flex items-center gap-4 text-sm text-slate-600">
-                            <span><strong>Tipo:</strong> {lawyer.kycDocumentType}</span>
+                            <span><strong>Tipo:</strong> {formatDocumentType(lawyer.kycDocumentType)}</span>
                             <span><strong>Número:</strong> {lawyer.kycDocumentNumber}</span>
                           </div>
                         </div>

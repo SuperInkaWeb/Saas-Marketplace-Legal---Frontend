@@ -7,11 +7,13 @@ import { useUploadKyc, extractApiError } from "@/modules/auth/hooks";
 import { useState } from "react";
 import { FormAlert } from "../../(auth)/components/FormAlert";
 import RightHero from "../../(auth)/components/RighHero";
+import { useRouter } from "next/navigation";
 import { ShieldCheck, CreditCard, Hash, Flag, ShieldAlert } from "lucide-react";
 
 export default function OnboardingKycPage() {
   const [error, setError] = useState<string | null>(null);
   const { mutate: uploadKyc, isPending } = useUploadKyc();
+  const router = useRouter();
 
   const {
     register,
@@ -24,6 +26,7 @@ export default function OnboardingKycPage() {
   const onSubmit = (data: KycDocumentFormData) => {
     setError(null);
     uploadKyc(data, {
+      onSuccess: () => router.push("/dashboard"),
       onError: (err) => setError(extractApiError(err).message),
     });
   };

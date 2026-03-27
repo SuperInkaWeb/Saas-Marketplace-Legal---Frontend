@@ -31,6 +31,12 @@ export default function Navbar() {
           >
             Buscar Abogados
           </Link>
+          <Link
+            href="/marketplace/cases"
+            className="text-slate-600 font-medium hover:text-slate-900 transition-colors"
+          >
+            Casos Legales
+          </Link>
           <a className="text-slate-600 font-medium hover:text-slate-900 transition-colors" href="#">Precios</a>
           <a className="text-slate-600 font-medium hover:text-slate-900 transition-colors" href="#">Nosotros</a>
         </div>

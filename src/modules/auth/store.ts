@@ -2,6 +2,12 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { AuthResponse } from "./types";
 
+const normalizeRole = (role: string | null | undefined): string | null => {
+  if (!role) return null;
+  const upperRole = role.toUpperCase().trim();
+  return upperRole.startsWith("ROLE_") ? upperRole.substring(5) : upperRole;
+};
+
 interface AuthState {
   token: string | null;
   user: Omit<AuthResponse, "accessToken"> | null;
@@ -21,11 +27,23 @@ export const useAuthStore = create<AuthState>()(
       hydrated: false,
 
       setAuth: ({ accessToken, ...user }) =>
-        set({ token: accessToken, user }),
+        set({
+          token: accessToken,
+          user: { ...user, role: normalizeRole(user.role) },
+        }),
 
       updateUser: (userData) =>
         set((state) => ({
-          user: state.user ? { ...state.user, ...userData } : null,
+          user: state.user
+            ? {
+                ...state.user,
+                ...userData,
+                role:
+                  userData.role !== undefined
+                    ? normalizeRole(userData.role)
+                    : state.user.role,
+              }
+            : null,
         })),
 
       logout: () =>

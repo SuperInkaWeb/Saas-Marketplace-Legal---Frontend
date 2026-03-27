@@ -114,7 +114,6 @@ export function useCreateLawyerProfile() {
 // ── KYC ────────────────────────────────────────────────────────────
 
 export function useUploadKyc() {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const updateUser = useAuthStore((s) => s.updateUser);
 
@@ -123,7 +122,7 @@ export function useUploadKyc() {
     onSuccess: (updatedUser) => {
       updateUser(updatedUser);
       queryClient.invalidateQueries({ queryKey: ["auth-me"] });
-      router.push("/dashboard");
+      queryClient.invalidateQueries({ queryKey: ["kyc-status"] });
     },
   });
 }
