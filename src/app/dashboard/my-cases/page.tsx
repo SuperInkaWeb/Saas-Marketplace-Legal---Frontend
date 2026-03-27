@@ -545,6 +545,7 @@ function CreateCaseModal({
 
 export default function MyCasesPage() {
   const user = useAuthStore((s) => s.user);
+  const hydrated = useAuthStore((s) => s.hydrated);
   const [cases, setCases] = useState<CaseWithProposalsResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -597,7 +598,17 @@ export default function MyCasesPage() {
   };
 
   // ── Role Guard ──────────────────────────────────────────────────
-  if (user?.role !== "CLIENT") {
+  if (!hydrated) {
+    return (
+      <div className="p-8 max-w-5xl mx-auto flex justify-center py-32">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900" />
+      </div>
+    );
+  }
+
+  const role = user?.role?.toUpperCase().trim();
+  const isClient = role === "CLIENT" || role === "ROLE_CLIENT";
+  if (!isClient) {
     return (
       <div className="p-8 max-w-5xl mx-auto flex justify-center py-32">
         <div className="text-center">
@@ -607,6 +618,9 @@ export default function MyCasesPage() {
           </h2>
           <p className="text-slate-500 mt-2">
             Esta sección es solo para clientes.
+          </p>
+          <p className="text-[10px] text-slate-300 mt-4">
+            Debug Role: {user?.role || "null"} | Onboarding: {user?.onboardingStep || "null"}
           </p>
         </div>
       </div>

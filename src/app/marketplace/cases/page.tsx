@@ -264,8 +264,9 @@ function ProposalModal({
 export default function PublicCaseBoardPage() {
   const user = useAuthStore((s) => s.user);
   const hydrated = useAuthStore((s) => s.hydrated);
-  const isLawyer = user?.role === "LAWYER";
-  const isClient = user?.role === "CLIENT";
+  const role = user?.role?.toUpperCase().trim();
+  const isLawyer = role === "LAWYER" || role === "ROLE_LAWYER";
+  const isClient = role === "CLIENT" || role === "ROLE_CLIENT";
 
   const [cases, setCases] = useState<CaseRequestResponse[]>([]);
   const [loading, setLoading] = useState(true);
