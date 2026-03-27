@@ -113,6 +113,8 @@ export interface KycStatusResponse {
   hasDocument: boolean;
   verificationStatus: string | null;
   documentType: string | null;
+  documentNumber: string | null;
+  submittedAt: string | null;
 }
 
 export interface OtpVerificationRequest {

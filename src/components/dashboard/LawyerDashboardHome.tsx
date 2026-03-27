@@ -95,9 +95,9 @@ export function LawyerDashboardHome({ user, stats, loadingStats, greeting }: Law
                 Sube tus documentos colegiales para obtener la insignia de <span className="font-semibold text-slate-700">Abogado Verificado</span> y aumentar tu visibilidad en el directorio.
               </p>
             </div>
-            <button className="hidden sm:inline-flex shrink-0 px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition-all shadow-md shadow-slate-900/20 hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap">
+            <Link href="/dashboard/verification" className="hidden sm:inline-flex shrink-0 px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition-all shadow-md shadow-slate-900/20 hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap">
               Verificar ahora
-            </button>
+            </Link>
           </motion.div>
         )}
 

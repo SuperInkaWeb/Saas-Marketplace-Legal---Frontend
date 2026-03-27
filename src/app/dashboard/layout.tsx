@@ -1,29 +1,15 @@
 "use client";
 
 import { useAuthStore } from "@/modules/auth/store";
+import { useMe } from "@/modules/auth/hooks";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState, ReactNode } from "react";
-import Link from "next/link";
 import { 
-  Home, 
-  Settings, 
-  UserCircle, 
-  LogOut, 
   Menu, 
   X,
-  ShieldCheck,
   Scale,
-  Calendar,
-  Briefcase,
-  FileText,
-  CreditCard,
-  Send,
-  Star
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
 
 import { ClientSidebar } from "@/components/dashboard/ClientSidebar";
 import { LawyerSidebar } from "@/components/dashboard/LawyerSidebar";
@@ -32,10 +18,20 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const user = useAuthStore((s) => s.user);
   const hydrated = useAuthStore((s) => s.hydrated);
   const logout = useAuthStore((s) => s.logout);
+  const updateUser = useAuthStore((s) => s.updateUser);
   const router = useRouter();
   const pathname = usePathname();
 
+  // Refresh user profile from server on load
+  const { data: freshUser } = useMe();
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (freshUser) {
+      updateUser(freshUser);
+    }
+  }, [freshUser, updateUser]);
 
   useEffect(() => {
     if (!hydrated) return; // Wait for rehydration

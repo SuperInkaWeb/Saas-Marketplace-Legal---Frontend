@@ -34,6 +34,12 @@ export function LawyerSidebar({ onItemClick, onLogout }: SidebarProps) {
 
   const navItems = [
     { label: "Inicio", href: "/dashboard", icon: Home },
+    { 
+      label: "Verificación", 
+      href: "/dashboard/verification", 
+      icon: ShieldCheck,
+      badge: !user.isVerified,
+    },
     { label: "Configurar Perfil", href: "/dashboard/profile", icon: Settings },
     { label: "Mis Citas", href: "/dashboard/appointments", icon: Calendar },
     { label: "Marketplace", href: "/dashboard/marketplace", icon: Briefcase },
@@ -96,6 +102,9 @@ export function LawyerSidebar({ onItemClick, onLogout }: SidebarProps) {
             )}>
               <Icon className={cn("w-5 h-5 transition-colors", isActive ? "text-emerald-400" : "text-slate-500 group-hover:text-emerald-400")} />
               {item.label}
+              {"badge" in item && item.badge && (
+                <span className="ml-auto w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse ring-2 ring-amber-500/20" />
+              )}
               {isActive && (
                 <motion.div
                   layoutId="sidebarActiveIndicatorLawyer"
