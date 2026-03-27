@@ -7,6 +7,8 @@ import {
   UpdateAccountStatusRequest,
   VerifyLawyerRequest,
   PaginatedResponse,
+  SpecialtyResponse,
+  CreateSpecialtyRequest,
 } from "./types";
 
 const BASE = "/admin";
@@ -53,5 +55,33 @@ export const adminApi = {
     body: VerifyLawyerRequest
   ): Promise<void> => {
     await api.put(`${BASE}/lawyers/${userPublicId}/verify`, body);
+  },
+
+  // ── Specialties ──────────────────────────────────────────────────
+  getAllSpecialties: async (): Promise<SpecialtyResponse[]> => {
+    const { data } = await api.get(`${BASE}/specialties`);
+    return data;
+  },
+
+  createSpecialty: async (body: CreateSpecialtyRequest): Promise<SpecialtyResponse> => {
+    const { data } = await api.post(`${BASE}/specialties`, body);
+    return data;
+  },
+
+  updateSpecialty: async (
+    id: number,
+    body: CreateSpecialtyRequest
+  ): Promise<SpecialtyResponse> => {
+    const { data } = await api.put(`${BASE}/specialties/${id}`, body);
+    return data;
+  },
+
+  deleteSpecialty: async (id: number): Promise<void> => {
+    await api.delete(`${BASE}/specialties/${id}`);
+  },
+
+  toggleSpecialtyStatus: async (id: number): Promise<SpecialtyResponse> => {
+    const { data } = await api.patch(`${BASE}/specialties/${id}/toggle`);
+    return data;
   },
 };
