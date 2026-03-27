@@ -128,9 +128,17 @@ function ProposalCard({
       {/* Lawyer Info & Text */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center shrink-0 border border-slate-200">
-            <UserCircle className="w-5 h-5 text-slate-400" />
-          </div>
+          {proposal.lawyerAvatarUrl ? (
+            <img 
+              src={proposal.lawyerAvatarUrl} 
+              alt={proposal.lawyerName}
+              className="w-9 h-9 rounded-full object-cover border border-slate-200"
+            />
+          ) : (
+            <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center shrink-0 border border-slate-200">
+              <UserCircle className="w-5 h-5 text-slate-400" />
+            </div>
+          )}
           <div className="min-w-0">
             <p className="text-sm font-semibold text-slate-900 truncate">
               {proposal.lawyerName}
@@ -618,9 +626,6 @@ export default function MyCasesPage() {
           </h2>
           <p className="text-slate-500 mt-2">
             Esta sección es solo para clientes.
-          </p>
-          <p className="text-[10px] text-slate-300 mt-4">
-            Debug Role: {user?.role || "null"} | Onboarding: {user?.onboardingStep || "null"}
           </p>
         </div>
       </div>

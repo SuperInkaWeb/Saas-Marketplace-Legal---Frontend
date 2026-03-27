@@ -191,6 +191,7 @@ function ProposalBadge({ status }: { status: ProposalStatus }) {
 export default function CaseDetailPage() {
   const { publicId } = useParams() as { publicId: string };
   const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
   const isLawyer = user?.role === "LAWYER";
   
   const [caseData, setCaseData] = useState<CaseWithProposalsResponse | null>(null);
@@ -298,9 +299,17 @@ export default function CaseDetailPage() {
               </div>
               
               <div className="mt-12 pt-8 border-t border-slate-100 flex items-center gap-4">
-                <div className="h-14 w-14 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold border border-slate-200">
-                  <UserCircle className="w-8 h-8" />
-                </div>
+                {caseData.clientAvatarUrl ? (
+                  <img 
+                    src={caseData.clientAvatarUrl} 
+                    alt={caseData.clientName}
+                    className="h-14 w-14 rounded-full object-cover border border-slate-200"
+                  />
+                ) : (
+                  <div className="h-14 w-14 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold border border-slate-200">
+                    <UserCircle className="w-8 h-8" />
+                  </div>
+                )}
                 <div>
                   <p className="font-black text-slate-900 flex items-center gap-1.5 text-lg">
                     {caseData.clientName}
@@ -350,7 +359,7 @@ export default function CaseDetailPage() {
                   </div>
                 </div>
 
-                {isLawyer && isOpen && (
+                {token && isLawyer && isOpen && (
                   <div className="pt-4">
                     <button 
                       onClick={() => setShowProposalModal(true)}
@@ -359,6 +368,19 @@ export default function CaseDetailPage() {
                       <Send className="w-5 h-5" /> Enviar Propuesta
                     </button>
                     <p className="text-center text-xs text-slate-400 mt-4 font-medium">Destácate enviando una propuesta formal</p>
+                  </div>
+                )}
+
+                {!token && isOpen && (
+                  <div className="pt-4">
+                    <Link 
+                      href="/login?redirect=/marketplace/cases/[publicId]"
+                      as={`/login?redirect=/marketplace/cases/${publicId}`}
+                      className="w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-xl font-black text-[15px] shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                    >
+                      Inicia Sesión para Postular
+                    </Link>
+                    <p className="text-center text-xs text-slate-400 mt-4 font-medium italic">Debes ser un abogado registrado</p>
                   </div>
                 )}
 
@@ -417,9 +439,17 @@ export default function CaseDetailPage() {
 
                   <div className="flex items-start justify-between mb-6">
                     <div className="flex items-center gap-4">
-                      <div className="h-14 w-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-600 text-xl font-black border border-slate-200 group-hover:border-primary/20 group-hover:bg-primary/5 group-hover:text-primary transition-colors">
-                        {proposal.lawyerName.charAt(0)}
-                      </div>
+                      {proposal.lawyerAvatarUrl ? (
+                        <img 
+                          src={proposal.lawyerAvatarUrl} 
+                          alt={proposal.lawyerName}
+                          className="h-14 w-14 rounded-2xl object-cover border border-slate-200"
+                        />
+                      ) : (
+                        <div className="h-14 w-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-600 text-xl font-black border border-slate-200 group-hover:border-primary/20 group-hover:bg-primary/5 group-hover:text-primary transition-colors">
+                          {proposal.lawyerName.charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <h4 className="text-lg font-black text-slate-900 group-hover:text-primary transition-colors line-clamp-1">{proposal.lawyerName}</h4>
                         <span className="text-xs text-slate-400 font-bold flex items-center gap-1">
@@ -430,7 +460,6 @@ export default function CaseDetailPage() {
                     </div>
                     <div className="flex flex-col items-end gap-1.5 shrink-0 pl-2">
                        <span className="text-xl font-black text-slate-900 font-manrope">${proposal.proposedFee.toLocaleString("es-ES")}</span>
-                       <ProposalBadge status={proposal.status} />
                     </div>
                   </div>
                   

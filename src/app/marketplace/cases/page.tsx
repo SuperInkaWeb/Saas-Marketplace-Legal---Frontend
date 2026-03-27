@@ -84,7 +84,15 @@ function PublicCaseCard({
 
         <div className="mt-auto flex flex-wrap items-center gap-6 md:gap-8 border-t border-surface-container-low pt-6">
           <div className="flex items-center text-on-surface-variant">
-            <UserCircle className="w-4 h-4 mr-2" />
+            {caseData.clientAvatarUrl ? (
+              <img 
+                src={caseData.clientAvatarUrl} 
+                alt={caseData.clientName}
+                className="w-4 h-4 mr-2 rounded-full object-cover"
+              />
+            ) : (
+              <UserCircle className="w-4 h-4 mr-2" />
+            )}
             <span className="text-xs font-semibold uppercase tracking-tight truncate max-w-[120px]">
               {caseData.clientName}
             </span>
