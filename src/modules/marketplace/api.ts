@@ -23,4 +23,9 @@ export const marketplaceApi = {
     const { data } = await api.get<ReviewDTO[]>(`/reviews/lawyer/${lawyerPublicId}`);
     return data;
   },
+  
+  replyToReview: async (publicId: string, replyText: string) => {
+    const { data } = await api.patch<ReviewDTO>(`/reviews/${publicId}/reply`, { replyText });
+    return data;
+  },
 };

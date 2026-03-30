@@ -41,7 +41,7 @@ export function ReviewModal({ isOpen, onClose, appointmentPublicId, lawyerName, 
       onSuccess();
       onClose();
     } catch (error: any) {
-      const message = error.response?.data?.message || "Error al enviar la reseña";
+      const message = error.response?.data?.detail || error.response?.data?.message || "Error al enviar la reseña";
       toast.error(message);
     } finally {
       setSubmitting(false);

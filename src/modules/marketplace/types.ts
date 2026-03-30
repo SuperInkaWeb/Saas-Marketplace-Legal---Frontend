@@ -44,7 +44,13 @@ export interface ReviewDTO {
   rating: number;
   comment: string;
   isAnonymous: boolean;
+  replyText?: string;
+  repliedAt?: string;
   createdAt: string;
+}
+
+export interface ReviewReplyRequest {
+  replyText: string;
 }
 
 export interface ReviewCreateRequest {
@@ -59,6 +65,8 @@ export interface ReviewResponse {
   clientName: string;
   rating: number;
   comment: string;
+  replyText?: string;
+  repliedAt?: string;
   createdAt: string;
 }
 

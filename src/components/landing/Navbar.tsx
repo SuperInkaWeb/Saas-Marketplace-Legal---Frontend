@@ -1,13 +1,14 @@
 "use client";
 
+import { useAuthStore } from "@/modules/auth/store";
+import { useLogout } from "@/modules/auth/hooks";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuthStore } from "@/modules/auth/store";
 
 export default function Navbar() {
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
+  const { logout } = useLogout();
   const hydrated = useAuthStore((s) => s.hydrated);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);

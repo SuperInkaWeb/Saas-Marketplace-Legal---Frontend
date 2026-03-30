@@ -152,7 +152,7 @@ export function LawyerDashboardHome({ user, stats, loadingStats, greeting }: Law
           </span>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
            {/* Edit Profile */}
            <Link href="/dashboard/profile" className="flex items-center justify-between p-5 rounded-2xl bg-surface-container-low/40 border border-slate-100/50 group hover:border-secondary/20 hover:bg-white hover:shadow-lg hover:shadow-slate-200/40 transition-all duration-300 cursor-pointer">
              <div className="flex items-center gap-4">
@@ -197,6 +197,22 @@ export function LawyerDashboardHome({ user, stats, loadingStats, greeting }: Law
                </div>
              </div>
              <div className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-3 group-hover:translate-x-0 group-hover:text-secondary">
+                <ChevronRight className="w-5 h-5" />
+             </div>
+           </Link>
+
+           {/* Reviews Access */}
+           <Link href="/dashboard/reviews" className="flex items-center justify-between p-5 rounded-2xl bg-surface-container-low/40 border border-slate-100/50 group hover:border-amber-500/20 hover:bg-white hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 cursor-pointer">
+             <div className="flex items-center gap-4">
+               <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 text-slate-600 group-hover:text-amber-500 group-hover:bg-amber-50 transition-colors">
+                 <Star className="w-6 h-6" />
+               </div>
+               <div>
+                 <p className="text-sm font-extrabold text-slate-900 truncate">Ver Reseñas</p>
+                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Reputación y Feedback</p>
+               </div>
+             </div>
+             <div className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-3 group-hover:translate-x-0 group-hover:text-amber-500">
                 <ChevronRight className="w-5 h-5" />
              </div>
            </Link>
