@@ -14,6 +14,7 @@ import { ProfileBio } from './components/ProfileBio';
 import { ProfileSpecialties } from './components/ProfileSpecialties';
 import { ProfileDetails } from './components/ProfileDetails';
 import { ProfileSidebar } from './components/ProfileSidebar';
+import { ProfileReviews } from './components/ProfileReviews';
 
 // Hooks & Types
 import { usePublicProfile } from './hooks/usePublicProfile';
@@ -95,6 +96,12 @@ export default function LawyerPublicProfile() {
               <ProfileDetails 
                 barAssociation={profile.barAssociation}
                 barRegistrationNumber={profile.barRegistrationNumber}
+              />
+              <ProfileReviews 
+                lawyerPublicId={profile.publicId} 
+                ratingAvg={profile.ratingAvg}
+                reviewCount={profile.reviewCount}
+                ratingBreakdown={profile.ratingBreakdown}
               />
             </div>
 

@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   Scale,
+  MessageSquareWarning,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ const navItems = [
   { label: "Usuarios", href: "/admin/users", icon: Users },
   { label: "Verificaciones", href: "/admin/verifications", icon: ShieldCheck },
   { label: "Especialidades", href: "/admin/specialties", icon: Scale },
+  { label: "Moderación", href: "/admin/reviews", icon: MessageSquareWarning },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

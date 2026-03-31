@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthStore } from "@/modules/auth/store";
-import { useMe } from "@/modules/auth/hooks";
+import { useMe, useLogout } from "@/modules/auth/hooks";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState, ReactNode } from "react";
 import { 
@@ -17,7 +17,7 @@ import { LawyerSidebar } from "@/components/dashboard/LawyerSidebar";
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const user = useAuthStore((s) => s.user);
   const hydrated = useAuthStore((s) => s.hydrated);
-  const logout = useAuthStore((s) => s.logout);
+  const { logout } = useLogout();
   const updateUser = useAuthStore((s) => s.updateUser);
   const router = useRouter();
   const pathname = usePathname();
@@ -67,11 +67,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     );
   }
 
-  const handleLogout = () => {
-    logout();
-    router.push("/");
-  };
-
   const role = user.role?.toUpperCase().trim();
   const isLawyer = role === "LAWYER" || role === "ROLE_LAWYER";
 
@@ -79,12 +74,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     <>
       {isLawyer ? (
         <LawyerSidebar 
-          onLogout={handleLogout} 
+          onLogout={logout} 
           onItemClick={() => setIsMobileMenuOpen(false)} 
         />
       ) : (
         <ClientSidebar 
-          onLogout={handleLogout} 
+          onLogout={logout} 
           onItemClick={() => setIsMobileMenuOpen(false)} 
         />
       )}

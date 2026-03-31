@@ -26,4 +26,5 @@ export interface PublicProfile {
   isVerified?: boolean;
   ratingAvg?: number;
   reviewCount?: number;
+  ratingBreakdown?: Record<number, number>;
 }

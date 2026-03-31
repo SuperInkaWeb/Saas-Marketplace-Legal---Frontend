@@ -17,6 +17,20 @@ import type {
 import { AxiosError } from "axios";
 import { ApiErrorResponse } from "@/utils/types";
 
+export function useLogout() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const logout = useAuthStore((s) => s.logout);
+
+  const handleLogout = () => {
+    logout();
+    queryClient.clear();
+    router.push("/");
+  };
+
+  return { logout: handleLogout };
+}
+
 export function useLogin() {
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
@@ -57,10 +71,12 @@ export function useVerifyOtp() {
 // ── USER / ME ──────────────────────────────────────────────────────
 
 export function useMe() {
+  const token = useAuthStore((s) => s.token);
   return useQuery({
-    queryKey: ["auth-me"],
+    queryKey: ["auth-me", token],
     queryFn: () => authApi.getMe(),
     retry: false,
+    enabled: !!token,
   });
 }
 
