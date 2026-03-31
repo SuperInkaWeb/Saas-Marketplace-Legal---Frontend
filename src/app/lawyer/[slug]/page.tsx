@@ -97,7 +97,12 @@ export default function LawyerPublicProfile() {
                 barAssociation={profile.barAssociation}
                 barRegistrationNumber={profile.barRegistrationNumber}
               />
-              <ProfileReviews lawyerPublicId={profile.publicId} />
+              <ProfileReviews 
+                lawyerPublicId={profile.publicId} 
+                ratingAvg={profile.ratingAvg}
+                reviewCount={profile.reviewCount}
+                ratingBreakdown={profile.ratingBreakdown}
+              />
             </div>
 
             {/* Sidebar Section */}

@@ -47,6 +47,7 @@ export interface ReviewDTO {
   replyText?: string;
   repliedAt?: string;
   createdAt: string;
+  isFeatured: boolean;
 }
 
 export interface ReviewReplyRequest {
@@ -68,6 +69,7 @@ export interface ReviewResponse {
   replyText?: string;
   repliedAt?: string;
   createdAt: string;
+  isFeatured: boolean;
 }
 
 export interface CaseRequestResponse {
@@ -104,6 +106,7 @@ export interface DashboardStatsResponse {
   totalProposals: number;
   ratingAvg: number;
   reviewCount: number;
+  ratingBreakdown?: Record<number, number>;
 }
 
 // ── Client Case Flow Types ───────────────────────────────────────────
@@ -150,4 +153,38 @@ export interface CaseWithProposalsResponse {
   status: CaseRequestStatus;
   createdAt: string;
   proposals: ClientProposalResponse[];
+}
+
+// ── Moderation & Reporting Types ─────────────────────────────────────
+
+export enum ReportReason {
+  OFFENSIVE_LANGUAGE = "OFFENSIVE_LANGUAGE",
+  SPAM = "SPAM",
+  FALSE_INFORMATION = "FALSE_INFORMATION",
+  UNFAIR_CRITICISM = "UNFAIR_CRITICISM",
+  OTHER = "OTHER",
+}
+
+export enum ReportStatus {
+  PENDING = "PENDING",
+  RESOLVED = "RESOLVED",
+  DISMISSED = "DISMISSED",
+}
+
+export interface ReviewReportRequest {
+  reason: ReportReason;
+  details?: string;
+}
+
+export interface ReviewReportDTO {
+  publicId: string;
+  reviewId: string;
+  reviewComment: string;
+  clientName: string;
+  reporterId: string;
+  reporterName: string;
+  reason: ReportReason;
+  details?: string;
+  status: ReportStatus;
+  createdAt: string;
 }
