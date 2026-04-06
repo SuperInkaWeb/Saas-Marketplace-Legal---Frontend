@@ -11,7 +11,8 @@ import {
   FileText, 
   UserCircle, 
   LogOut,
-  Scale
+  Scale,
+  MessageSquare,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -32,6 +33,7 @@ export function ClientSidebar({ onItemClick, onLogout }: SidebarProps) {
     { label: "Mis Citas", href: "/dashboard/appointments", icon: Calendar },
     { label: "Mis Casos", href: "/dashboard/my-cases", icon: Briefcase },
     { label: "Mis Documentos", href: "/dashboard/documents", icon: FileText },
+    { label: "Mensajes", href: "/dashboard/chats", icon: MessageSquare },
   ];
 
   return (
