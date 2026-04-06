@@ -84,6 +84,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, sch
       
       toast.success("Cita agendada exitosamente");
       onClose();
+    } catch (error: any) {
       const errorDetail = error.response?.data?.detail || error.response?.data?.message || "Error al agendar la cita. Es posible que el horario ya esté reservado.";
       toast.error(errorDetail);
     } finally {
