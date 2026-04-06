@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { Bell, Check, X } from "lucide-react";
 import { notificationService } from "@/modules/notification/services/notificationService";
 import { NotificationResponse } from "@/modules/notification/types";
+import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,6 +14,7 @@ export const NotificationCenter = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     fetchNotifications();
@@ -64,6 +66,20 @@ export const NotificationCenter = () => {
     }
   };
 
+  const handleNotificationClick = (n: NotificationResponse) => {
+    setIsOpen(false);
+    if (n.actionUrl) {
+      router.push(n.actionUrl);
+    } else if (n.title.toLowerCase().includes("mensaje") || n.message.toLowerCase().includes("mensaje")) {
+      router.push("/dashboard/chats");
+    }
+    
+    if (!n.isRead) {
+      notificationService.markAsRead(n.publicId).catch(console.error);
+      setNotifications(prev => prev.map(item => item.publicId === n.publicId ? { ...item, isRead: true } : item));
+    }
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -110,8 +126,9 @@ export const NotificationCenter = () => {
                   {notifications.map((n) => (
                     <div
                       key={n.publicId}
+                      onClick={() => handleNotificationClick(n)}
                       className={cn(
-                        "p-4 transition-colors relative group",
+                        "p-4 transition-colors relative group cursor-pointer",
                         !n.isRead ? "bg-blue-50/40" : "hover:bg-slate-50/50"
                       )}
                     >

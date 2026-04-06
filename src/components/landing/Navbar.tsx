@@ -4,6 +4,7 @@ import { useAuthStore } from "@/modules/auth/store";
 import { useLogout } from "@/modules/auth/hooks";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
 
 export default function Navbar() {
   const token = useAuthStore((s) => s.token);
@@ -41,7 +42,12 @@ export default function Navbar() {
           <a className="text-slate-600 font-medium hover:text-slate-900 transition-colors" href="#">Precios</a>
           <a className="text-slate-600 font-medium hover:text-slate-900 transition-colors" href="#">Nosotros</a>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          {hydrated && token && (
+            <div className="mr-2">
+              <NotificationCenter />
+            </div>
+          )}
           {hydrated && token ? (
             <div className="relative">
               <button

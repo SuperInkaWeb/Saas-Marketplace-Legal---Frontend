@@ -16,7 +16,8 @@ import {
   ShieldCheck,
   Send,
   Star,
-  CreditCard
+  CreditCard,
+  MessageSquare,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,7 @@ export function LawyerSidebar({ onItemClick, onLogout }: SidebarProps) {
     { label: "Mis Reseñas", href: "/dashboard/reviews", icon: Star },
     { label: "Pagos e Ingresos", href: "/dashboard/payments", icon: CreditCard },
     { label: "Mis Documentos", href: "/dashboard/documents", icon: FileText },
+    { label: "Mensajes", href: "/dashboard/chats", icon: MessageSquare },
     { 
       label: "Mi Perfil Público", 
       href: `/lawyer/${user.slug}`, 
