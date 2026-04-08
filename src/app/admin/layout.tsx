@@ -13,6 +13,7 @@ import {
   X,
   Scale,
   MessageSquareWarning,
+  FileText,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ const navItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Usuarios", href: "/admin/users", icon: Users },
   { label: "Verificaciones", href: "/admin/verifications", icon: ShieldCheck },
+  { label: "Plantillas", href: "/admin/templates", icon: FileText },
   { label: "Especialidades", href: "/admin/specialties", icon: Scale },
   { label: "Moderación", href: "/admin/reviews", icon: MessageSquareWarning },
 ];

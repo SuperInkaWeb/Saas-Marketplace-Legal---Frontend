@@ -3,17 +3,24 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/modules/auth/store";
 import { documentService } from "@/modules/document/services/documentService";
-import { DocumentResponse } from "@/modules/document/types";
-import { FileText, Download, Trash2, UploadCloud, FileType2, Plus } from "lucide-react";
+import { DocumentResponse, TemplatePublicResponse } from "@/modules/document/types";
+import { FileText, Download, Trash2, UploadCloud, FileType2, Plus, X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function DocumentsPage() {
   const user = useAuthStore((s) => s.user);
+  const router = useRouter();
   const [documents, setDocuments] = useState<DocumentResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const [isTemplateModalOpen, setTemplateModalOpen] = useState(false);
+  const [templates, setTemplates] = useState<TemplatePublicResponse[]>([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
 
   useEffect(() => {
     fetchDocuments();
@@ -31,6 +38,21 @@ export default function DocumentsPage() {
       toast.error("Error al cargar los documentos");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openTemplateModal = async () => {
+    setTemplateModalOpen(true);
+    if (templates.length === 0) {
+      setLoadingTemplates(true);
+      try {
+        const data = await documentService.getTemplates();
+        setTemplates(data);
+      } catch (error) {
+        toast.error("Error al cargar plantillas");
+      } finally {
+        setLoadingTemplates(false);
+      }
     }
   };
 
@@ -62,9 +84,17 @@ export default function DocumentsPage() {
           </h1>
           <p className="mt-2 text-slate-500 text-sm">Gestiona tus archivos, contratos y plantillas legales.</p>
         </div>
-        <button className="bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-xl font-medium transition-colors inline-flex items-center gap-2 text-sm">
-          <UploadCloud className="w-4 h-4" /> Subir Documento
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={openTemplateModal}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-medium transition-colors inline-flex items-center gap-2 text-sm shadow-sm"
+          >
+            <FileText className="w-4 h-4" /> Generar Documento
+          </button>
+          <button className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-5 py-2.5 rounded-xl font-medium transition-colors inline-flex items-center gap-2 text-sm">
+            <UploadCloud className="w-4 h-4" /> Subir
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -76,8 +106,11 @@ export default function DocumentsPage() {
           <FileType2 className="w-12 h-12 text-slate-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-slate-900">Sin documentos</h3>
           <p className="text-slate-500 mt-1 mb-6">Aún no has subido ningún documento a tu bóveda.</p>
-          <button className="bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 text-sm mx-auto">
-            <Plus className="w-4 h-4" /> Crear mi primer documento
+          <button 
+            onClick={openTemplateModal}
+            className="bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 text-sm mx-auto"
+          >
+            <Plus className="w-4 h-4" /> Generar con plantilla
           </button>
         </div>
       ) : (
@@ -132,6 +165,70 @@ export default function DocumentsPage() {
           </AnimatePresence>
         </div>
       )}
+
+      {/* Template Selection Modal */}
+      <AnimatePresence>
+        {isTemplateModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+              onClick={() => setTemplateModalOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden relative z-10 flex flex-col max-h-[85vh]"
+            >
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between shrink-0">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900">Seleccionar Plantilla</h2>
+                  <p className="text-sm text-slate-500">Elija un modelo oficial para generar el documento.</p>
+                </div>
+                <button
+                  onClick={() => setTemplateModalOpen(false)}
+                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-6 overflow-y-auto custom-scrollbar bg-slate-50">
+                {loadingTemplates ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+                  </div>
+                ) : templates.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-slate-500">No hay plantillas disponibles.</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-3">
+                    {templates.map(t => (
+                      <div 
+                        key={t.publicId}
+                        onClick={() => router.push(`/dashboard/documents/generate?template=${t.code}`)}
+                        className="bg-white p-4 rounded-xl border border-slate-200 hover:border-emerald-500/50 hover:shadow-md transition-all cursor-pointer group flex items-start justify-between"
+                      >
+                        <div>
+                          <h3 className="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">{t.name}</h3>
+                          <p className="text-xs text-slate-500 mt-1">Jurisdicción: {t.jurisdiction}</p>
+                        </div>
+                        <span className="text-xs font-mono bg-slate-100 px-2 py-1 rounded text-slate-600 border border-slate-200">
+                          {t.code}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

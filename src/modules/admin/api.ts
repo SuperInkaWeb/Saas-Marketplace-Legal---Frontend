@@ -9,6 +9,8 @@ import {
   PaginatedResponse,
   SpecialtyResponse,
   CreateSpecialtyRequest,
+  DocumentTemplateResponse,
+  DocumentTemplateRequest,
 } from "./types";
 
 const BASE = "/admin";
@@ -83,5 +85,33 @@ export const adminApi = {
   toggleSpecialtyStatus: async (id: number): Promise<SpecialtyResponse> => {
     const { data } = await api.patch(`${BASE}/specialties/${id}/toggle`);
     return data;
+  },
+
+  // ── Document Templates ───────────────────────────────────────────
+  getAllTemplates: async (): Promise<DocumentTemplateResponse[]> => {
+    const { data } = await api.get(`${BASE}/templates`);
+    return data;
+  },
+
+  getTemplate: async (publicId: string): Promise<DocumentTemplateResponse> => {
+    const { data } = await api.get(`${BASE}/templates/${publicId}`);
+    return data;
+  },
+
+  createTemplate: async (body: DocumentTemplateRequest): Promise<DocumentTemplateResponse> => {
+    const { data } = await api.post(`${BASE}/templates`, body);
+    return data;
+  },
+
+  updateTemplate: async (
+    publicId: string,
+    body: DocumentTemplateRequest
+  ): Promise<DocumentTemplateResponse> => {
+    const { data } = await api.put(`${BASE}/templates/${publicId}`, body);
+    return data;
+  },
+
+  deleteTemplate: async (publicId: string): Promise<void> => {
+    await api.delete(`${BASE}/templates/${publicId}`);
   },
 };
