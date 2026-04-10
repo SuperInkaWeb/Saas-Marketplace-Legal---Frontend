@@ -44,6 +44,7 @@ export function LawyerSidebar({ onItemClick, onLogout }: SidebarProps) {
     { label: "Configurar Perfil", href: "/dashboard/profile", icon: Settings },
     { label: "Mis Citas", href: "/dashboard/appointments", icon: Calendar },
     { label: "Marketplace", href: "/dashboard/marketplace", icon: Briefcase },
+    { label: "Expedientes (ERP)", href: "/dashboard/matters", icon: Briefcase },
     { label: "Mis Propuestas", href: "/dashboard/proposals", icon: Send },
     { label: "Mis Reseñas", href: "/dashboard/reviews", icon: Star },
     { label: "Pagos e Ingresos", href: "/dashboard/payments", icon: CreditCard },
