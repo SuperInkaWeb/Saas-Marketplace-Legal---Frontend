@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "@/modules/auth/store";
 import { documentService } from "@/modules/document/services/documentService";
 import { DocumentResponse, TemplatePublicResponse } from "@/modules/document/types";
-import { FileText, Download, Trash2, UploadCloud, FileType2, Plus, X, Loader2, FilePenLine } from "lucide-react";
+import { FileText, Download, Trash2, UploadCloud, FileType2, Plus, X, Loader2, FilePenLine, Scale } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -198,10 +198,13 @@ export default function DocumentsPage() {
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden relative z-10 flex flex-col max-h-[85vh]"
             >
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between shrink-0">
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900">Seleccionar Plantilla</h2>
-                  <p className="text-sm text-slate-500">Elija un modelo oficial para generar el documento.</p>
+                  <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    <Scale className="w-5 h-5 text-indigo-600" />
+                    Marketplace de Plantillas
+                  </h2>
+                  <p className="text-sm text-slate-500">Documentos legales estándar de alta calidad, listos para automatizar.</p>
                 </div>
                 <button
                   onClick={() => setTemplateModalOpen(false)}
@@ -211,30 +214,50 @@ export default function DocumentsPage() {
                 </button>
               </div>
 
-              <div className="p-6 overflow-y-auto custom-scrollbar bg-slate-50">
+              <div className="p-6 overflow-y-auto custom-scrollbar bg-slate-50/50">
                 {loadingTemplates ? (
-                  <div className="flex justify-center py-12">
-                    <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+                  <div className="flex flex-col items-center justify-center py-20 gap-3">
+                    <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+                    <p className="text-sm font-medium text-slate-500 animate-pulse">Cargando catálogo...</p>
                   </div>
                 ) : templates.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-slate-500">No hay plantillas disponibles.</p>
+                  <div className="text-center py-12">
+                    <p className="text-slate-500 font-medium">No hay plantillas disponibles en este momento.</p>
                   </div>
                 ) : (
-                  <div className="grid gap-3">
+                  <div className="grid gap-4">
                     {templates.map(t => (
                       <div 
                         key={t.publicId}
                         onClick={() => router.push(`/dashboard/documents/generate?template=${t.code}`)}
-                        className="bg-white p-4 rounded-xl border border-slate-200 hover:border-emerald-500/50 hover:shadow-md transition-all cursor-pointer group flex items-start justify-between"
+                        className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer group flex items-center justify-between shadow-sm relative overflow-hidden"
                       >
-                        <div>
-                          <h3 className="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">{t.name}</h3>
-                          <p className="text-xs text-slate-500 mt-1">Jurisdicción: {t.jurisdiction}</p>
+                        <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
+                            <FileText className="w-6 h-6 text-slate-400 group-hover:text-indigo-600" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                                {t.name}
+                              </h3>
+                              <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded uppercase">Premium</span>
+                            </div>
+                            <p className="text-xs text-slate-500">Jurisdicción: <span className="text-slate-700 font-medium">{t.jurisdiction}</span></p>
+                          </div>
                         </div>
-                        <span className="text-xs font-mono bg-slate-100 px-2 py-1 rounded text-slate-600 border border-slate-200">
-                          {t.code}
-                        </span>
+
+                        <div className="flex flex-col items-end gap-2 text-right">
+                          <div className="text-lg font-black text-slate-900 flex items-center gap-1">
+                            <span className="text-sm font-bold text-indigo-600">$</span>
+                            {t.price?.toFixed(2) || "0.00"}
+                          </div>
+                          <span className="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200 uppercase tracking-tighter">
+                            {t.code}
+                          </span>
+                        </div>
                       </div>
                     ))}
                   </div>

@@ -58,4 +58,5 @@ export interface TemplatePublicResponse {
   jurisdiction: string;
   requiredFields: string;
   fieldDefinitions?: string;
+  price: number;
 }
