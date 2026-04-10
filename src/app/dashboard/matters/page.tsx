@@ -115,15 +115,27 @@ export default function MattersDashboardPage() {
 
   const getStatusConfig = (status: MatterStatus) => {
     switch (status) {
-      case 'OPEN': return { color: 'bg-emerald-100 text-emerald-700 border-emerald-200', text: 'Abierto', icon: <Briefcase className="w-3 h-3" /> };
-      case 'IN_PROGRESS': return { color: 'bg-blue-100 text-blue-700 border-blue-200', text: 'En Progreso', icon: <Clock className="w-3 h-3" /> };
-      case 'PENDING_CLIENT': return { color: 'bg-amber-100 text-amber-700 border-amber-200', text: 'Esperando Cliente', icon: <AlertCircle className="w-3 h-3" /> };
-      case 'IN_LITIGATION': return { color: 'bg-rose-100 text-rose-700 border-rose-200', text: 'En Litigio', icon: <Briefcase className="w-3 h-3" /> };
-      case 'SETTLED': return { color: 'bg-violet-100 text-violet-700 border-violet-200', text: 'Acuerdo', icon: <CheckCircle2 className="w-3 h-3" /> };
-      case 'CLOSED': return { color: 'bg-slate-100 text-slate-700 border-slate-200', text: 'Cerrado', icon: <CheckCircle2 className="w-3 h-3" /> };
-      default: return { color: 'bg-slate-100 text-slate-700 border-slate-200', text: status, icon: <Briefcase className="w-3 h-3" /> };
+      case 'OPEN': return { color: 'bg-emerald-100 text-emerald-700 border-emerald-200', text: 'Abierto', icon: <Briefcase className="w-3 h-3" />, dot: 'bg-emerald-500' };
+      case 'IN_PROGRESS': return { color: 'bg-blue-100 text-blue-700 border-blue-200', text: 'En Progreso', icon: <Clock className="w-3 h-3" />, dot: 'bg-blue-500' };
+      case 'PENDING_CLIENT': return { color: 'bg-amber-100 text-amber-700 border-amber-200', text: 'Esperando Cliente', icon: <AlertCircle className="w-3 h-3" />, dot: 'bg-amber-500' };
+      case 'IN_LITIGATION': return { color: 'bg-rose-100 text-rose-700 border-rose-200', text: 'En Litigio', icon: <Briefcase className="w-3 h-3" />, dot: 'bg-rose-500' };
+      case 'SETTLED': return { color: 'bg-violet-100 text-violet-700 border-violet-200', text: 'Acuerdo', icon: <CheckCircle2 className="w-3 h-3" />, dot: 'bg-violet-500' };
+      case 'CLOSED': return { color: 'bg-slate-100 text-slate-700 border-slate-200', text: 'Cerrado', icon: <CheckCircle2 className="w-3 h-3" />, dot: 'bg-slate-500' };
+      default: return { color: 'bg-slate-100 text-slate-700 border-slate-200', text: status, icon: <Briefcase className="w-3 h-3" />, dot: 'bg-slate-500' };
     }
   };
+
+  const handleUpdateStatus = async (publicId: string, newStatus: MatterStatus) => {
+    try {
+      await matterService.updateMatterStatus(publicId, newStatus);
+      toast.success("Estado actualizado");
+      fetchMatters();
+    } catch (error) {
+      toast.error("Error al actualizar estado");
+    }
+  };
+
+  const STATUSES: MatterStatus[] = ['OPEN', 'IN_PROGRESS', 'PENDING_CLIENT', 'IN_LITIGATION', 'CLOSED'];
 
   return (
     <div className="p-6 md:p-8 max-w-[1400px] mx-auto min-h-screen bg-slate-50/50">
@@ -254,8 +266,83 @@ export default function MattersDashboardPage() {
           </div>
         </div>
       ) : (
-        <div className="text-center py-20 text-slate-500 border border-dashed border-slate-300 rounded-2xl bg-white">
-          Vista Kanban en desarrollo... (Próximo Sprint)
+        <div className="flex gap-6 overflow-x-auto pb-6 custom-scrollbar min-h-[600px] items-start">
+          {STATUSES.map((status) => {
+            const statusMatters = matters.filter(m => m.status === status);
+            const config = getStatusConfig(status);
+            
+            return (
+              <div 
+                key={status}
+                className="flex-shrink-0 w-80 bg-slate-100/50 rounded-2xl p-4 border border-slate-200/60"
+              >
+                <div className="flex items-center justify-between mb-4 px-1">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${config.dot}`}></div>
+                    <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider">{config.text}</h3>
+                    <span className="bg-white text-slate-500 text-[10px] font-bold px-2 py-0.5 rounded-full border border-slate-200 shadow-sm">
+                      {statusMatters.length}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {statusMatters.map((matter) => (
+                    <motion.div
+                      layout
+                      key={matter.publicId}
+                      onClick={() => router.push(`/dashboard/matters/${matter.publicId}`)}
+                      className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-200 cursor-pointer transition-all group group"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 group-hover:text-indigo-500 group-hover:border-indigo-100">
+                          {matter.number}
+                        </span>
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                           <ChevronRight className="w-4 h-4 text-indigo-400" />
+                        </div>
+                      </div>
+                      
+                      <h4 className="font-bold text-slate-900 text-sm mb-1 line-clamp-2 group-hover:text-indigo-600 transition-colors">
+                        {matter.title}
+                      </h4>
+                      <p className="text-xs text-slate-500 font-medium mb-3 flex items-center gap-1.5">
+                        <UserCircle className="w-3.5 h-3.5" /> {matter.clientName}
+                      </p>
+
+                      <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
+                         <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+                           <Clock className="w-3 h-3" /> {format(new Date(matter.startDate), "dd MMM", { locale: es })}
+                         </p>
+                         
+                         {/* Quick status cycle for demo/kanban feel if they dont want to drag */}
+                         <div className="flex items-center gap-1">
+                            {STATUSES.filter(s => s !== status).slice(0, 1).map(nextS => (
+                              <button 
+                                key={nextS}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleUpdateStatus(matter.publicId, nextS);
+                                }}
+                                className="text-[9px] font-extrabold text-indigo-600 bg-indigo-50 px-2 py-1 rounded hover:bg-indigo-100 transition-all border border-indigo-100"
+                              >
+                                {getStatusConfig(nextS).text} →
+                              </button>
+                            ))}
+                         </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                  
+                  {statusMatters.length === 0 && (
+                    <div className="py-8 text-center bg-white/30 border border-dashed border-slate-200 rounded-xl">
+                      <p className="text-[11px] text-slate-400 font-medium">No hay casos aquí</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 

@@ -17,5 +17,10 @@ export const matterService = {
   createMatter: async (payload: MatterCreateRequest): Promise<MatterResponse> => {
     const { data } = await api.post(BASE_URL, payload);
     return data;
+  },
+
+  updateMatterStatus: async (publicId: string, status: string): Promise<MatterResponse> => {
+    const { data } = await api.patch(`${BASE_URL}/${publicId}/status`, { status });
+    return data;
   }
 };

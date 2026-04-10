@@ -50,4 +50,22 @@ export const documentService = {
     const { data } = await api.get(`${BASE_URL}/${documentId}`);
     return data;
   },
+
+  getDocumentsByMatter: async (matterPublicId: string): Promise<DocumentResponse[]> => {
+    const { data } = await api.get(`${BASE_URL}/matter/${matterPublicId}`);
+    return data;
+  },
+
+  uploadMatterDocument: async (matterPublicId: string, file: File): Promise<DocumentResponse> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("matterPublicId", matterPublicId);
+
+    const { data } = await api.post(`${BASE_URL}/upload-matter`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+    return data;
+  }
 };

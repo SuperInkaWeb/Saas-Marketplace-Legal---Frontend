@@ -20,6 +20,7 @@ export interface UploadDocumentRequest {
   fileSizeBytes?: number;
   isTemplate?: boolean;
   price?: number;
+  matterPublicId?: string;
 }
 
 export interface DocumentGeneratorRequest {
