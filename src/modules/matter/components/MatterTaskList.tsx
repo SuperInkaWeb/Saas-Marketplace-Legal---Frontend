@@ -13,10 +13,6 @@ interface MatterTaskListProps {
 }
 
 export const MatterTaskList = ({ tasks, onToggleStatus }: MatterTaskListProps) => {
-  const isOverdue = (dueDate?: string) => {
-    if (!dueDate) return false;
-    return new Date(dueDate) < new Date() && !isCompleted;
-  };
 
   if (tasks.length === 0) {
     return (
