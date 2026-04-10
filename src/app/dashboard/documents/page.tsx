@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "@/modules/auth/store";
 import { documentService } from "@/modules/document/services/documentService";
 import { DocumentResponse, TemplatePublicResponse } from "@/modules/document/types";
-import { FileText, Download, Trash2, UploadCloud, FileType2, Plus, X, Loader2 } from "lucide-react";
+import { FileText, Download, Trash2, UploadCloud, FileType2, Plus, X, Loader2, FilePenLine } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function DocumentsPage() {
@@ -30,8 +29,6 @@ export default function DocumentsPage() {
     if (!user) return;
     try {
       setLoading(true);
-      // For lawyers we show their documents and maybe they can set them as templates
-      // For clients we can show purchased documents, but for now we'll just fetch 'me'
       const data = await documentService.getMyDocuments();
       setDocuments(data);
     } catch (error) {
@@ -132,29 +129,47 @@ export default function DocumentsPage() {
                   {doc.fileName}
                 </h3>
                 
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-6">
+                <div className="flex items-center justify-between text-xs text-slate-500 mb-4">
                   <span>{formatBytes(doc.fileSizeBytes)}</span>
                   <span>{format(new Date(doc.createdAt), "MMM d, yyyy", { locale: es })}</span>
                 </div>
 
-                {doc.isTemplate && (
-                  <span className="inline-block px-2 text-[10px] font-bold uppercase tracking-wider bg-violet-100 text-violet-700 rounded-md mb-4 w-max">
-                    Plantilla
-                  </span>
-                )}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {doc.isTemplate && (
+                    <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-violet-100 text-violet-700 rounded-md">
+                      Plantilla
+                    </span>
+                  )}
+                  {doc.isDraft && (
+                    <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 rounded-md">
+                      Borrador
+                    </span>
+                  )}
+                </div>
                 
                 <div className="flex gap-2 mt-auto border-t border-slate-100 pt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <a 
-                    href={doc.fileUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-700 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors border border-slate-200"
+                  <button 
+                    onClick={() => router.push(`/dashboard/documents/${doc.publicId}`)}
+                    className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
                   >
-                    <Download className="w-3.5 h-3.5" /> Descargar
-                  </a>
+                    <FilePenLine className="w-3.5 h-3.5" /> {doc.isDraft ? "Editar" : "Ver"}
+                  </button>
+                  
+                  {doc.fileUrl && (
+                    <a 
+                      href={doc.fileUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors border border-slate-200"
+                      title="Descargar archivo original"
+                    >
+                      <Download className="w-4 h-4" />
+                    </a>
+                  )}
+
                   <button 
                     onClick={() => handleArchive(doc.publicId)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors border border-slate-200"
                     title="Archivar"
                   >
                     <Trash2 className="w-4 h-4" />

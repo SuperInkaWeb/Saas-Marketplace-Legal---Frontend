@@ -106,6 +106,7 @@ export interface DocumentTemplateResponse {
   jurisdiction: string;
   content: string;
   requiredFields: string;
+  fieldDefinitions?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -117,5 +118,6 @@ export interface DocumentTemplateRequest {
   jurisdiction: string;
   content: string;
   requiredFields: string;
+  fieldDefinitions?: string;
   isActive: boolean;
 }

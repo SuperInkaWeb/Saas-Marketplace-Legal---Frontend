@@ -60,6 +60,7 @@ export default function EditTemplatePage({ params }: { params: Promise<{ id: str
     jurisdiction: template.jurisdiction,
     content: template.content,
     requiredFields: template.requiredFields,
+    fieldDefinitions: template.fieldDefinitions || "",
     isActive: template.isActive,
   };
 

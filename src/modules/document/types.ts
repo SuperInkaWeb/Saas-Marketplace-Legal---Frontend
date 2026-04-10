@@ -5,6 +5,8 @@ export interface DocumentResponse {
   fileType: string;
   fileSizeBytes: number;
   isTemplate: boolean;
+  isDraft: boolean;
+  content?: string;
   price: number;
   signatureStatus: string;
   isArchived: boolean;
@@ -30,12 +32,23 @@ export interface DocumentGeneratorRequest {
 export interface DocumentGeneratorResponse {
   generatedContent: string;
   missingFields: string[];
-  isValid: boolean;
+  isValid?: boolean;
   documentPublicId?: string;
+  fileName?: string;
+  isDraft?: boolean;
 }
 
 export interface DocumentUpdateRequest {
   content: string;
+}
+
+export interface DocumentFieldDefinition {
+  name: string;
+  label: string;
+  type: "TEXT" | "NUMBER" | "DATE" | "SELECT";
+  required: boolean;
+  placeholder?: string;
+  options?: string[];
 }
 
 export interface TemplatePublicResponse {
@@ -44,4 +57,5 @@ export interface TemplatePublicResponse {
   code: string;
   jurisdiction: string;
   requiredFields: string;
+  fieldDefinitions?: string;
 }

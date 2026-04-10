@@ -50,6 +50,7 @@ export default function AdminTemplatesPage() {
         jurisdiction: template.jurisdiction,
         content: template.content,
         requiredFields: template.requiredFields,
+        fieldDefinitions: template.fieldDefinitions,
         isActive: !template.isActive
       });
       toast.success(updated.isActive ? "Plantilla activada" : "Plantilla desactivada");

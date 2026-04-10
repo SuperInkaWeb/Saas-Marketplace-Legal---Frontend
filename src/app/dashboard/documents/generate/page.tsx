@@ -6,10 +6,11 @@ import { LegalEditor } from "@/modules/document/components/LegalEditor";
 import { DocumentGeneratorResponse } from "@/modules/document/types";
 import { FileText, ArrowLeft, Send, Scale } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
 
 function DocumentGenerationContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const templateCode = searchParams.get("template");
   
@@ -18,7 +19,6 @@ function DocumentGenerationContent() {
 
   const handleDocumentGenerated = (res: DocumentGeneratorResponse) => {
     setGenResponse(res);
-    // If it's completely valid, move to step 2
     if (res.isValid && res.generatedContent) {
       setStep(2);
     }
@@ -26,35 +26,50 @@ function DocumentGenerationContent() {
 
   return (
     <div className="min-h-screen bg-slate-50/50 p-6">
-      <div className="max-w-6xl mx-auto space-y-8">
+      <div className="max-w-[1700px] mx-auto space-y-6">
         
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-              Generador de Documentos
-              <span className="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full uppercase tracking-wider">
-                Pro
-              </span>
-            </h1>
-            <p className="text-slate-500 mt-2 text-lg">
-              Cree documentos legales precisos en segundos.
-            </p>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => {
+                if (step === 2) setStep(1);
+                else router.push("/dashboard/documents");
+              }}
+              className="p-2 bg-white rounded-full border border-slate-200 shadow-sm text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all active:scale-95 group"
+              title="Volver"
+            >
+              <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
+            </button>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                Generador de Documentos
+                <span className="hidden sm:inline-block px-3 py-1 bg-indigo-100 text-indigo-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                  Pro
+                </span>
+              </h1>
+              <p className="text-slate-500 text-sm md:text-base">
+                {step === 1 ? "Complete los campos y visualice en tiempo real." : "Revise su documento legal final antes de exportarlo."}
+              </p>
+            </div>
           </div>
           
           {step === 2 && (
-            <button
-              onClick={() => setStep(1)}
-              className="flex items-center gap-2 text-slate-600 hover:text-indigo-600 font-medium transition-colors bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Volver al Cuestionario
-            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mr-2">Paso 2 / 2</span>
+              <button
+                onClick={() => setStep(1)}
+                className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-bold text-xs transition-colors bg-indigo-50 px-4 py-2 rounded-xl border border-indigo-100 shadow-sm"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                Editar Datos
+              </button>
+            </div>
           )}
         </div>
 
         {/* Dynamic Content */}
-        <div className="relative relative min-h-[60vh]">
+        <div className="relative min-h-[70vh]">
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div
@@ -68,7 +83,6 @@ function DocumentGenerationContent() {
                   <DocumentQuestionnaire 
                     documentTypeCode={templateCode}
                     onDocumentGenerated={handleDocumentGenerated}
-                    initialMissingFields={genResponse?.missingFields || []}
                   />
                 ) : (
                   <div className="bg-white p-12 text-center rounded-2xl border border-slate-200 shadow-sm">
@@ -95,8 +109,8 @@ function DocumentGenerationContent() {
                       <FileText className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-800">Borrador Generado</p>
-                      <p className="text-sm text-slate-500">Revise y aplique ajustes finales.</p>
+                      <p className="font-semibold text-slate-800">Documento Generado</p>
+                      <p className="text-sm text-slate-500">Revise, edite y exporte como PDF.</p>
                     </div>
                   </div>
                   
