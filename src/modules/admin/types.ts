@@ -97,3 +97,27 @@ export interface PaginatedResponse<T> {
   first: boolean;
   last: boolean;
 }
+
+// ── Document Templates ───────────────────────────────────────────────
+export interface DocumentTemplateResponse {
+  publicId: string;
+  name: string;
+  code: string;
+  jurisdiction: string;
+  content: string;
+  requiredFields: string;
+  fieldDefinitions?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DocumentTemplateRequest {
+  name: string;
+  code: string;
+  jurisdiction: string;
+  content: string;
+  requiredFields: string;
+  fieldDefinitions?: string;
+  isActive: boolean;
+}

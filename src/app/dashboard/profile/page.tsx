@@ -32,34 +32,34 @@ export default function ProfileSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-surface py-12 px-6 lg:px-12">
+      <div className="max-w-6xl mx-auto">
         
         {/* Header Section */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <button 
-              onClick={() => router.push("/dashboard")}
-              className="group flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors mb-4"
-            >
-              <ArrowLeft className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-1" />
-              Volver al Dashboard
-            </button>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-              Configuración de Perfil
+        <div className="mb-16">
+          <button 
+            onClick={() => router.push("/dashboard")}
+            className="group flex items-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-slate-900 transition-colors mb-8"
+          >
+            <ArrowLeft className="w-3 h-3 mr-2 transition-transform group-hover:-translate-x-1" />
+            Volver
+          </button>
+          <div className="border-l-4 border-amber-500 pl-8">
+            <h1 className="text-4xl lg:text-6xl font-black text-slate-900 tracking-tighter uppercase font-manrope">
+              Configuración <br /> de Perfil
             </h1>
-            <p className="text-slate-500 mt-1">
-              Gestiona tu información pública, horarios y especialidades para que te encuentren los clientes.
+            <p className="text-slate-400 font-inter text-sm max-w-lg mt-6 leading-relaxed">
+              Gestione su identidad pública, disponibilidad técnica y especialidades operativas dentro del ecosistema legal.
             </p>
           </div>
         </div>
 
         {/* Main Content Layout */}
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-16">
           
-          {/* Sidebar Tabs */}
-          <div className="md:w-64 shrink-0">
-            <nav className="flex md:flex-col gap-2 overflow-x-auto pb-4 md:pb-0 scrollbar-hide">
+          {/* Architectural Tabs Navigation */}
+          <div className="lg:w-64 shrink-0">
+            <nav className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 scrollbar-hide sticky top-24">
               {TABS.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -68,18 +68,18 @@ export default function ProfileSettingsPage() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`
-                      relative flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-all whitespace-nowrap
+                      relative flex items-center gap-4 px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap
                       ${isActive 
-                        ? "text-emerald-700 bg-emerald-50/80 shadow-sm border border-emerald-100" 
-                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-transparent"}
+                        ? "text-slate-900 bg-white shadow-sm border border-slate-100" 
+                        : "text-slate-400 hover:text-slate-900 hover:bg-slate-50"}
                     `}
                   >
-                    <Icon className={`w-5 h-5 ${isActive ? "text-emerald-600" : "text-slate-400"}`} />
+                    <Icon className={`w-4 h-4 transition-colors ${isActive ? "text-amber-600" : "text-slate-300"}`} />
                     {tab.label}
                     {isActive && (
                       <motion.div
-                        layoutId="activeTabIndicator"
-                        className="absolute left-0 w-1 h-6 bg-emerald-500 rounded-r-full hidden md:block"
+                        layoutId="activeTabIndicatorSettings"
+                        className="absolute left-0 w-1 h-6 bg-amber-500 hidden lg:block"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.2 }}
@@ -91,21 +91,20 @@ export default function ProfileSettingsPage() {
             </nav>
           </div>
 
-          {/* Form Content Area */}
-          <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 min-h-[600px]">
+          {/* Content Area */}
+          <div className="flex-1 bg-white border border-slate-50 p-8 lg:p-12 min-h-[700px] shadow-[0_20px_50px_rgba(0,0,0,0.02)]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 className="h-full"
               >
                 {activeTab === "general" && <GeneralInfoForm />}
                 {activeTab === "specialties" && <SpecialtiesForm />}
                 {activeTab === "schedules" && <ScheduleManager />}
-
               </motion.div>
             </AnimatePresence>
           </div>

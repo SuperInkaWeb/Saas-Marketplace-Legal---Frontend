@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { User, Save, Loader2, MapPin, DollarSign, BookOpen, Camera } from "lucide-react";
+import { Loader2, Camera } from "lucide-react";
 import { lawyerConfigService } from "@/modules/profile/services/lawyerConfigService";
 import { profileService } from "@/modules/profile/services/profileService";
 import { UpdateLawyerProfileRequest } from "@/modules/profile/types";
@@ -31,6 +31,17 @@ const schema = z.object({
 });
 
 type FormData = z.infer<typeof schema>;
+
+import { motion, AnimatePresence } from "framer-motion";
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }
+  }
+};
 
 export default function GeneralInfoForm() {
   const [isLoading, setIsLoading] = useState(true);
@@ -144,25 +155,36 @@ export default function GeneralInfoForm() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-48 text-emerald-600">
+      <div className="flex justify-center items-center h-48 text-slate-900">
         <Loader2 className="w-8 h-8 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      <div className="mb-8 border-b border-slate-100 pb-6">
-        <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <User className="w-6 h-6 text-emerald-600" />
-          Información General
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={{
+        visible: { transition: { staggerChildren: 0.1 } }
+      }}
+      className="w-full"
+    >
+      <motion.div variants={sectionVariants} className="mb-12">
+        <h2 className="text-xs font-black text-slate-900 uppercase tracking-[0.3em] flex items-center gap-3">
+          <motion.span 
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-2 h-2 bg-amber-500 shrink-0"
+          ></motion.span>
+          Información Operativa
         </h2>
-        <p className="text-slate-500 text-sm mt-1.5 leading-relaxed max-w-2xl">
-          Tus datos personales, biografía profesional e información de valor que verán tus clientes al visitar tu perfil público. Asegúrate de incluir palabras clave relevantes.
+        <p className="text-slate-400 text-[11px] font-medium uppercase tracking-widest mt-4 leading-relaxed max-w-xl">
+          Especifique sus credenciales y biografía técnica. Esta información será procesada y expuesta en su galería pública.
         </p>
-      </div>
+      </motion.div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-16">
 
         {/* Image Cropper Modal */}
         {imageToCrop && (
@@ -173,25 +195,30 @@ export default function GeneralInfoForm() {
           />
         )}
 
-        {/* Avatar Upload */}
-        <div className="flex items-center gap-6 mb-8 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-          <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
-            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-emerald-50 bg-slate-100 flex items-center justify-center relative shadow-sm">
+        {/* Avatar Upload - Architectural Style */}
+        <motion.div variants={sectionVariants} className="flex flex-col md:flex-row items-center gap-10 bg-slate-50 p-10 border border-slate-100 shadow-sm">
+          <div className="relative group cursor-pointer shrink-0" onClick={handleAvatarClick}>
+            <motion.div 
+              whileHover={{ y: -5 }}
+              className="w-32 h-40 bg-slate-200 overflow-hidden relative shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
+            >
               {user?.avatarUrl ? (
-                <img src={user.avatarUrl} alt="Avatar" crossOrigin="anonymous" className="w-full h-full object-cover" />
+                <img src={user.avatarUrl} alt="Avatar" crossOrigin="anonymous" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
               ) : (
-                <User className="w-10 h-10 text-slate-400" />
-              )}
-              {isUpdatingAvatar && (
-                <div className="absolute inset-0 bg-white/60 flex items-center justify-center backdrop-blur-sm">
-                  <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
+                <div className="w-full h-full flex items-center justify-center text-slate-400">
+                  <span className="material-symbols-outlined text-4xl">person</span>
                 </div>
               )}
-              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <Camera className="w-6 h-6 text-white mb-1" />
-                <span className="text-[10px] text-white font-medium uppercase tracking-wider">Cambiar</span>
+              {isUpdatingAvatar && (
+                <div className="absolute inset-0 bg-white/80 flex items-center justify-center backdrop-blur-sm">
+                  <Loader2 className="w-6 h-6 animate-spin text-slate-900" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-slate-900/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera className="w-6 h-6 text-white mb-2" />
+                <span className="text-[9px] text-white font-black uppercase tracking-[0.2em]">Sustituir</span>
               </div>
-            </div>
+            </motion.div>
             <input 
               type="file" 
               ref={fileInputRef} 
@@ -200,51 +227,46 @@ export default function GeneralInfoForm() {
               onChange={handleFileChange} 
             />
           </div>
-          <div>
-            <h3 className="text-lg font-bold text-slate-900">Foto de Perfil</h3>
-            <p className="text-sm text-slate-500 mt-1 max-w-sm leading-relaxed">
-              Sube una foto clara y profesional en la que te veas bien. Recomendado 400x400px.
+          <div className="text-center md:text-left">
+            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-3">Identidad Visual</h3>
+            <p className="text-xs text-slate-400 font-medium leading-relaxed max-w-sm">
+              Sube una fotografía técnica con iluminación neutra. El formato arquitectónico resaltará su profesionalismo en el marketplace.
             </p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Basic Personal Info */}
-        <section>
-          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Datos Personales</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700">Nombre(s)</label>
-              <input
-                {...register("firstName")}
-                className={`w-full px-4 py-2.5 bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.firstName ? "border-red-300 ring-red-100" : "border-slate-200"}`}
-              />
-              {errors.firstName && <p className="text-xs text-red-500">{errors.firstName.message}</p>}
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700">Apellido Paterno</label>
-              <input
-                {...register("lastNameFather")}
-                className={`w-full px-4 py-2.5 bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.lastNameFather ? "border-red-300 ring-red-100" : "border-slate-200"}`}
-              />
-              {errors.lastNameFather && <p className="text-xs text-red-500">{errors.lastNameFather.message}</p>}
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700">Apellido Materno</label>
-              <input
-                {...register("lastNameMother")}
-                className={`w-full px-4 py-2.5 bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.lastNameMother ? "border-red-300 ring-red-100" : "border-slate-200"}`}
-              />
-              {errors.lastNameMother && <p className="text-xs text-red-500">{errors.lastNameMother.message}</p>}
-            </div>
+        <motion.section variants={sectionVariants}>
+          <div className="flex items-center gap-4 mb-8">
+            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] border-l-2 border-amber-500 pl-4">Identificación Legal</h3>
           </div>
-        </section>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { label: "Nombre de Pila", key: "firstName" },
+              { label: "Apellido Paterno", key: "lastNameFather" },
+              { label: "Apellido Materno", key: "lastNameMother" }
+            ].map((field) => (
+              <div key={field.key} className="space-y-3">
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">{field.label}</label>
+                <motion.input
+                  whileFocus={{ scale: 1.01, borderColor: "#f59e0b" }}
+                  {...register(field.key as any)}
+                  className={`w-full px-5 py-3.5 bg-white border font-bold text-slate-900 text-sm focus:outline-none transition-all ${errors[field.key as keyof FormData] ? "border-red-300" : "border-slate-100 shadow-sm"}`}
+                />
+                {errors[field.key as keyof FormData] && <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">{errors[field.key as keyof FormData]?.message}</p>}
+              </div>
+            ))}
+          </div>
+        </motion.section>
 
         {/* Contact & Location Info */}
-        <section>
-          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Contacto y Ubicación</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700">Teléfono</label>
+        <motion.section variants={sectionVariants}>
+          <div className="flex items-center gap-4 mb-8">
+            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] border-l-2 border-amber-500 pl-4">Logística y Ubicación</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="space-y-3">
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Contacto Directo</label>
               <Controller
                 name="phoneNumber"
                 control={control}
@@ -254,88 +276,87 @@ export default function GeneralInfoForm() {
                     value={field.value}
                     onChange={field.onChange}
                     className="w-full"
-                    inputClassName={`!w-full !h-[44px] !px-4 !rounded-r-xl !border-y !border-r !border-l-0 !bg-slate-50 !text-slate-900 !text-sm !transition-all !duration-200 focus:!bg-white focus:!ring-2 focus:!ring-emerald-500/50 ${
-                      errors.phoneNumber ? "!border-red-400" : "!border-slate-200"
+                    inputClassName={`!w-full !h-[50px] !px-5 !rounded-none !border-y !border-r !border-l-0 !bg-white !text-slate-900 !text-sm !font-bold !transition-all focus:!ring-1 focus:!ring-amber-500 ${
+                      errors.phoneNumber ? "!border-red-300" : "!border-slate-100 !shadow-sm"
                     }`}
                     countrySelectorStyleProps={{
-                      buttonClassName: `!h-[44px] !rounded-l-xl !border !bg-slate-50 !transition-all ${
-                        errors.phoneNumber ? "!border-red-400" : "!border-slate-200 hover:!border-slate-300"
+                      buttonClassName: `!h-[50px] !rounded-none !border !bg-slate-50 !transition-all ${
+                        errors.phoneNumber ? "!border-red-300" : "!border-slate-100"
                       }`,
                     }}
                   />
                 )}
               />
-              {errors.phoneNumber && <p className="text-xs text-red-500 mt-1">{errors.phoneNumber.message}</p>}
+              {errors.phoneNumber && <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">{errors.phoneNumber.message}</p>}
             </div>
             
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700 flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-emerald-600" /> Ciudad
-              </label>
-              <input
+            <div className="space-y-3">
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Ciudad</label>
+              <motion.input
+                whileFocus={{ scale: 1.01, borderColor: "#f59e0b" }}
                 {...register("city")}
-                className={`w-full px-4 py-2.5 bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.city ? "border-red-300" : "border-slate-200"}`}
+                className={`w-full px-5 py-3.5 bg-white border font-bold text-slate-900 text-sm focus:outline-none transition-all ${errors.city ? "border-red-300" : "border-slate-100 shadow-sm"}`}
               />
-              {errors.city && <p className="text-xs text-red-500">{errors.city.message}</p>}
+              {errors.city && <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">{errors.city.message}</p>}
             </div>
             
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700">País</label>
-              <input
+            <div className="space-y-3">
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">País de Operación</label>
+              <motion.input
+                whileFocus={{ scale: 1.01, borderColor: "#f59e0b" }}
                 {...register("country")}
-                className={`w-full px-4 py-2.5 bg-slate-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all ${errors.country ? "border-red-300" : "border-slate-200"}`}
+                className={`w-full px-5 py-3.5 bg-white border font-bold text-slate-900 text-sm focus:outline-none transition-all ${errors.country ? "border-red-300" : "border-slate-100 shadow-sm"}`}
               />
-              {errors.country && <p className="text-xs text-red-500">{errors.country.message}</p>}
+              {errors.country && <p className="text-[9px] font-black text-red-500 uppercase tracking-widest">{errors.country.message}</p>}
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Bio (Rich Text Editor) */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-emerald-600" />
-              Biografía Profesional
-            </h3>
+        <motion.section variants={sectionVariants}>
+          <div className="flex items-center gap-4 mb-8">
+            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] border-l-2 border-amber-500 pl-4">Manifiesto Profesional</h3>
           </div>
           <Controller
             name="bio"
             control={control}
             render={({ field }) => (
-              <div className={errors.bio ? "ring-2 ring-red-400/50 rounded-lg" : ""}>
+              <motion.div 
+                whileFocus={{ boxShadow: "0 0 0 1px #f59e0b" }}
+                className={`overflow-hidden border transition-all ${errors.bio ? "border-red-300 ring-1 ring-red-100" : "border-slate-100 shadow-sm"}`}
+              >
                 <RichTextEditor
                   value={field.value || ""}
                   onChange={field.onChange}
-                  className="shadow-sm border border-slate-200 rounded-lg"
+                  className="bg-white"
                 />
-              </div>
+              </motion.div>
             )}
           />
-          {errors.bio && <p className="text-xs text-red-500 mt-2">{errors.bio.message}</p>}
-        </section>
+          {errors.bio && <p className="text-[9px] font-black text-red-500 uppercase tracking-widest mt-4">{errors.bio.message}</p>}
+        </motion.section>
 
         {/* Rates & Bar Info */}
-        <section className="bg-slate-50/50 p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm mt-8">
-          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-6">Honorarios y Colegiatura</h3>
+        <motion.section variants={sectionVariants} className="bg-slate-50 p-10 border border-slate-100 shadow-sm mt-12">
+          <div className="flex items-center gap-4 mb-10">
+            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em]">Honorarios y Acreditación</h3>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="space-y-2 col-span-1">
-              <label className="block text-sm font-medium text-slate-700 flex items-center gap-1">
-                <DollarSign className="w-4 h-4 text-emerald-600" /> Tarifa Base / hora
-              </label>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div className="space-y-3 col-span-1">
+              <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Costo por Hora</label>
               <input
                 type="number"
                 {...register("hourlyRate", { valueAsNumber: true })}
-                className={`w-full px-4 py-2.5 bg-white border rounded-xl focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all ${errors.hourlyRate ? "border-red-300" : "border-slate-200"}`}
+                className={`w-full px-5 py-3.5 bg-white border font-black text-slate-900 text-sm focus:ring-1 focus:ring-amber-500 outline-none transition-all ${errors.hourlyRate ? "border-red-300" : "border-slate-200"}`}
               />
-              {errors.hourlyRate && <p className="text-xs text-red-500">{errors.hourlyRate.message}</p>}
             </div>
             
-            <div className="space-y-2 col-span-1">
-              <label className="block text-sm font-medium text-slate-700">Moneda</label>
+            <div className="space-y-3 col-span-1">
+              <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Divisa</label>
               <select
                 {...register("currency")}
-                className={`w-full px-4 py-2.5 bg-white border rounded-xl focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all ${errors.currency ? "border-red-300" : "border-slate-200"}`}
+                className="w-full px-5 py-3.5 bg-white border border-slate-200 font-bold text-slate-900 text-sm focus:ring-1 focus:ring-amber-500 outline-none transition-all"
               >
                 <option value="USD">USD ($)</option>
                 <option value="MXN">MXN ($)</option>
@@ -345,54 +366,51 @@ export default function GeneralInfoForm() {
               </select>
             </div>
             
-            <div className="space-y-2 col-span-1">
-              <label className="block text-sm font-medium text-slate-700">
-                N° Colegiatura
-              </label>
+            <div className="space-y-3 col-span-1">
+              <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">N° Colegiatura</label>
               <input
                 {...register("barRegistrationNumber")}
-                placeholder="Ej. CAL 12345"
-                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
+                className="w-full px-5 py-3.5 bg-white border border-slate-200 font-bold text-slate-900 text-sm focus:ring-1 focus:ring-amber-500 outline-none transition-all"
               />
             </div>
             
-            <div className="space-y-2 col-span-1">
-              <label className="block text-sm font-medium text-slate-700">
-                Colegio de Abogados
-              </label>
+            <div className="space-y-3 col-span-1">
+              <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Colegio</label>
               <input
                 {...register("barAssociation")}
-                placeholder="Ej. Ilustre Colegio..."
-                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all"
+                className="w-full px-5 py-3.5 bg-white border border-slate-200 font-bold text-slate-900 text-sm focus:ring-1 focus:ring-amber-500 outline-none transition-all"
               />
             </div>
           </div>
-        </section>
+        </motion.section>
 
-        {/* Actions */}
-        <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-sm order-2 sm:order-1">
-            {message && (
-              <div className={`px-4 py-2 rounded-lg font-medium ${message.type === "success" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
-                {message.text}
-              </div>
-            )}
-            {Object.keys(errors).length > 0 && !message && (
-              <span className="text-red-500 bg-red-50 border border-red-200 px-4 py-2 rounded-lg inline-block">
-                Por favor corrige los errores resaltados en el formulario.
-              </span>
-            )}
+        {/* Actions - Architectural Block */}
+        <motion.div variants={sectionVariants} className="pt-12 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-8">
+          <div className="flex-1">
+            <AnimatePresence>
+              {message && (
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className={`px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] border-l-4 ${message.type === "success" ? "bg-slate-900 text-white border-amber-500" : "bg-red-50 text-red-700 border-red-500"}`}
+                >
+                  {message.text}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02, backgroundColor: "#000" }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isSaving}
-            className="w-full sm:w-auto order-1 sm:order-2 flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3 rounded-xl font-medium transition-all shadow-md shadow-slate-900/10 hover:shadow-lg disabled:opacity-50"
+            className="w-full sm:w-auto bg-slate-900 text-white px-12 py-5 text-[10px] font-black uppercase tracking-[0.3em] transition-all shadow-2xl disabled:opacity-50"
           >
-            {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-            Guardar Cambios
-          </button>
-        </div>
+            {isSaving ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Ejecutar Cambios"}
+          </motion.button>
+        </motion.div>
       </form>
-    </div>
+    </motion.div>
   );
 }

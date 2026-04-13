@@ -1,5 +1,12 @@
 import api from "@/lib/api";
-import { DocumentResponse, UploadDocumentRequest } from "../types";
+import { 
+  DocumentResponse, 
+  UploadDocumentRequest,
+  DocumentGeneratorRequest,
+  DocumentGeneratorResponse,
+  DocumentUpdateRequest,
+  TemplatePublicResponse
+} from "../types";
 
 const BASE_URL = "/documents";
 
@@ -14,12 +21,51 @@ export const documentService = {
     return data;
   },
 
-  getTemplates: async (): Promise<DocumentResponse[]> => {
+  getTemplates: async (): Promise<TemplatePublicResponse[]> => {
     const { data } = await api.get(`${BASE_URL}/templates`);
     return data;
   },
 
   archiveDocument: async (documentId: string): Promise<void> => {
     await api.delete(`${BASE_URL}/${documentId}`);
+  },
+
+  /** Live preview — renders template with data but does NOT save */
+  previewDocument: async (payload: DocumentGeneratorRequest): Promise<DocumentGeneratorResponse> => {
+    const { data } = await api.post(`${BASE_URL}/preview`, payload);
+    return data;
+  },
+
+  /** Full generation — renders AND persists as draft */
+  generateDocument: async (payload: DocumentGeneratorRequest): Promise<DocumentGeneratorResponse> => {
+    const { data } = await api.post(`${BASE_URL}/generate`, payload);
+    return data;
+  },
+
+  updateDocumentContent: async (documentId: string, payload: DocumentUpdateRequest): Promise<void> => {
+    await api.put(`${BASE_URL}/${documentId}/content`, payload);
+  },
+
+  getDocument: async (documentId: string): Promise<DocumentResponse> => {
+    const { data } = await api.get(`${BASE_URL}/${documentId}`);
+    return data;
+  },
+
+  getDocumentsByMatter: async (matterPublicId: string): Promise<DocumentResponse[]> => {
+    const { data } = await api.get(`${BASE_URL}/matter/${matterPublicId}`);
+    return data;
+  },
+
+  uploadMatterDocument: async (matterPublicId: string, file: File): Promise<DocumentResponse> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("matterPublicId", matterPublicId);
+
+    const { data } = await api.post(`${BASE_URL}/upload-matter`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+    return data;
   }
 };

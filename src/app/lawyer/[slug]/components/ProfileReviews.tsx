@@ -92,9 +92,9 @@ export const ProfileReviews: React.FC<ProfileReviewsProps> = ({
             <div className="flex-1 relative">
               {review.isFeatured && (
                 <div className="absolute -top-3 -right-3 z-20">
-                  <div className="flex items-center gap-1.5 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-lg">
-                    <Sparkles className="w-3 h-3 text-blue-400 fill-blue-400" />
-                    <span>Reseña Destacada</span>
+                  <div className="flex items-center gap-1.5 bg-slate-900 text-white text-[9px] font-black uppercase tracking-[0.3em] px-4 py-2 shadow-2xl border-l-2 border-amber-500">
+                    <Sparkles className="w-3 h-3 text-amber-500 fill-amber-500" />
+                    <span>Recomendado</span>
                   </div>
                 </div>
               )}
