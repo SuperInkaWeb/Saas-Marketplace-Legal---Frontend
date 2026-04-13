@@ -3,18 +3,21 @@
 
 @theme {
   --color-primary: #000000;
-  --color-secondary: #3755c3;
-  --color-tertiary: #000000;
-  --color-background: #faf8ff;
-  --color-surface: #faf8ff;
-  --color-on-surface: #141a32;
-  --color-on-surface-variant: #46464d;
-  --color-primary-container: #141a32;
+  --color-secondary: #545f72;
+  --color-tertiary: #735c00;
+  --color-accent: #D4AF37;
+  --color-background: #f8f9fa;
+  --color-surface: #f8f9fa;
+  --color-on-surface: #191c1d;
+  --color-on-surface-variant: #43474d;
+  --color-primary-container: #021c36;
   --color-on-primary: #ffffff;
-  --color-surface-container-low: #f3f2ff;
+  --color-surface-container-low: #f3f4f5;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-highest: #dce1ff;
-  --color-surface-container-high: #e3e7ff;
+  --color-surface-container-highest: #e1e3e4;
+  --color-surface-container-high: #e7e8e9;
+  --color-outline-variant: #c4c6ce;
+  --color-tertiary-fixed: #ffe088;
   
   --font-manrope: "Manrope", sans-serif;
   --font-inter: "Inter", sans-serif;

@@ -5,114 +5,151 @@ import { useLogout } from "@/modules/auth/hooks";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
+import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
   const { logout } = useLogout();
   const hydrated = useAuthStore((s) => s.hydrated);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navLinks = [
+    { name: "Marketplace", href: "/marketplace" },
+    { name: "Soluciones", href: "#" },
+    { name: "Actualidad", href: "#" },
+    { name: "Nosotros", href: "#" },
+  ];
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm font-manrope antialiased tracking-tight">
-      <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-        <Link href="/" className="text-2xl font-black tracking-tighter text-slate-900">
-          Legit
+    <motion.nav 
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
+      className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-outline-variant/10"
+    >
+      <div className="flex justify-between items-center w-full px-6 lg:px-12 py-5 max-w-[1920px] mx-auto">
+        <Link 
+          href="/" 
+          className="font-manrope font-black tracking-tighter text-2xl text-primary uppercase transition-transform active:scale-95"
+        >
+          AbogHub
         </Link>
-        <div className="hidden md:flex items-center space-x-8">
-          <Link 
-            href="/" 
-            className="text-slate-600 font-medium hover:text-slate-900 transition-colors"
-          >
-            Inicio
-          </Link>
-          <Link 
-            href="/marketplace" 
-            className="text-blue-700 font-bold border-b-2 border-blue-700 pb-1"
-          >
-            Buscar Abogados
-          </Link>
-          <Link
-            href="/marketplace/cases"
-            className="text-slate-600 font-medium hover:text-slate-900 transition-colors"
-          >
-            Casos Legales
-          </Link>
-          <a className="text-slate-600 font-medium hover:text-slate-900 transition-colors" href="#">Precios</a>
-          <a className="text-slate-600 font-medium hover:text-slate-900 transition-colors" href="#">Nosotros</a>
+
+        <div className="hidden md:flex items-center gap-10">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link 
+                key={link.name}
+                href={link.href} 
+                className="relative group py-2"
+              >
+                <span className={`font-manrope tracking-[0.1em] font-bold uppercase text-[11px] transition-colors duration-300 ${isActive ? "text-primary" : "text-secondary hover:text-primary"}`}>
+                  {link.name}
+                </span>
+                <motion.div 
+                  initial={false}
+                  animate={{ width: isActive ? "100%" : "0%" }}
+                  whileHover={{ width: "100%" }}
+                  className="absolute bottom-0 left-0 h-[2px] bg-accent"
+                />
+              </Link>
+            );
+          })}
         </div>
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center gap-6">
           {hydrated && token && (
-            <div className="mr-2">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mr-2">
               <NotificationCenter />
-            </div>
+            </motion.div>
           )}
+          
           {hydrated && token ? (
             <div className="relative">
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center gap-2 text-slate-700 hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 font-semibold rounded-lg text-sm px-3 py-2 transition-all"
+                className="flex items-center gap-4 group"
               >
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">
-                  {user?.fullName?.charAt(0).toUpperCase() || "U"}
+                <div className="hidden lg:flex flex-col items-end leading-none text-right">
+                  <span className="font-manrope text-[10px] font-black tracking-[0.2em] uppercase text-primary">
+                    {user?.fullName?.split(" ")[0]}
+                  </span>
+                  <span className="font-manrope text-[9px] text-accent tracking-[0.2em] uppercase mt-1 font-bold">
+                    Portal Activo
+                  </span>
                 </div>
-                <span className="hidden sm:inline-block font-bold">{user?.fullName?.split(" ")[0]}</span>
+                <div className="w-10 h-10 bg-primary flex items-center justify-center text-white font-black text-sm border-2 border-transparent group-hover:border-accent transition-all overflow-hidden duration-500">
+                   {user?.fullName?.charAt(0).toUpperCase() || "U"}
+                </div>
               </button>
 
-              {isProfileOpen && (
-                <>
-                  <div className="fixed inset-0 z-10" onClick={() => setIsProfileOpen(false)}></div>
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 z-20 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="px-4 py-3 border-b border-gray-50 mb-1">
-                      <p className="text-sm font-black text-slate-900 truncate">{user?.fullName}</p>
-                      <p className="text-xs text-slate-500 truncate">{user?.email}</p>
-                    </div>
-                    <Link
-                      href="/dashboard"
+              <AnimatePresence>
+                {isProfileOpen && (
+                  <>
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="fixed inset-0 z-10" 
                       onClick={() => setIsProfileOpen(false)}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors font-bold"
+                    ></motion.div>
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      className="absolute right-0 mt-6 w-64 bg-white border border-outline-variant/15 shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-20 overflow-hidden"
                     >
-                      Panel de Control
-                    </Link>
-                    <button
-                      onClick={() => {
-                        setIsProfileOpen(false);
-                        logout();
-                      }}
-                      className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-bold"
-                    >
-                      Cerrar Sesión
-                    </button>
-                  </div>
-                </>
-              )}
+                      <div className="px-6 py-6 border-b border-outline-variant/10 bg-surface-container-low/30 text-right">
+                        <p className="font-manrope text-[11px] font-black text-primary truncate uppercase tracking-[0.1em]">
+                          {user?.fullName}
+                        </p>
+                        <p className="font-manrope text-[9px] text-secondary truncate tracking-[0.1em] uppercase mt-1">
+                          {user?.email}
+                        </p>
+                      </div>
+                      <div className="py-2">
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setIsProfileOpen(false)}
+                          className="flex items-center justify-end px-6 py-4 font-manrope text-[10px] font-black tracking-widest uppercase text-secondary hover:text-primary hover:bg-surface-container-low/50 transition-all"
+                        >
+                          Mi Dashboard
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setIsProfileOpen(false);
+                            logout();
+                          }}
+                          className="flex items-center justify-end w-full text-right px-6 py-4 font-manrope text-[10px] font-black tracking-widest uppercase text-error hover:bg-error/5 transition-all border-t border-outline-variant/10"
+                        >
+                          Cerrar Sesión
+                        </button>
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
           ) : (
-            <>
-              <Link
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Link 
                 href="/login"
-                className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all px-4 py-2"
+                className="bg-primary text-white px-10 py-4 font-manrope text-[10px] font-black tracking-[0.2em] uppercase hover:bg-accent transition-all inline-block"
               >
-                Login
+                Acceso Portal
               </Link>
-              <Link
-                href="/register"
-                className="px-5 py-2.5 bg-primary-container text-on-primary rounded-lg text-sm font-bold shadow-md hover:opacity-90 transition-all"
-              >
-                Unirse
-              </Link>
-            </>
+            </motion.div>
           )}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-slate-500"
-          >
-            <span className="material-symbols-outlined">menu</span>
-          </button>
         </div>
       </div>
-      <div className="bg-slate-100 h-px w-full"></div>
-    </nav>
+    </motion.nav>
   );
 }

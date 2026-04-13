@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Star, MapPin, ShieldCheck, DollarSign, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { LawyerSearchResponse } from "../../modules/marketplace/types";
 
@@ -13,79 +12,73 @@ export function LawyerCard({ lawyer }: LawyerCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      className="group relative bg-surface-container-lowest rounded-xl overflow-hidden transition-all duration-300 shadow-sm hover:shadow-xl"
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="group bg-surface-container-lowest p-6 lg:p-10 flex flex-col sm:flex-row gap-8 items-start relative transition-all duration-500 hover:bg-white border-b-2 border-transparent hover:border-accent"
     >
-      <div className="aspect-[4/3] relative overflow-hidden bg-surface-container-low">
+      <div className="w-full sm:w-48 h-64 flex-shrink-0 bg-surface-container-high relative overflow-hidden">
         <img
           src={lawyer.avatarUrl || "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800"}
           alt={lawyer.fullName}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-110 group-hover:scale-100"
         />
         {lawyer.isVerified && (
-          <div className="absolute top-4 left-4 bg-primary-container/90 backdrop-blur-md text-white px-3 py-1 rounded text-[10px] font-bold tracking-widest uppercase shadow-lg">
-            Premium Expert
+          <div className="absolute bottom-0 left-0 bg-primary px-3 py-1">
+            <span className="text-[9px] font-bold text-white uppercase tracking-widest">Membresía Premium</span>
           </div>
         )}
       </div>
 
-      <div className="p-6">
+      <div className="flex-1 flex flex-col h-full w-full">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h3 className="text-xl font-black tracking-tight text-primary flex items-center gap-2 font-manrope">
+            <h3 className="text-2xl font-bold tracking-tight text-primary font-manrope uppercase">
               {lawyer.fullName}
-              {lawyer.isVerified && (
-                <span 
-                  className="material-symbols-outlined text-secondary text-lg" 
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  verified
-                </span>
-              )}
             </h3>
-            <p className="text-sm font-medium text-on-surface-variant">
-              {lawyer.specialties?.[0] || "Abogado Generalista"}
+            <p className="font-inter text-xs uppercase tracking-widest text-secondary mt-1">
+              {lawyer.specialties?.[0] || "Consultor Legal"}
             </p>
           </div>
-          <div className="flex items-center gap-1 bg-surface-container-low px-2 py-1 rounded-lg">
+          <div className="flex items-center gap-1 bg-surface-container-low px-2 py-1">
             <span 
-              className="material-symbols-outlined text-amber-500 text-sm" 
+              className="material-symbols-outlined text-accent text-xs" 
               style={{ fontVariationSettings: "'FILL' 1" }}
             >
               star
             </span>
-            <span className="text-xs font-bold text-on-surface">{lawyer.ratingAvg?.toFixed(1) || "5.0"}</span>
+            <span className="text-xs font-bold text-primary">{lawyer.ratingAvg?.toFixed(1) || "5.0"}</span>
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-6">
-          {lawyer.specialties?.slice(0, 2).map((s) => (
-            <span 
-              key={s} 
-              className="px-2 py-1 bg-surface-container text-secondary text-[10px] font-black rounded-sm uppercase tracking-wider"
+        <p className="text-xs text-secondary/70 font-inter leading-relaxed mb-8 line-clamp-3">
+          Especialista en {lawyer.specialties?.join(", ") || "asesoría legal integral"}. 
+          Comprometido con la precisión técnica y la excelencia en casos de alta complejidad.
+        </p>
+
+        <div className="mt-auto">
+          <div className="flex flex-wrap gap-4 mb-8">
+            {lawyer.specialties?.slice(0, 2).map((s) => (
+              <span 
+                key={s} 
+                className="bg-surface-container-low px-3 py-1 text-[9px] font-bold uppercase tracking-widest border-l-2 border-accent"
+              >
+                {s}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div>
+              <p className="text-[10px] text-secondary/40 uppercase tracking-widest">Tarifa por Hora</p>
+              <p className="text-lg font-bold font-manrope">{lawyer.currency} {lawyer.hourlyRate || "150"}</p>
+            </div>
+            <Link
+              href={`/lawyer/${lawyer.slug}`}
+              className="w-full sm:w-auto bg-primary text-on-primary px-8 py-4 text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-accent transition-all text-center"
             >
-              {s}
-            </span>
-          ))}
-        </div>
-
-        <div className="bg-surface-container-low h-px w-full mb-6"></div>
-
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="block text-[10px] uppercase font-bold tracking-widest text-on-surface-variant">Desde</span>
-            <span className="text-lg font-black text-primary">
-              {lawyer.currency || "USD"} {lawyer.hourlyRate || "150"}
-              <small className="text-xs font-medium ml-1">/h</small>
-            </span>
+              Reservar Consulta
+            </Link>
           </div>
-          <Link
-            href={`/lawyer/${lawyer.slug}`}
-            className="px-6 py-3 bg-primary-container text-on-primary text-xs font-black uppercase tracking-widest rounded-lg hover:bg-primary transition-all shadow-md hover:shadow-lg"
-          >
-            Ver Perfil
-          </Link>
         </div>
       </div>
     </motion.div>
