@@ -16,12 +16,18 @@ export function LawyerCard({ lawyer }: LawyerCardProps) {
       viewport={{ once: true }}
       className="group bg-surface-container-lowest p-6 lg:p-10 flex flex-col sm:flex-row gap-8 items-start relative transition-all duration-500 hover:bg-white border-b-2 border-transparent hover:border-accent"
     >
-      <div className="w-full sm:w-48 h-64 flex-shrink-0 bg-surface-container-high relative overflow-hidden">
-        <img
-          src={lawyer.avatarUrl || "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800"}
-          alt={lawyer.fullName}
-          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-110 group-hover:scale-100"
-        />
+      <div className="w-full sm:w-48 h-64 flex-shrink-0 bg-surface-container-high relative overflow-hidden flex items-center justify-center">
+        {lawyer.avatarUrl ? (
+          <img
+            src={lawyer.avatarUrl}
+            alt={lawyer.fullName}
+            className="w-full h-full object-cover transition-all duration-700 scale-110 group-hover:scale-100"
+          />
+        ) : (
+          <div className="w-full h-full bg-slate-100 flex items-center justify-center">
+            <span className="material-symbols-outlined text-6xl text-slate-300">account_circle</span>
+          </div>
+        )}
         {lawyer.isVerified && (
           <div className="absolute bottom-0 left-0 bg-primary px-3 py-1">
             <span className="text-[9px] font-bold text-white uppercase tracking-widest">Membresía Premium</span>
@@ -50,9 +56,8 @@ export function LawyerCard({ lawyer }: LawyerCardProps) {
           </div>
         </div>
 
-        <p className="text-xs text-secondary/70 font-inter leading-relaxed mb-8 line-clamp-3">
-          Especialista en {lawyer.specialties?.join(", ") || "asesoría legal integral"}. 
-          Comprometido con la precisión técnica y la excelencia en casos de alta complejidad.
+        <p className="text-xs text-secondary/70 font-inter leading-relaxed mb-8 line-clamp-3 italic">
+          {lawyer.bio || "Este arquitecto legal prefiere mantener una reserva estratégica sobre su biografía técnica pública."}
         </p>
 
         <div className="mt-auto">
@@ -70,13 +75,17 @@ export function LawyerCard({ lawyer }: LawyerCardProps) {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div>
               <p className="text-[10px] text-secondary/40 uppercase tracking-widest">Tarifa por Hora</p>
-              <p className="text-lg font-bold font-manrope">{lawyer.currency} {lawyer.hourlyRate || "150"}</p>
+              <p className="text-lg font-bold font-manrope">
+                {lawyer.hourlyRate && lawyer.hourlyRate > 0 
+                  ? `${lawyer.currency} ${lawyer.hourlyRate}` 
+                  : "Por definir"}
+              </p>
             </div>
             <Link
               href={`/lawyer/${lawyer.slug}`}
               className="w-full sm:w-auto bg-primary text-on-primary px-8 py-4 text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-accent transition-all text-center"
             >
-              Reservar Consulta
+              Ver Perfil
             </Link>
           </div>
         </div>

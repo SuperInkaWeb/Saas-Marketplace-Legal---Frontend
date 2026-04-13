@@ -12,6 +12,7 @@ export interface LawyerSearchResponse {
   reviewCount: number;
   isVerified: boolean;
   specialties: string[];
+  bio?: string;
 }
 
 export interface SpecialtyResponse {

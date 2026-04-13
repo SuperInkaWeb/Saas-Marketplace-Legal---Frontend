@@ -48,36 +48,27 @@ export default function LawyerPublicProfile() {
   return (
     <>
       <Navbar />
-      <div className={`${inter.className} bg-white text-slate-700 min-h-screen bg-sophisticated antialiased`}>
+      <div className={`${inter.className} bg-surface text-slate-700 min-h-screen antialiased`}>
         <style jsx global>{`
           /* Custom scrollbar */
           ::-webkit-scrollbar {
-              width: 8px;
+              width: 6px;
           }
           ::-webkit-scrollbar-track {
-              background: #f1f5f9;
+              background: transparent;
           }
           ::-webkit-scrollbar-thumb {
               background: #cbd5e1;
-              border-radius: 4px;
+              border-radius: 10px;
           }
           ::-webkit-scrollbar-thumb:hover {
               background: #94a3b8;
           }
 
-          /* Sophisticated light background */
-          .bg-sophisticated {
-              background: linear-gradient(135deg, rgba(255, 255, 255, 0.97) 0%, rgba(248, 250, 252, 0.95) 100%), 
-                          url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=2000');
-              background-size: cover;
-              background-position: center;
-              background-attachment: fixed;
-          }
-
           .glass-panel {
-              background: rgba(255, 255, 255, 0.8);
-              backdrop-filter: blur(12px);
-              border: 1px solid rgba(0, 0, 0, 0.05);
+              background: #ffffff;
+              border: 1px solid rgba(0, 0, 0, 0.03);
+              box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
           }
 
           .hero-border {
