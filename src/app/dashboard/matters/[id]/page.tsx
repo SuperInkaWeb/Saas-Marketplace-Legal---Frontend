@@ -5,17 +5,19 @@ import { useParams, useRouter } from "next/navigation";
 import { matterService } from "@/modules/matter/services/matterService";
 import { matterEventService } from "@/modules/matter/services/matterEventService";
 import { matterTaskService } from "@/modules/matter/services/matterTaskService";
+import { matterParticipantService } from "@/modules/matter/services/matterParticipantService";
 import { documentService } from "@/modules/document/services/documentService";
 import { 
   MatterResponse, MatterStatus, MatterEventResponse, 
-  MatterTaskResponse, MatterEventType 
+  MatterTaskResponse, MatterEventType, MatterParticipantResponse,
+  ParticipantRole, PARTICIPANT_ROLE_LABELS
 } from "@/modules/matter/types";
 import { DocumentResponse } from "@/modules/document/types";
 import { 
   ArrowLeft, Briefcase, Calendar, ChevronRight, Clock, 
   FileText, MessagesSquare, Scale, UserCircle, CheckCircle2,
   AlertCircle, Plus, LayoutDashboard, History, Settings2, Trash2,
-  Paperclip, ExternalLink
+  Paperclip, ExternalLink, Users, Gavel, Building2, Eye, Phone, Mail, X
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -33,16 +35,18 @@ export default function MatterDetailPage() {
   
   const [matter, setMatter] = useState<MatterResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"RESUMEN" | "DOCUMENTOS" | "TAREAS" | "FACTURACION">("RESUMEN");
+  const [activeTab, setActiveTab] = useState<"RESUMEN" | "DOCUMENTOS" | "TAREAS" | "PARTICIPANTES" | "FACTURACION">("RESUMEN");
 
   // Data States
   const [events, setEvents] = useState<MatterEventResponse[]>([]);
   const [tasks, setTasks] = useState<MatterTaskResponse[]>([]);
   const [documents, setDocuments] = useState<DocumentResponse[]>([]);
+  const [participants, setParticipants] = useState<MatterParticipantResponse[]>([]);
 
   // Modal States
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [isParticipantModalOpen, setIsParticipantModalOpen] = useState(false);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<DocumentResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,12 +69,23 @@ export default function MatterDetailPage() {
     dueDate: ""
   });
 
+  const [participantForm, setParticipantForm] = useState({
+    fullName: "",
+    role: "OPPOSING_COUNSEL" as ParticipantRole,
+    email: "",
+    phone: "",
+    firmOrInstitution: "",
+    professionalId: "",
+    notes: ""
+  });
+
   useEffect(() => {
     if (publicId) {
       fetchMatter();
       fetchEvents();
       fetchTasks();
       fetchDocuments();
+      fetchParticipants();
     }
   }, [publicId]);
 
@@ -105,6 +120,13 @@ export default function MatterDetailPage() {
     try {
       const data = await documentService.getDocumentsByMatter(publicId);
       setDocuments(data);
+    } catch (e) { console.error(e); }
+  };
+
+  const fetchParticipants = async () => {
+    try {
+      const data = await matterParticipantService.getParticipants(publicId);
+      setParticipants(data);
     } catch (e) { console.error(e); }
   };
 
@@ -185,6 +207,62 @@ export default function MatterDetailPage() {
   const handlePreview = (doc: DocumentResponse) => {
     setSelectedDocument(doc);
     setIsPreviewModalOpen(true);
+  };
+
+  const handleAddParticipant = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsSubmitting(true);
+      await matterParticipantService.addParticipant(publicId, {
+        fullName: participantForm.fullName,
+        role: participantForm.role,
+        email: participantForm.email || undefined,
+        phone: participantForm.phone || undefined,
+        firmOrInstitution: participantForm.firmOrInstitution || undefined,
+        professionalId: participantForm.professionalId || undefined,
+        notes: participantForm.notes || undefined
+      });
+      toast.success("Participante agregado al expediente");
+      setIsParticipantModalOpen(false);
+      setParticipantForm({ fullName: "", role: "OPPOSING_COUNSEL", email: "", phone: "", firmOrInstitution: "", professionalId: "", notes: "" });
+      fetchParticipants();
+    } catch (e) {
+      toast.error("Error al agregar participante");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRemoveParticipant = async (participantPublicId: string) => {
+    try {
+      await matterParticipantService.removeParticipant(participantPublicId);
+      toast.success("Participante removido");
+      fetchParticipants();
+    } catch (e) {
+      toast.error("Error al remover participante");
+    }
+  };
+
+  const getRoleIcon = (role: ParticipantRole) => {
+    switch (role) {
+      case 'JUDGE': return <Gavel className="w-4 h-4" />;
+      case 'COURT': return <Building2 className="w-4 h-4" />;
+      case 'WITNESS': return <Eye className="w-4 h-4" />;
+      case 'EXPERT': return <Scale className="w-4 h-4" />;
+      default: return <UserCircle className="w-4 h-4" />;
+    }
+  };
+
+  const getRoleColor = (role: ParticipantRole) => {
+    switch (role) {
+      case 'OPPOSING_COUNSEL': return 'bg-rose-50 text-rose-600 border-rose-200';
+      case 'OPPOSING_PARTY': return 'bg-orange-50 text-orange-600 border-orange-200';
+      case 'JUDGE': return 'bg-purple-50 text-purple-600 border-purple-200';
+      case 'COURT': return 'bg-indigo-50 text-indigo-600 border-indigo-200';
+      case 'WITNESS': return 'bg-cyan-50 text-cyan-600 border-cyan-200';
+      case 'EXPERT': return 'bg-teal-50 text-teal-600 border-teal-200';
+      default: return 'bg-slate-50 text-slate-600 border-slate-200';
+    }
   };
 
   const getStatusConfig = (status: MatterStatus) => {
@@ -286,6 +364,7 @@ export default function MatterDetailPage() {
         <div className="lg:col-span-1 space-y-2">
           {[
             { id: "RESUMEN", label: "Resumen", icon: History },
+            { id: "PARTICIPANTES", label: "Participantes", icon: Users, badge: participants.length },
             { id: "DOCUMENTOS", label: "Documentos", icon: FileText },
             { id: "TAREAS", label: "Tareas", icon: CheckCircle2 },
             { id: "FACTURACION", label: "Facturación", icon: Briefcase }
@@ -297,6 +376,11 @@ export default function MatterDetailPage() {
             >
               <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? "text-indigo-200" : "text-slate-400"}`} />
               {tab.label}
+              {"badge" in tab && (tab as any).badge > 0 && (
+                <span className={`ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full ${activeTab === tab.id ? "bg-white/20 text-white" : "bg-indigo-100 text-indigo-600"}`}>
+                  {(tab as any).badge}
+                </span>
+              )}
             </button>
           ))}
           
@@ -455,13 +539,102 @@ export default function MatterDetailPage() {
                 </div>
               )}
               
+              {activeTab === "PARTICIPANTES" && (
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                      <Users className="w-5 h-5 text-indigo-500" /> Participantes del Caso
+                    </h3>
+                    <button 
+                      onClick={() => setIsParticipantModalOpen(true)}
+                      className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors flex items-center gap-1"
+                    >
+                      <Plus className="w-3 h-3" /> Agregar
+                    </button>
+                  </div>
+
+                  {participants.length > 0 ? (
+                    <div className="space-y-3">
+                      {participants.map((p) => (
+                        <motion.div
+                          key={p.publicId}
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex items-start gap-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all group"
+                        >
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${getRoleColor(p.role)}`}>
+                            {getRoleIcon(p.role)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="text-sm font-bold text-slate-900">{p.fullName}</h4>
+                              <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${getRoleColor(p.role)}`}>
+                                {PARTICIPANT_ROLE_LABELS[p.role]}
+                              </span>
+                            </div>
+                            {p.firmOrInstitution && (
+                              <p className="text-xs text-slate-500 font-medium flex items-center gap-1 mb-1">
+                                <Building2 className="w-3 h-3" /> {p.firmOrInstitution}
+                              </p>
+                            )}
+                            <div className="flex flex-wrap items-center gap-3 mt-2">
+                              {p.email && (
+                                <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+                                  <Mail className="w-3 h-3" /> {p.email}
+                                </span>
+                              )}
+                              {p.phone && (
+                                <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+                                  <Phone className="w-3 h-3" /> {p.phone}
+                                </span>
+                              )}
+                              {p.professionalId && (
+                                <span className="text-[11px] text-slate-400 font-medium">
+                                  Cédula: {p.professionalId}
+                                </span>
+                              )}
+                            </div>
+                            {p.notes && (
+                              <p className="text-xs text-slate-400 mt-2 italic line-clamp-2">{p.notes}</p>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => handleRemoveParticipant(p.publicId)}
+                            className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 p-2 transition-all"
+                            title="Remover participante"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-12 text-center border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50/50">
+                      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100 shadow-sm">
+                        <Users className="w-8 h-8 text-slate-300" />
+                      </div>
+                      <p className="font-bold text-slate-700 mb-1">Sin participantes registrados</p>
+                      <p className="text-sm text-slate-500 max-w-xs mx-auto mb-6">
+                        Agrega jueces, contrapartes, abogados contrarios y peritos involucrados en el caso.
+                      </p>
+                      <button
+                        onClick={() => setIsParticipantModalOpen(true)}
+                        className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md shadow-indigo-200 hover:scale-105 transition-all inline-flex items-center gap-2"
+                      >
+                        <Plus className="w-4 h-4" /> Agregar Participante
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {activeTab === "FACTURACION" && (
                 <div className="flex flex-col items-center justify-center py-20 text-center">
                    <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mb-6 border border-amber-100">
                       <AlertCircle className="w-10 h-10 text-amber-500" />
                    </div>
                    <h3 className="text-xl font-bold text-slate-900 mb-2">Módulo de Facturación</h3>
-                   <p className="text-slate-500 max-w-xs mx-auto">El registro de horas facturables y liquidaciones estará disponible en la Fase 3 del ERP.</p>
+                   <p className="text-slate-500 max-w-xs mx-auto">El registro de horas facturables y liquidaciones estará disponible próximamente cuando se integre una pasarela de pagos.</p>
                 </div>
               )}
 
@@ -545,6 +718,70 @@ export default function MatterDetailPage() {
                     <button type="button" onClick={() => setIsTaskModalOpen(false)} className="flex-1 py-3 font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-colors">Cancelar</button>
                     <button disabled={isSubmitting} type="submit" className="flex-1 py-3 font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all shadow-md shadow-indigo-100 disabled:opacity-50">Asignar</button>
                   </div>
+               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Participant Modal */}
+      <AnimatePresence>
+        {isParticipantModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsParticipantModalOpen(false)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden relative z-10">
+               <div className="p-6 border-b border-slate-50 flex items-center justify-between">
+                 <div>
+                   <h3 className="text-lg font-bold text-slate-900">Agregar Participante</h3>
+                   <p className="text-sm text-slate-500">Registra a una persona o institución involucrada en el caso.</p>
+                 </div>
+                 <button onClick={() => setIsParticipantModalOpen(false)} className="text-slate-400 hover:text-slate-600 p-1">
+                   <X className="w-5 h-5" />
+                 </button>
+               </div>
+               <form onSubmit={handleAddParticipant} className="p-6 space-y-4">
+                 <div className="grid grid-cols-2 gap-4">
+                   <div className="col-span-2">
+                     <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1.5">Nombre Completo *</label>
+                     <input required type="text" value={participantForm.fullName} onChange={e => setParticipantForm({...participantForm, fullName: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium" placeholder="Ej. Lic. Juan Pérez García" />
+                   </div>
+                   <div>
+                     <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1.5">Rol *</label>
+                     <select value={participantForm.role} onChange={e => setParticipantForm({...participantForm, role: e.target.value as ParticipantRole})} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium">
+                       <option value="OPPOSING_COUNSEL">Abogado Contrario</option>
+                       <option value="OPPOSING_PARTY">Contraparte</option>
+                       <option value="JUDGE">Juez</option>
+                       <option value="COURT">Juzgado / Tribunal</option>
+                       <option value="WITNESS">Testigo</option>
+                       <option value="EXPERT">Perito</option>
+                       <option value="OTHER">Otro</option>
+                     </select>
+                   </div>
+                   <div>
+                     <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1.5">Cédula Profesional</label>
+                     <input type="text" value={participantForm.professionalId} onChange={e => setParticipantForm({...participantForm, professionalId: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium" placeholder="Opcional" />
+                   </div>
+                   <div>
+                     <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1.5">Email</label>
+                     <input type="email" value={participantForm.email} onChange={e => setParticipantForm({...participantForm, email: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium" placeholder="correo@ejemplo.com" />
+                   </div>
+                   <div>
+                     <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1.5">Teléfono</label>
+                     <input type="tel" value={participantForm.phone} onChange={e => setParticipantForm({...participantForm, phone: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium" placeholder="+52 ..." />
+                   </div>
+                   <div className="col-span-2">
+                     <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1.5">Despacho / Institución</label>
+                     <input type="text" value={participantForm.firmOrInstitution} onChange={e => setParticipantForm({...participantForm, firmOrInstitution: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium" placeholder="Ej. Juzgado 3ro de lo Civil, CDMX" />
+                   </div>
+                   <div className="col-span-2">
+                     <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1.5">Notas</label>
+                     <textarea rows={2} value={participantForm.notes} onChange={e => setParticipantForm({...participantForm, notes: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium resize-none" placeholder="Observaciones adicionales..." />
+                   </div>
+                 </div>
+                 <div className="pt-4 flex gap-3">
+                   <button type="button" onClick={() => setIsParticipantModalOpen(false)} className="flex-1 py-3 font-bold text-slate-500 hover:bg-slate-50 rounded-xl transition-colors">Cancelar</button>
+                   <button disabled={isSubmitting} type="submit" className="flex-1 py-3 font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all shadow-md shadow-indigo-100 disabled:opacity-50">Guardar Participante</button>
+                 </div>
                </form>
             </motion.div>
           </div>

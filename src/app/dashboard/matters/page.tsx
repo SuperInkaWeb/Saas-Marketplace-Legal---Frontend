@@ -20,6 +20,10 @@ export default function MattersDashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Search & Filter state
+  const [filterSearch, setFilterSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState<MatterStatus | "">("")
+  
   // Autocomplete State
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<ClientSearchResponse[]>([]);
@@ -37,6 +41,14 @@ export default function MattersDashboardPage() {
   useEffect(() => {
     fetchMatters();
   }, []);
+
+  // Debounced filter search effect
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      fetchMatters(filterSearch, filterStatus || undefined);
+    }, 400);
+    return () => clearTimeout(timeout);
+  }, [filterSearch, filterStatus]);
 
   // Debounced Search Effect
   useEffect(() => {
@@ -101,10 +113,10 @@ export default function MattersDashboardPage() {
     }
   };
 
-  const fetchMatters = async () => {
+  const fetchMatters = async (search?: string, status?: string) => {
     try {
       setLoading(true);
-      const data = await matterService.getMatters();
+      const data = await matterService.getMatters(search, status);
       setMatters(data);
     } catch (error) {
       toast.error("Error al cargar los expedientes");
@@ -180,18 +192,48 @@ export default function MattersDashboardPage() {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-wrap gap-4 items-center">
-        <div className="relative flex-1 min-w-[250px]">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input 
-            type="text" 
-            placeholder="Buscar por caso, cliente o número..." 
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-          />
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-6 space-y-3">
+        <div className="flex flex-wrap gap-4 items-center">
+          <div className="relative flex-1 min-w-[250px]">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input 
+              type="text" 
+              placeholder="Buscar por caso, cliente o número..." 
+              value={filterSearch}
+              onChange={(e) => setFilterSearch(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+            />
+          </div>
+          {(filterSearch || filterStatus) && (
+            <button 
+              onClick={() => { setFilterSearch(""); setFilterStatus(""); }}
+              className="px-3 py-2 text-xs font-bold text-red-500 bg-red-50 border border-red-100 rounded-xl hover:bg-red-100 transition-colors flex items-center gap-1"
+            >
+              <X className="w-3 h-3" /> Limpiar
+            </button>
+          )}
         </div>
-        <button className="px-4 py-2 bg-slate-50 border border-slate-200 text-slate-600 rounded-xl text-sm font-medium hover:bg-slate-100 transition-colors flex items-center gap-2">
-          <Filter className="w-3.5 h-3.5" /> Filtrar
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mr-1">Estado:</span>
+          <button
+            onClick={() => setFilterStatus("")}
+            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${!filterStatus ? "bg-indigo-600 text-white shadow-sm" : "bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200"}`}
+          >
+            Todos
+          </button>
+          {STATUSES.map((s) => {
+            const cfg = getStatusConfig(s);
+            return (
+              <button
+                key={s}
+                onClick={() => setFilterStatus(filterStatus === s ? "" : s)}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all border ${filterStatus === s ? cfg.color + " shadow-sm" : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"}`}
+              >
+                {cfg.text}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Content Area */}

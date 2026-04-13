@@ -4,8 +4,15 @@ import { MatterCreateRequest, MatterResponse } from "../types";
 const BASE_URL = "/matters";
 
 export const matterService = {
-  getMatters: async (): Promise<MatterResponse[]> => {
-    const { data } = await api.get(BASE_URL);
+  getMatters: async (search?: string, status?: string): Promise<MatterResponse[]> => {
+    const params = new URLSearchParams();
+    if (search && search.trim()) params.append("search", search.trim());
+    if (status && status.trim()) params.append("status", status.trim());
+    
+    const queryString = params.toString();
+    const url = queryString ? `${BASE_URL}?${queryString}` : BASE_URL;
+    
+    const { data } = await api.get(url);
     return data;
   },
 
