@@ -196,7 +196,8 @@ function ProposalModal({
       onSubmitted();
       onClose();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Error al enviar la propuesta");
+      const errorMsg = error.response?.data?.detail || error.response?.data?.message || "Error al enviar la propuesta";
+      toast.error(errorMsg);
     } finally {
       setSubmitting(false);
     }

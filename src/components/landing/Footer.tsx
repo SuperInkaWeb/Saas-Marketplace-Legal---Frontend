@@ -7,8 +7,8 @@ export default function Footer() {
     <footer className="bg-primary text-white">
       <div className="flex flex-col md:flex-row justify-between items-start w-full px-6 lg:px-12 py-20 gap-12 max-w-[1920px] mx-auto border-t border-accent/20">
         <div className="flex flex-col gap-8 max-w-sm">
-          <div className="font-manrope font-bold text-accent text-2xl tracking-tighter uppercase">
-            ABOGHUB
+          <div className="mb-2">
+            <img src="/logo full aboghub svg.svg" alt="AbogHub" className="h-12 w-auto brightness-0 invert" />
           </div>
           <p className="font-inter text-[10px] tracking-[0.2em] uppercase leading-loose text-secondary/60">
             © {new Date().getFullYear()} ABOGHUB. TODOS LOS DERECHOS RESERVADOS. PRECISIÓN SOBERANA EN TECNOLOGÍA LEGAL.

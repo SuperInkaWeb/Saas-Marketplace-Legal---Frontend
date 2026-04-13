@@ -33,9 +33,9 @@ export default function Navbar() {
       <div className="flex justify-between items-center w-full px-6 lg:px-12 py-5 max-w-[1920px] mx-auto">
         <Link 
           href="/" 
-          className="font-manrope font-black tracking-tighter text-2xl text-primary uppercase transition-transform active:scale-95"
+          className="transition-transform active:scale-95"
         >
-          AbogHub
+          <img src="/logo full aboghub svg.svg" alt="AbogHub" className="h-10 w-auto" />
         </Link>
 
         <div className="hidden md:flex items-center gap-10">

@@ -12,10 +12,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+let lastToastTime = 0;
+const TOAST_COOLDOWN = 2000; // 2 seconds
+
 api.interceptors.response.use(
   (res) => res,
   (error) => {
     const isAuthEndpoint = error.config?.url?.includes("/auth/");
+    const now = Date.now();
+    const canShowToast = now - lastToastTime > TOAST_COOLDOWN;
 
     // Handle Session Expiration (401 Unauthorized)
     if (error.response?.status === 401 && !isAuthEndpoint) {
@@ -23,9 +28,12 @@ api.interceptors.response.use(
       
       if (typeof window !== "undefined") {
         if (!window.location.pathname.includes("/login")) {
-          toast.error("Sesión expirada", {
-            description: "Por favor, inicia sesión de nuevo para continuar.",
-          });
+          if (canShowToast) {
+            toast.error("Sesión expirada", {
+              description: "Por favor, inicia sesión de nuevo para continuar.",
+            });
+            lastToastTime = now;
+          }
           logout();
           window.location.href = "/login";
         } else {
@@ -38,10 +46,11 @@ api.interceptors.response.use(
 
     // Handle Permissions (403 Forbidden)
     if (error.response?.status === 403 && !isAuthEndpoint) {
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && canShowToast) {
         toast.error("Acceso denegado", {
           description: "No tienes permisos suficientes para realizar esta acción.",
         });
+        lastToastTime = now;
       }
     }
     
