@@ -146,24 +146,24 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {/* Main Content Area */}
       <main className="flex-1 md:pl-72 flex flex-col">
         {/* Desktop Top Header (Hidden on mobile) */}
-        <header className="hidden md:flex h-16 border-b border-slate-200 bg-white/50 backdrop-blur-md sticky top-0 z-40 items-center justify-end px-8 gap-4">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mr-auto">
-            {isLawyer ? "Cita de Abogado" : "Panel de Cliente"} • {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+        <header className="hidden md:flex h-16 border-b border-slate-50 bg-white/80 backdrop-blur-md sticky top-0 z-40 items-center justify-end px-10 gap-6">
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mr-auto">
+            {isLawyer ? "Práctica Legal" : "Panel Cliente"} &bull; {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
           </div>
           <NotificationCenter />
-          <div className="w-px h-6 bg-slate-200 mx-2" />
-          <div className="flex items-center gap-3">
+          <div className="w-px h-6 bg-slate-100 mx-2" />
+          <div className="flex items-center gap-4">
              <div className="text-right">
-                <p className="text-xs font-bold text-slate-900 leading-none">{user.firstName}</p>
-                <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-tighter mt-1">{isLawyer ? "Abogado" : "Cliente"}</p>
+                <p className="text-xs font-black text-slate-900 leading-none uppercase tracking-tight">{user.firstName}</p>
+                <p className="text-[9px] font-bold text-amber-600 uppercase tracking-widest mt-1.5">{isLawyer ? "Verificado" : "Cliente"}</p>
              </div>
-             <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center border border-slate-200 overflow-hidden ring-1 ring-slate-100">
+             <div className="w-9 h-9 bg-slate-100 flex items-center justify-center border border-slate-200 overflow-hidden shadow-sm">
                 {user.avatarUrl ? <img src={user.avatarUrl} className="w-full h-full object-cover" /> : <Scale className="w-4 h-4 text-slate-300" />}
              </div>
           </div>
         </header>
 
-        <div className="flex-1 pt-16 md:pt-0">
+        <div className="flex-1 pt-16 md:pt-0 bg-surface">
           {children}
         </div>
       </main>

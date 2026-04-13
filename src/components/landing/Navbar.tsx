@@ -17,10 +17,10 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const navLinks = [
-    { name: "Marketplace", href: "/marketplace" },
+    { name: "Abogados", href: "/marketplace" },
+    { name: "Mercado de Casos", href: "/marketplace/cases" },
     { name: "Soluciones", href: "#" },
     { name: "Actualidad", href: "#" },
-    { name: "Nosotros", href: "#" },
   ];
 
   return (

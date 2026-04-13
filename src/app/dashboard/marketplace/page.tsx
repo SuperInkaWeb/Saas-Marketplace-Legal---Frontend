@@ -6,7 +6,7 @@ import { marketplaceService } from "@/modules/marketplace/services/marketplaceSe
 import type { CaseRequestResponse } from "@/modules/marketplace/types";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Briefcase, DollarSign, Send, FileText, UserCircle, X } from "lucide-react";
+import { Briefcase, DollarSign, Send, FileText, UserCircle, X, Loader2, Sparkles, MapPin, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 
@@ -57,7 +57,6 @@ export default function MarketplacePage() {
       });
       toast.success("Propuesta enviada exitosamente");
       setSelectedCase(null);
-      // Optionally refresh cases or mark as proposed locally
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Error al enviar la propuesta");
     } finally {
@@ -67,85 +66,96 @@ export default function MarketplacePage() {
 
   if (user?.role !== "LAWYER") {
     return (
-      <div className="p-8 max-w-7xl mx-auto flex justify-center py-32">
-        <div className="text-center">
-          <Briefcase className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-slate-900">Acceso Restringido</h2>
-          <p className="text-slate-500 mt-2">Solo los abogados verificados pueden acceder al marketplace de casos.</p>
+      <div className="p-12 max-w-7xl mx-auto flex justify-center py-40">
+        <div className="text-center max-w-md bg-white p-12 shadow-xl border border-slate-50">
+          <Briefcase className="w-12 h-12 text-slate-200 mx-auto mb-8" />
+          <h2 className="text-xs font-black text-slate-900 uppercase tracking-[0.3em] mb-4">Acceso Restringido</h2>
+          <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest leading-relaxed">
+            Solo operadores legales verificados pueden acceder a la galería de demandas privadas.
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 border-b border-slate-200 pb-4">
-          Marketplace de Casos
+    <div className="p-8 md:p-14 max-w-7xl mx-auto">
+      {/* Lex Architect Header */}
+      <div className="mb-20">
+        <div className="flex items-center gap-3 mb-8">
+          <span className="w-10 h-[2px] bg-amber-500"></span>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Mercado Libre de Casos</span>
+        </div>
+        <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 uppercase font-manrope leading-[0.9]">
+          Galería de <br /> Demandas
         </h1>
-        <p className="mt-2 text-slate-500 text-sm">Encuentra clientes buscando representación legal y envía tus propuestas.</p>
+        <p className="mt-8 text-slate-400 font-inter text-sm max-w-xl leading-relaxed">
+          Explore las solicitudes de representación legal activa. Analice los requerimientos técnicos y presente su propuesta formal de servicios.
+        </p>
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+        <div className="flex flex-col items-center justify-center py-32 gap-6">
+          <Loader2 className="w-10 h-10 text-slate-900 animate-spin" />
+          <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Sincronizando Galería...</span>
         </div>
       ) : cases.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-slate-200 shadow-sm">
-          <FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">No hay casos abiertos</h3>
-          <p className="text-slate-500 mt-1">Actualmente no hay solicitudes de clientes disponibles en el mercado.</p>
+        <div className="text-center py-32 bg-white border border-slate-50 shadow-[0_20px_60px_rgba(0,0,0,0.02)]">
+          <FileText className="w-12 h-12 text-slate-100 mx-auto mb-8" />
+          <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.3em]">No hay casos activos</h3>
+          <p className="text-slate-400 text-[10px] uppercase tracking-widest mt-4">La galería se encuentra vacía en este momento.</p>
         </div>
       ) : (
-        <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-10">
           {cases.map((c) => (
             <motion.div
               key={c.publicId}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white p-8 border border-slate-50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] hover:shadow-[0_30px_70px_rgba(0,0,0,0.06)] transition-all flex flex-col h-full group"
             >
-              <div className="flex justify-between items-start mb-4">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">
+              <div className="flex justify-between items-start mb-10">
+                <span className="text-[9px] font-black text-white bg-slate-900 px-4 py-1.5 uppercase tracking-[0.2em] shadow-lg">
                   {c.specialtyName || "General"}
                 </span>
-                <span className="text-emerald-600 font-bold flex items-center bg-emerald-50 px-3 py-1 rounded-full text-sm">
-                  <DollarSign className="w-4 h-4" />
-                  {c.budget?.toLocaleString('es-ES') || "A convenir"}
-                </span>
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Presupuesto</span>
+                  <span className="text-2xl font-black text-slate-900 font-manrope">
+                    {c.budget ? `$${c.budget.toLocaleString('es-ES')}` : "A DEFINIR"}
+                  </span>
+                </div>
               </div>
               
-              <h3 className="text-lg font-bold text-slate-900 leading-tight mb-2 line-clamp-2">
+              <h3 className="text-xl font-black text-slate-900 leading-none mb-6 line-clamp-2 uppercase font-manrope tracking-tight group-hover:text-amber-600 transition-colors">
                 {c.title}
               </h3>
               
-              <p className="text-slate-600 text-sm line-clamp-3 mb-6 flex-1">
+              <p className="text-slate-400 text-xs font-medium leading-relaxed line-clamp-4 mb-10 flex-1">
                 {c.description}
               </p>
               
-              <div className="border-t border-slate-100 pt-4 mt-auto">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Solicitante</span>
-                    <span className="text-sm font-medium text-slate-800 flex items-center gap-1.5 mt-0.5">
-                      <UserCircle className="w-4 h-4 text-slate-400" />
-                      {c.clientName}
+              <div className="pt-8 border-t border-slate-50 mt-auto">
+                <div className="grid grid-cols-2 gap-4 mb-10">
+                  <div>
+                    <span className="text-[9px] text-slate-300 font-black uppercase tracking-widest block mb-2">Solicitante</span>
+                    <span className="text-[10px] font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                       {c.clientName}
                     </span>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Fecha</span>
-                    <span className="text-sm font-medium text-slate-800 mt-0.5">
-                      {format(new Date(c.createdAt), "d MMM, yyyy", { locale: es })}
+                  <div className="text-right">
+                    <span className="text-[9px] text-slate-300 font-black uppercase tracking-widest block mb-2">Ingreso</span>
+                    <span className="text-[10px] font-black text-slate-500 uppercase">
+                      {format(new Date(c.createdAt), "dd/MM/yyyy", { locale: es })}
                     </span>
                   </div>
                 </div>
                 
                 <button
                   onClick={() => handleOpenProposal(c)}
-                  className="w-full bg-slate-900 hover:bg-black text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 group"
+                  className="w-full bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] py-5 transition-all shadow-xl active:scale-[0.98] flex items-center justify-center gap-3 group/btn"
                 >
-                  <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  Enviar Propuesta
+                  <Send className="w-4 h-4 text-amber-500 group-hover/btn:translate-x-1 transition-transform" />
+                  Presentar Propuesta
                 </button>
               </div>
             </motion.div>
@@ -153,66 +163,78 @@ export default function MarketplacePage() {
         </div>
       )}
 
-      {/* Proposal Modal */}
+      {/* Lex Architect Proposal Modal */}
       <AnimatePresence>
         {selectedCase && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/90 backdrop-blur-md p-6">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]"
+              className="bg-white shadow-[0_40px_100px_rgba(0,0,0,0.5)] w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] border border-slate-100"
             >
-              <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
-                <div>
-                  <h2 className="text-xl font-bold text-slate-900">Detalles de la Propuesta</h2>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1 line-clamp-1">{selectedCase.title}</p>
+              <div className="flex items-center justify-between p-10 border-b border-slate-50 bg-slate-50/30">
+                <div className="border-l-4 border-amber-500 pl-6">
+                  <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">Propuesta Técnica</h2>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-2 line-clamp-1">{selectedCase.title}</p>
                 </div>
-                <button onClick={() => setSelectedCase(null)} className="text-slate-400 hover:text-slate-600 bg-white shadow-sm p-2 rounded-full border border-slate-200">
+                <button 
+                  onClick={() => setSelectedCase(null)} 
+                  className="bg-white p-3 text-slate-300 hover:text-slate-900 transition-colors shadow-sm"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="p-6 overflow-y-auto custom-scrollbar space-y-6">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-900 mb-2">Mensaje o Plan de Acción</label>
+              <div className="p-10 overflow-y-auto custom-scrollbar space-y-10">
+                <div className="space-y-4">
+                  <label className="block text-[10px] font-black text-slate-900 uppercase tracking-[0.3em]">Plan de Ejecución Legal</label>
                   <textarea
                     value={proposalText}
                     onChange={(e) => setProposalText(e.target.value)}
-                    placeholder="Explícale al cliente cómo puedes ayudarle con su caso..."
-                    className="w-full text-sm rounded-xl border border-slate-200 p-4 focus:ring-2 focus:ring-slate-900/20 focus:border-slate-900 outline-none resize-none h-40"
+                    placeholder="Especifique su estrategia técnica y experiencia relevante para este requerimiento..."
+                    className="w-full text-sm font-medium text-slate-700 bg-slate-50 border border-slate-100 p-6 focus:ring-1 focus:ring-amber-500 outline-none resize-none h-48 transition-all"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-slate-900 mb-2">Honorarios Propuestos (USD)</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <DollarSign className="h-5 w-5 text-slate-400" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="space-y-4 text-center md:text-left">
+                    <label className="block text-[10px] font-black text-slate-900 uppercase tracking-[0.3em]">Honorarios Requeridos (USD)</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                        <DollarSign className="h-4 w-4 text-amber-600" />
+                      </div>
+                      <input
+                        type="number"
+                        value={proposedFee}
+                        onChange={(e) => setProposedFee(Number(e.target.value))}
+                        placeholder="0.00"
+                        className="w-full pl-12 pr-6 py-5 bg-white border border-slate-100 text-xl font-black text-slate-900 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                      />
                     </div>
-                    <input
-                      type="number"
-                      value={proposedFee}
-                      onChange={(e) => setProposedFee(Number(e.target.value))}
-                      placeholder="0.00"
-                      className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900/20 focus:border-slate-900 outline-none font-medium"
-                    />
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2">Presupuesto del cliente: {selectedCase.budget} USD</p>
                   </div>
-                  <p className="text-xs text-slate-500 mt-2">El cliente presupuestó {selectedCase.budget} USD.</p>
+                  
+                  <div className="flex flex-col justify-center gap-4 bg-slate-50 p-6 text-center">
+                    <Sparkles className="w-6 h-6 text-amber-500 mx-auto" />
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-relaxed">
+                      Su propuesta será analizada por el cliente bajo criterios de precisión y prestigio.
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="p-6 border-t border-slate-100">
+              <div className="p-10 border-t border-slate-50 bg-white">
                 <button
                   disabled={submitting || !proposalText || !proposedFee}
                   onClick={handleSubmitProposal}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] py-6 transition-all shadow-2xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                 >
                   {submitting ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <>
-                      <Send className="w-4 h-4" /> Enviar Propuesta Formal
+                      <Check className="w-4 h-4 text-amber-500" /> Ejecutar Envío de Propuesta
                     </>
                   )}
                 </button>
