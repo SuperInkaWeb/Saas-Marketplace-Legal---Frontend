@@ -50,6 +50,8 @@ export function LawyerSidebar({ onItemClick, onLogout }: SidebarProps) {
     { label: "Finanzas", href: "/dashboard/payments", icon: CreditCard },
     { label: "Documentos", href: "/dashboard/documents", icon: FileText },
     { label: "Mensajería", href: "/dashboard/chats", icon: MessageSquare },
+    { label: "IA Legal", href: "/dashboard/ai-assistant", icon: Scale },
+    { label: "Suscripción", href: "/dashboard/subscription", icon: Sparkles },
     { 
       label: "Ver Perfil Público", 
       href: `/lawyer/${user.slug}`, 
