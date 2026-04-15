@@ -5,6 +5,7 @@ import { Send, Upload, Bot, Sparkles, Scale, FileText, Lock } from "lucide-react
 import { aiService } from "@/modules/ai/services/aiService";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { marked } from "marked";
 
 export default function AiAssistantPage() {
   const router = useRouter();
@@ -142,9 +143,18 @@ export default function AiAssistantPage() {
                   <div className={`p-4 rounded-2xl max-w-[80%] ${
                     msg.role === "USER" 
                       ? "bg-slate-900 text-white rounded-br-none" 
-                      : "bg-white border border-slate-200 text-slate-700 rounded-bl-none shadow-sm whitespace-pre-wrap leading-relaxed"
+                      : "bg-white border border-slate-200 text-slate-700 rounded-bl-none shadow-sm"
                   }`}>
-                    {msg.content}
+                    {msg.role === "USER" ? (
+                      <div className="whitespace-pre-wrap leading-relaxed">
+                        {msg.content}
+                      </div>
+                    ) : (
+                      <div 
+                        className="prose prose-slate prose-sm max-w-none leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: marked.parse(msg.content, { async: false }) as string }}
+                      />
+                    )}
                   </div>
                 </div>
               ))
@@ -228,9 +238,10 @@ export default function AiAssistantPage() {
                   <Sparkles className="w-6 h-6 text-amber-500" />
                   <h3 className="text-xl font-bold text-slate-900">Análisis Jurídico</h3>
                 </div>
-                <div className="prose prose-slate max-w-none whitespace-pre-wrap">
-                  {docAnalysis}
-                </div>
+                <div 
+                  className="prose prose-slate max-w-none"
+                  dangerouslySetInnerHTML={{ __html: marked.parse(docAnalysis, { async: false }) as string }}
+                />
               </div>
             )}
           </div>
