@@ -10,55 +10,55 @@ export default function Footer() {
           <div className="mb-2">
             <img src="/logo full aboghub svg.svg" alt="AbogHub" className="h-12 w-auto brightness-0 invert" />
           </div>
-          <p className="font-inter text-[10px] tracking-[0.2em] uppercase leading-loose text-secondary/60">
-            © {new Date().getFullYear()} ABOGHUB. TODOS LOS DERECHOS RESERVADOS. PRECISIÓN SOBERANA EN TECNOLOGÍA LEGAL.
+          <p className="font-inter text-sm text-slate-300/80 leading-relaxed mt-4">
+            © 2026 QORIBEX | TODOS LOS DERECHOS RESERVADOS
           </p>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-16 lg:gap-24 w-full md:w-auto">
           <div className="flex flex-col gap-4">
-            <span className="text-[10px] font-bold text-white tracking-[0.3em] mb-4 uppercase">Plataforma</span>
+            <span className="text-sm font-bold text-white tracking-wider mb-4 uppercase">Plataforma</span>
             <Link 
               href="/terms" 
-              className="font-inter text-[10px] tracking-widest uppercase text-secondary/70 hover:text-white underline underline-offset-8 transition-all"
+              className="font-inter text-sm text-slate-300 hover:text-white transition-colors"
             >
               Términos de Servicio
             </Link>
             <Link 
               href="/privacy" 
-              className="font-inter text-[10px] tracking-widest uppercase text-secondary/70 hover:text-white underline underline-offset-8 transition-all"
+              className="font-inter text-sm text-slate-300 hover:text-white transition-colors"
             >
               Privacidad
             </Link>
           </div>
 
           <div className="flex flex-col gap-4">
-            <span className="text-[10px] font-bold text-white tracking-[0.3em] mb-4 uppercase">Gobernanza</span>
+            <span className="text-sm font-bold text-white tracking-wider mb-4 uppercase">Gobernanza</span>
             <Link 
               href="/regulatory" 
-              className="font-inter text-[10px] tracking-widest uppercase text-secondary/70 hover:text-white underline underline-offset-8 transition-all"
+              className="font-inter text-sm text-slate-300 hover:text-white transition-colors"
             >
               Revelación Regulatoria
             </Link>
             <Link 
               href="/accessibility" 
-              className="font-inter text-[10px] tracking-widest uppercase text-secondary/70 hover:text-white underline underline-offset-8 transition-all"
+              className="font-inter text-sm text-slate-300 hover:text-white transition-colors"
             >
               Accesibilidad
             </Link>
           </div>
 
           <div className="flex flex-col gap-4">
-            <span className="text-[10px] font-bold text-white tracking-[0.3em] mb-4 uppercase">Contacto</span>
+            <span className="text-sm font-bold text-white tracking-wider mb-4 uppercase">Contacto</span>
             <Link 
               href="/contact" 
-              className="font-inter text-[10px] tracking-widest uppercase text-secondary/70 hover:text-white underline underline-offset-8 transition-all"
+              className="font-inter text-sm text-slate-300 hover:text-white transition-colors"
             >
               Soporte
             </Link>
             <Link 
               href="/careers" 
-              className="font-inter text-[10px] tracking-widest uppercase text-secondary/70 hover:text-white underline underline-offset-8 transition-all"
+              className="font-inter text-sm text-slate-300 hover:text-white transition-colors"
             >
               Carreras
             </Link>
