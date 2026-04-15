@@ -3,7 +3,12 @@
 
 @theme {
   --color-primary: #000000;
-  --color-secondary: #545f72;
+  --color-secondary: #000000;
+  
+  --color-brand-primary: #0055FF;
+  --color-brand-secondary: #00C853;
+  --color-brand-accent: #D4AF37;
+
   --color-tertiary: #735c00;
   --color-accent: #D4AF37;
   --color-background: #f8f9fa;
