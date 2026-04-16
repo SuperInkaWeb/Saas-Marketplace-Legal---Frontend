@@ -25,8 +25,8 @@ export const selectRoleSchema = z.object({
 });
 
 export const clientProfileSchema = z.object({
-  companyName: z.preprocess((v) => (v === "" ? undefined : v), z.string().optional()),
-  billingAddress: z.preprocess((v) => (v === "" ? undefined : v), z.string().optional()),
+  companyName: z.string().optional(),
+  billingAddress: z.string().optional(),
 });
 
 export const lawyerProfileSchema = z.object({

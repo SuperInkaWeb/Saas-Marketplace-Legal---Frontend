@@ -52,7 +52,12 @@ export default function OnboardingProfilePage() {
 
   const onClientSubmit = (data: ClientProfileFormData) => {
     setError(null);
-    createClient(data, {
+    // Convert empty strings to undefined so the API treats them as optional
+    const cleanData = {
+      companyName: data.companyName === "" ? undefined : data.companyName,
+      billingAddress: data.billingAddress === "" ? undefined : data.billingAddress,
+    };
+    createClient(cleanData, {
       onError: (err) => setError(extractApiError(err).message),
     });
   };
