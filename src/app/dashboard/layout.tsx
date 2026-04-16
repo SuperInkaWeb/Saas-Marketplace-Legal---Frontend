@@ -58,7 +58,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   if (!hydrated || !user) {
     return (
       <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center gap-4">
-        <Scale className="w-12 h-12 text-emerald-500 animate-pulse" />
+        <div className="relative">
+          <img src="/logo full aboghub svg.svg" className="h-12 w-auto animate-pulse brightness-0 invert" alt="Loading" />
+        </div>
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "-0.3s" }}></div>
           <div className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "-0.15s" }}></div>
@@ -88,23 +90,22 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 flex font-['Inter',sans-serif]">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-72 flex-col fixed inset-y-0 z-50">
         <SidebarContent />
       </aside>
 
       {/* Mobile Topbar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-4 z-50">
-        <div className="flex items-center gap-2 text-white">
-          <Scale className="w-6 h-6 text-emerald-500" />
-          <span className="text-xl font-bold tracking-tight text-white">Legit</span>
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-100 flex items-center justify-between px-4 z-50">
+        <div className="flex items-center gap-2">
+          <img src="/logo full aboghub svg.svg" className="h-7 w-auto" alt="AbogHub" />
         </div>
         <div className="flex items-center gap-2">
           <NotificationCenter />
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="p-2 text-slate-400 hover:text-white transition-colors"
+            className="p-2 text-slate-500 hover:text-emerald-600 transition-colors"
           >
             <Menu className="w-6 h-6" />
           </button>

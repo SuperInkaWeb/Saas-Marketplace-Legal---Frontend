@@ -9,6 +9,7 @@ import { FormAlert } from "../components/FormAlert";
 import Link from "next/link";
 import RightHero from "../components/RighHero";
 import AuthInput from "../components/AuthInput";
+import AuthHeader from "../components/AuthHeader";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -52,8 +53,10 @@ export default function LoginPage() {
     <div className="min-h-screen flex bg-white font-['Inter',sans-serif]">
 
       {/* Lado Izquierdo */}
-      <div className="w-full lg:w-1/2 xl:w-5/12 flex flex-col justify-center px-8 sm:px-16 lg:px-24 bg-white z-10">
+      <div className="w-full lg:w-1/2 xl:w-5/12 flex flex-col px-8 sm:px-16 lg:px-24 py-20 bg-white z-10 overflow-y-auto">
         <div className="w-full max-w-sm mx-auto">
+          {/* Header / Logo de regreso */}
+          <AuthHeader />
 
           {/* Logo / Emblema Universal */}
           <div className="mb-8">

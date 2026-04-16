@@ -6,10 +6,13 @@ import {
   Calendar, 
   FileText, 
   Plus, 
-  ArrowRight,
-  Clock,
-  ShieldCheck
+  ChevronRight,
+  Search,
+  MessageSquare,
+  Settings,
+  CreditCard
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 interface ClientDashboardHomeProps {
@@ -23,138 +26,131 @@ export function ClientDashboardHome({ user }: ClientDashboardHomeProps) {
   else if (hour < 19) greeting = "Buenas tardes";
   else greeting = "Buenas noches";
 
+  const stats = [
+    { label: "Casos activos", value: "Gestionar", icon: Briefcase, color: "text-blue-600", bg: "bg-blue-50", href: "/dashboard/my-cases" },
+    { label: "Próximas citas", value: "Revisar", icon: Calendar, color: "text-purple-600", bg: "bg-purple-50", href: "/dashboard/appointments" },
+    { label: "Documentos", value: "Acceder", icon: FileText, color: "text-emerald-600", bg: "bg-emerald-50", href: "/dashboard/documents" },
+    { label: "Mensajes", value: "Chat", icon: MessageSquare, color: "text-amber-600", bg: "bg-amber-50", href: "/dashboard/chats" },
+  ];
+
+  const quickActions = [
+    { label: "Publicar Caso", sub: "Busca asesoría", icon: Plus, href: "/dashboard/my-cases"},
+    { label: "Marketplace", sub: "Explorar expertos", icon: Search, href: "/marketplace"},
+    { label: "Mi Perfil", sub: "Gestionar datos", icon: Settings, href: "/dashboard/profile"},
+    { label: "Pagos", sub: "Facturación", icon: CreditCard, href: "/dashboard/payments"},
+  ];
+
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-12">
-      <div className="bg-slate-900 px-6 pt-12 pb-24 lg:px-10 rounded-b-[2.5rem] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-overlay pointer-events-none"></div>
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/20 blur-3xl rounded-full pointer-events-none"></div>
+    <div className="min-h-screen bg-white pt-10 md:pt-16 pb-12 px-6 lg:px-10 max-w-[1600px] mx-auto font-['Inter',sans-serif]">
+      
+      {/* Welcome Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-12 relative"
+      >
+        <div className="absolute -left-10 -top-10 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -z-10" />
+        <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-2">
+          {greeting}, <span className="text-emerald-600">{user.firstName}</span>.
+        </h2>
+        <p className="text-slate-500 font-medium text-lg">
+          Gestiona tus asuntos legales desde tu panel de control personalizado.
+        </p>
+      </motion.div>
 
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-emerald-300 text-xs font-medium mb-4 backdrop-blur-md"
-              >
-                Panel de Cliente
-              </motion.div>
-              <motion.h1
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-4xl lg:text-5xl font-extrabold text-white tracking-tight"
-              >
-                {greeting}, <span className="text-emerald-400">{user.firstName}</span>
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-slate-300 mt-3 text-lg max-w-xl"
-              >
-                Gestiona tus casos legales y agenda citas con profesionales expertos de forma segura.
-              </motion.p>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
+      {/* KPI Cards - Bento Grid Style */}
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12"
+      >
+        {stats.map((stat, idx) => {
+          const Icon = stat.icon;
+          return (
+            <Link 
+              key={idx} 
+              href={stat.href}
+              className="bg-white p-6 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100 flex flex-col justify-between group hover:shadow-xl hover:border-emerald-600/20 transition-all duration-300"
             >
-              <Link href="/dashboard/my-cases" className="inline-flex items-center justify-center gap-2 bg-emerald-500 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-emerald-900/20 hover:bg-emerald-400 transition-all hover:-translate-y-1">
-                <Plus className="w-5 h-5" />
-                Publicar Nuevo Caso
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-6 lg:px-10 -mt-12 space-y-8 relative z-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Quick Stat: Active Cases */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div className="bg-blue-50 p-3 rounded-xl">
-              <Briefcase className="w-6 h-6 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-sm text-slate-500 font-medium">Casos Activos</p>
-              <h4 className="text-2xl font-bold text-slate-900">Gestionar</h4>
-            </div>
-            <Link href="/dashboard/my-cases" className="ml-auto text-slate-300 hover:text-slate-600">
-              <ArrowRight className="w-5 h-5" />
+              <div className="flex justify-between items-start mb-6">
+                <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center transition-colors group-hover:bg-emerald-600 group-hover:text-white", stat.bg, stat.color)}>
+                  <Icon className="w-6 h-6" />
+                </div>
+              </div>
+              <div>
+                <p className="text-slate-500 text-sm font-bold mb-1">{stat.label}</p>
+                <h3 className="text-3xl font-extrabold text-slate-900 leading-none">{stat.value}</h3>
+              </div>
             </Link>
-          </div>
+          );
+        })}
+      </motion.div>
 
-          {/* Quick Stat: Appointments */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div className="bg-purple-50 p-3 rounded-xl">
-              <Calendar className="w-6 h-6 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm text-slate-500 font-medium">Próximas Citas</p>
-              <h4 className="text-2xl font-bold text-slate-900">Revisar</h4>
-            </div>
-            <Link href="/dashboard/appointments" className="ml-auto text-slate-300 hover:text-slate-600">
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
-
-          {/* Quick Stat: Documents */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div className="bg-emerald-50 p-3 rounded-xl">
-              <FileText className="w-6 h-6 text-emerald-600" />
-            </div>
-            <div>
-              <p className="text-sm text-slate-500 font-medium">Documentos</p>
-              <h4 className="text-2xl font-bold text-slate-900">Acceder</h4>
-            </div>
-            <Link href="/dashboard/documents" className="ml-auto text-slate-300 hover:text-slate-600">
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
+      {/* Quick Access Block */}
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <h3 className="text-2xl font-extrabold text-slate-900">Accesos Rápidos</h3>
+          <span className="w-fit px-3 py-1.5 bg-slate-50 rounded-lg text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
+            Acciones Frecuentes
+          </span>
         </div>
-
-        {/* Featured Section for Clients */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-8 md:p-12 flex flex-col md:flex-row items-center gap-10">
-            <div className="flex-1 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider">
-                Expertos Disponibles
-              </div>
-              <h2 className="text-3xl font-bold text-slate-900 leading-tight">
-                Encuentra al abogado ideal para tu necesidad legal
-              </h2>
-              <p className="text-slate-500 text-lg">
-                Explora cientos de profesionales verificados por especialidad, ubicación y calificación. Publica tu caso y recibe propuestas competitivas en minutos.
-              </p>
-              <div className="flex flex-wrap gap-4 pt-2">
-                <Link href="/marketplace/lawyers" className="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all">
-                  Explorar Abogados
-                </Link>
-                <Link href="/marketplace/cases" className="px-6 py-3 bg-white text-slate-900 border border-slate-200 font-bold rounded-xl hover:bg-slate-50 transition-all">
-                  Ver Casos Públicos
-                </Link>
-              </div>
-            </div>
-            <div className="w-full md:w-1/3 bg-slate-50 rounded-2xl p-8 space-y-4">
-              <div className="flex items-center gap-3 text-slate-700">
-                <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                <span className="font-semibold text-sm">Abogados 100% Verificados</span>
-              </div>
-              <div className="flex items-center gap-3 text-slate-700">
-                <Clock className="w-5 h-5 text-emerald-500" />
-                <span className="font-semibold text-sm">Respuesta en menos de 24h</span>
-              </div>
-              <div className="flex items-center gap-3 text-slate-700">
-                <FileText className="w-5 h-5 text-emerald-500" />
-                <span className="font-semibold text-sm">Firma digital integrada</span>
-              </div>
-            </div>
-          </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+           {quickActions.map((action, idx) => {
+             const Icon = action.icon;
+             return (
+               <Link 
+                key={idx} 
+                href={action.href} 
+                className="flex items-center justify-between p-5 rounded-2xl bg-slate-50/50 border border-slate-100 group hover:border-emerald-600/20 hover:bg-white hover:shadow-xl hover:shadow-emerald-600/5 transition-all duration-300 cursor-pointer"
+               >
+                 <div className="flex items-center gap-4">
+                   <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 text-slate-600 group-hover:text-emerald-600 group-hover:bg-emerald-600/5 transition-colors">
+                     <Icon className="w-6 h-6" />
+                   </div>
+                   <div>
+                     <p className="text-sm font-extrabold text-slate-900 truncate">{action.label}</p>
+                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">{action.sub}</p>
+                   </div>
+                 </div>
+                 <div className="text-slate-300 opacity-0 group-hover:opacity-100 transition-all -translate-x-3 group-hover:translate-x-0 group-hover:text-emerald-600">
+                    <ChevronRight className="w-5 h-5" />
+                 </div>
+               </Link>
+             );
+           })}
         </div>
-      </div>
+      </motion.div>
+
+      {/* Info Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mt-12 p-8 rounded-[2rem] bg-slate-900 text-white relative overflow-hidden"
+      >
+        <div className="absolute right-0 top-0 w-1/2 h-full bg-emerald-600/10 blur-[100px] pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="max-w-xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider mb-4 border border-emerald-500/10">
+              Seguridad Garantizada
+            </div>
+            <h3 className="text-3xl font-extrabold mb-4">¿Necesitas un abogado ahora?</h3>
+            <p className="text-slate-400 font-medium">
+              Explora nuestro marketplace de profesionales verificados. Publica tu requerimiento legal y recibe propuestas en tiempo real de expertos en la materia.
+            </p>
+          </div>
+          <Link href="/marketplace" className="px-8 py-4 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-900/40">
+            Ir al Marketplace
+          </Link>
+        </div>
+      </motion.div>
     </div>
   );
 }

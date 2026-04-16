@@ -23,10 +23,13 @@ export const aiService = {
     }
   },
 
-  analyzeDocument: async (file: File): Promise<DocumentAnalysisResponse> => {
+  analyzeDocument: async (file: File, prompt?: string): Promise<DocumentAnalysisResponse> => {
     try {
       const formData = new FormData();
       formData.append("file", file);
+      if (prompt) {
+        formData.append("prompt", prompt);
+      }
       const response = await api.post("/ai/analyze-document", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });

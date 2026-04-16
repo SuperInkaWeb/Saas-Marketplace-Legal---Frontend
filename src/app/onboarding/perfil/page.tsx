@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { FormAlert } from "../../(auth)/components/FormAlert";
 import RightHero from "../../(auth)/components/RighHero";
 import { Building2, MapPin, Globe, Loader2 } from "lucide-react";
+import AuthHeader from "../../(auth)/components/AuthHeader";
 
 export default function OnboardingProfilePage() {
   const { data: user, isLoading: isLoadingUser } = useMe();
@@ -51,7 +52,12 @@ export default function OnboardingProfilePage() {
 
   const onClientSubmit = (data: ClientProfileFormData) => {
     setError(null);
-    createClient(data, {
+    // Convert empty strings to undefined so the API treats them as optional
+    const cleanData = {
+      companyName: data.companyName === "" ? undefined : data.companyName,
+      billingAddress: data.billingAddress === "" ? undefined : data.billingAddress,
+    };
+    createClient(cleanData, {
       onError: (err) => setError(extractApiError(err).message),
     });
   };
@@ -66,8 +72,10 @@ export default function OnboardingProfilePage() {
   return (
     <div className="min-h-screen flex bg-white font-['Inter',sans-serif]">
       {/* Lado Izquierdo */}
-      <div className="w-full lg:w-1/2 xl:w-5/12 flex flex-col justify-center px-8 sm:px-16 lg:px-24 bg-white z-10">
+      <div className="w-full lg:w-1/2 xl:w-5/12 flex flex-col px-8 sm:px-16 lg:px-24 py-20 bg-white z-10 overflow-y-auto">
         <div className="w-full max-w-sm mx-auto">
+          {/* Header / Logo de regreso */}
+          <AuthHeader />
           {/* Header */}
           <div className="mb-10">
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
