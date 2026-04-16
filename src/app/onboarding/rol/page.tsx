@@ -8,6 +8,7 @@ import { useState } from "react";
 import { FormAlert } from "../../(auth)/components/FormAlert";
 import RightHero from "../../(auth)/components/RighHero";
 import { User, Scale, CheckCircle2 } from "lucide-react";
+import AuthHeader from "../../(auth)/components/AuthHeader";
 
 export default function SelectRolePage() {
   const [error, setError] = useState<string | null>(null);
@@ -38,8 +39,10 @@ export default function SelectRolePage() {
   return (
     <div className="min-h-screen flex bg-white font-['Inter',sans-serif]">
       {/* Lado Izquierdo */}
-      <div className="w-full lg:w-1/2 xl:w-5/12 flex flex-col justify-center px-8 sm:px-16 lg:px-24 bg-white z-10">
+      <div className="w-full lg:w-1/2 xl:w-5/12 flex flex-col px-8 sm:px-16 lg:px-24 py-20 bg-white z-10 overflow-y-auto">
         <div className="w-full max-w-sm mx-auto">
+          {/* Header / Logo de regreso */}
+          <AuthHeader />
           {/* Header */}
           <div className="mb-10">
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">

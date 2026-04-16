@@ -18,6 +18,7 @@ export default function AiAssistantPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [docPrompt, setDocPrompt] = useState("");
   const [docAnalysis, setDocAnalysis] = useState("");
 
   const scrollToBottom = () => {
@@ -59,7 +60,7 @@ export default function AiAssistantPage() {
     setDocAnalysis("");
 
     try {
-      const response = await aiService.analyzeDocument(selectedFile);
+      const response = await aiService.analyzeDocument(selectedFile, docPrompt);
       setDocAnalysis(response.analysisResult);
       toast.success("Documento analizado con éxito.");
     } catch (error: any) {
@@ -216,17 +217,54 @@ export default function AiAssistantPage() {
               </label>
 
               {selectedFile && (
-                <div className="mt-6 p-4 bg-slate-100 rounded-xl w-full flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <FileText className="text-slate-500 w-6 h-6" />
-                    <span className="font-semibold text-slate-700">{selectedFile.name}</span>
+                <div className="mt-8 w-full space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-white p-2 rounded-lg border border-slate-200 shadow-sm">
+                        <FileText className="text-blue-600 w-6 h-6" />
+                      </div>
+                      <div className="flex flex-col items-start text-left">
+                        <span className="font-bold text-slate-800 text-sm line-clamp-1">{selectedFile.name}</span>
+                        <span className="text-xs text-slate-500">Archivo listo para procesar</span>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => setSelectedFile(null)}
+                      className="text-slate-400 hover:text-red-500 transition-colors"
+                    >
+                      Remover
+                    </button>
                   </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700 flex items-center gap-2 px-1">
+                      <Sparkles className="w-4 h-4 text-blue-500" />
+                      Instrucciones para la IA (Opcional)
+                    </label>
+                    <textarea
+                      value={docPrompt}
+                      onChange={(e) => setDocPrompt(e.target.value)}
+                      placeholder="Ej: ¿Cuáles son las contingencias legales? o ¿Resume las obligaciones del arrendatario?"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all min-h-[100px] resize-none shadow-sm"
+                    />
+                  </div>
+
                   <button 
                     onClick={handleAnalyzeDoc}
                     disabled={isLoading}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                    className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-3"
                   >
-                    {isLoading ? "Analizando..." : <><Sparkles className="w-4 h-4"/> Analizar</>}
+                    {isLoading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Analizando documento...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5 text-amber-400" />
+                        Analizar Documento con IA
+                      </>
+                    )}
                   </button>
                 </div>
               )}

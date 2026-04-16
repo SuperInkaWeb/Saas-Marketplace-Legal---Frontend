@@ -3,25 +3,41 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { kycDocumentSchema, type KycDocumentFormData } from "@/modules/auth/schemas";
-import { useUploadKyc, extractApiError } from "@/modules/auth/hooks";
-import { useState } from "react";
+import { useUploadKyc, useMe, extractApiError } from "@/modules/auth/hooks";
+import { useState, useEffect } from "react";
 import { FormAlert } from "../../(auth)/components/FormAlert";
 import RightHero from "../../(auth)/components/RighHero";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, CreditCard, Hash, Flag, ShieldAlert } from "lucide-react";
+import AuthHeader from "../../(auth)/components/AuthHeader";
+import { COUNTRIES } from "@/modules/auth/constants";
 
 export default function OnboardingKycPage() {
   const [error, setError] = useState<string | null>(null);
+  const { data: user } = useMe();
   const { mutate: uploadKyc, isPending } = useUploadKyc();
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<KycDocumentFormData>({
     resolver: zodResolver(kycDocumentSchema),
   });
+
+  // Autocomplete country code based on user profile
+  useEffect(() => {
+    if (user?.country) {
+      const countryData = COUNTRIES.find(
+        (c) => c.name.toLowerCase() === user.country?.toLowerCase()
+      );
+      if (countryData?.code) {
+        setValue("documentCountryCode", countryData.code);
+      }
+    }
+  }, [user, setValue]);
 
   const onSubmit = (data: KycDocumentFormData) => {
     setError(null);
@@ -34,8 +50,10 @@ export default function OnboardingKycPage() {
   return (
     <div className="min-h-screen flex bg-white font-['Inter',sans-serif]">
       {/* Lado Izquierdo */}
-      <div className="w-full lg:w-1/2 xl:w-5/12 flex flex-col justify-center px-8 sm:px-16 lg:px-24 bg-white z-10">
+      <div className="w-full lg:w-1/2 xl:w-5/12 flex flex-col px-8 sm:px-16 lg:px-24 py-20 bg-white z-10 overflow-y-auto">
         <div className="w-full max-w-sm mx-auto">
+          {/* Header / Logo de regreso */}
+          <AuthHeader />
           {/* Header */}
           <div className="mb-10 text-center lg:text-left">
             <div className="inline-flex p-3 rounded-2xl bg-blue-50 text-blue-600 mb-6">

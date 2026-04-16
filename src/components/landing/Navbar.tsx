@@ -5,8 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const user = useAuthStore((s) => s.user);
@@ -23,10 +22,11 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: "Servicios", href: "/services" },
+    //{ label: "Servicios", href: "/services" },
     { label: "Marketplace", href: "/marketplace" },
-    { label: "Directorio", href: "/directory" },
-    { label: "Contacto", href: "/contact" },
+    { label: "Mercado de Casos", href: "/marketplace/cases" },
+    //{ label: "Directorio", href: "/directory" },
+    //{ label: "Contacto", href: "/contact" },
   ];
 
   return (
