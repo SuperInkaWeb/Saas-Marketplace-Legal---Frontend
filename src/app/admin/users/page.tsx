@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAdminUsers, useUpdateAccountStatus } from "@/modules/admin/hooks";
+import { useAdminUsers, useUpdateAccountStatus, useDeleteUser } from "@/modules/admin/hooks";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -12,11 +12,13 @@ import {
   ChevronRight,
   Users as UsersIcon,
   Filter,
+  Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import Swal from "sweetalert2";
 
 export default function AdminUsersPage() {
   const [search, setSearch] = useState("");
@@ -48,6 +50,39 @@ export default function AdminUsersPage() {
       toast.success(`Cuenta ${newStatus === "BLOCKED" ? "bloqueada" : "activada"} exitosamente.`);
     } catch {
       toast.error("Error al actualizar el estado de la cuenta.");
+    }
+  };
+
+  const deleteUser = useDeleteUser();
+
+  const handleDeleteUser = async (publicId: string, email: string) => {
+    const { value: writtenEmail } = await Swal.fire({
+      title: '¿Eliminar usuario?',
+      text: `Escribe el correo "${email}" para confirmar la eliminación permanente.`,
+      input: 'text',
+      inputPlaceholder: email,
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value || value !== email) {
+          return 'El correo no coincide';
+        }
+      }
+    });
+
+    if (writtenEmail) {
+      try {
+        await deleteUser.mutateAsync(publicId);
+        Swal.fire('¡Eliminado!', 'El usuario ha sido eliminado correctamente.', 'success');
+      } catch (err: any) {
+        if (err.response?.status === 400 || err.response?.data?.detail) {
+          Swal.fire('Error', err.response?.data?.detail || 'El usuario tiene registros dependientes y no puede ser eliminado.', 'error');
+        } else {
+          Swal.fire('Error', 'Ocurrió un error inesperado al eliminar.', 'error');
+        }
+      }
     }
   };
 
@@ -191,22 +226,31 @@ export default function AdminUsersPage() {
                         </td>
                         <td className="px-6 py-4 text-right">
                           {user.role !== "ADMIN" && (
-                            <button
-                              onClick={() => handleToggleStatus(user.publicId, user.accountStatus)}
-                              disabled={updateStatus.isPending}
-                              className={cn(
-                                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors",
-                                user.accountStatus === "ACTIVE"
-                                  ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
-                                  : "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200"
-                              )}
-                            >
-                              {user.accountStatus === "ACTIVE" ? (
-                                <><ShieldBan className="w-3.5 h-3.5" /> Bloquear</>
-                              ) : (
-                                <><ShieldCheck className="w-3.5 h-3.5" /> Activar</>
-                              )}
-                            </button>
+                            <div className="flex justify-end gap-2">
+                              <button
+                                onClick={() => handleToggleStatus(user.publicId, user.accountStatus)}
+                                disabled={updateStatus.isPending || deleteUser.isPending}
+                                className={cn(
+                                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors",
+                                  user.accountStatus === "ACTIVE"
+                                    ? "bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200"
+                                    : "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200"
+                                )}
+                              >
+                                {user.accountStatus === "ACTIVE" ? (
+                                  <><ShieldBan className="w-3.5 h-3.5" /> Bloquear</>
+                                ) : (
+                                  <><ShieldCheck className="w-3.5 h-3.5" /> Activar</>
+                                )}
+                              </button>
+                              <button
+                                onClick={() => handleDeleteUser(user.publicId, user.email)}
+                                disabled={deleteUser.isPending || updateStatus.isPending}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                              >
+                                {deleteUser.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><Trash2 className="w-3.5 h-3.5" /> Eliminar</>}
+                              </button>
+                            </div>
                           )}
                         </td>
                       </tr>

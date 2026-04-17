@@ -46,6 +46,10 @@ export const adminApi = {
     await api.put(`${BASE}/users/${publicId}/status`, body);
   },
 
+  deleteUser: async (publicId: string): Promise<void> => {
+    await api.delete(`${BASE}/users/${publicId}`);
+  },
+
   // ── Lawyer Verification ──────────────────────────────────────────
   getPendingLawyers: async (): Promise<AdminLawyerPendingResponse[]> => {
     const { data } = await api.get(`${BASE}/lawyers/pending`);

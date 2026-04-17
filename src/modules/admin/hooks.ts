@@ -61,6 +61,17 @@ export function useUpdateAccountStatus() {
   });
 }
 
+export function useDeleteUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (publicId: string) => adminApi.deleteUser(publicId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminKeys.all });
+    },
+  });
+}
+
 // ── Lawyer Verification ───────────────────────────────────────────────
 export function useAdminPendingLawyers() {
   return useQuery({

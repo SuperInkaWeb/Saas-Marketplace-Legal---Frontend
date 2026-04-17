@@ -46,7 +46,18 @@ api.interceptors.response.use(
 
     // Handle Permissions (403 Forbidden)
     if (error.response?.status === 403 && !isAuthEndpoint) {
-      if (typeof window !== "undefined" && canShowToast) {
+      const isMeEndpoint = error.config?.url?.includes("/me");
+      
+      if (isMeEndpoint) {
+        // If /me is forbidden, the entire session/account state is likely invalid for the app
+        const { logout } = useAuthStore.getState();
+        if (typeof window !== "undefined") {
+          logout();
+          window.location.href = "/login";
+        } else {
+          logout();
+        }
+      } else if (typeof window !== "undefined" && canShowToast) {
         toast.error("Acceso denegado", {
           description: "No tienes permisos suficientes para realizar esta acción.",
         });

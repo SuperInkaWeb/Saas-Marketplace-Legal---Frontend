@@ -45,8 +45,11 @@ export default function DashboardPage() {
       setLoadingStats(true);
       const data = await lawyerConfigService.getDashboardStats();
       setStats(data);
-    } catch (e) {
-      console.error("Error loading stats", e);
+    } catch (e: any) {
+      // Ignore 403 as it might happen during role transitions or for unauthorized roles
+      if (e.response?.status !== 403) {
+        console.error("Error loading stats", e);
+      }
     } finally {
       setLoadingStats(false);
     }
