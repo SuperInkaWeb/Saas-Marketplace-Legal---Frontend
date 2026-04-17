@@ -40,8 +40,11 @@ export const NotificationCenter = () => {
     try {
       const data = await notificationService.getMyNotifications();
       setNotifications(data);
-    } catch (error) {
-      console.error("Failed to fetch notifications", error);
+    } catch (error: any) {
+      // Silently handle 403 as it might be a restricted feature for the current user/role
+      if (error.response?.status !== 403) {
+        console.error("Failed to fetch notifications", error);
+      }
     }
   };
 

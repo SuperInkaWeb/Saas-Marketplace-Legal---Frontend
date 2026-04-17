@@ -74,10 +74,31 @@ export function DocumentQuestionnaire({
     loadTemplateFields();
   }, [documentTypeCode]);
 
+  const getVisibleFields = useCallback(() => {
+    return fields.filter(field => {
+      const name = field.name.toUpperCase();
+      const isSpouseField = name.includes("CONYUGE") || name.includes("ESPOS") || name.includes("CASAMIENTO");
+      if (isSpouseField) {
+        const estadoCivilField = fields.find(f => f.name.toUpperCase().includes("ESTADO_CIVIL"));
+        if (estadoCivilField) {
+          const maritalStatus = (formData[estadoCivilField.name] || "").toUpperCase();
+          // Si no es casado ni conviviente, esconder campos del cónyuge
+          if (!maritalStatus.includes("CASAD") && !maritalStatus.includes("CONVIVIENTE")) {
+            return false;
+          }
+        }
+      }
+      return true;
+    });
+  }, [fields, formData]);
+
+  const visibleFields = getVisibleFields();
+
   // Debounced preview fetcher
   const fetchPreview = useCallback(async (data: Record<string, string>) => {
     setIsPreviewLoading(true);
     try {
+      // Solo enviar los datos que el usuario ha llenado; el backend maneja la lógica condicional
       const payload: DocumentGeneratorRequest = {
         documentTypeCode,
         jurisdiction: "Perú",
@@ -104,8 +125,8 @@ export function DocumentQuestionnaire({
   };
 
   const handleGenerate = async () => {
-    // Validate required fields
-    const missing = fields.filter(f => f.required && (!formData[f.name] || formData[f.name].trim() === ""));
+    // Validate required fields (only checking visible ones)
+    const missing = visibleFields.filter(f => f.required && (!formData[f.name] || formData[f.name].trim() === ""));
     if (missing.length > 0) {
       toast.error(`Por favor complete: ${missing.map(m => m.label).join(", ")}`);
       return;
@@ -113,6 +134,7 @@ export function DocumentQuestionnaire({
 
     setIsGenerating(true);
     try {
+      // Solo enviar los datos visibles; el backend suprime secciones no aplicables
       const payload: DocumentGeneratorRequest = {
         documentTypeCode,
         caseRequestId,
@@ -135,8 +157,8 @@ export function DocumentQuestionnaire({
     }
   };
 
-  const filledCount = fields.filter(f => formData[f.name]?.trim()).length;
-  const progress = fields.length > 0 ? Math.round((filledCount / fields.length) * 100) : 0;
+  const filledCount = visibleFields.filter(f => formData[f.name]?.trim()).length;
+  const progress = visibleFields.length > 0 ? Math.round((filledCount / visibleFields.length) * 100) : 0;
 
   const renderInput = (field: DocumentFieldDefinition) => {
     const baseClasses = "w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-slate-700 placeholder:text-slate-400 outline-none text-sm";
@@ -245,7 +267,7 @@ export function DocumentQuestionnaire({
             </div>
           ) : (
             <div className="space-y-3 pt-2">
-              {fields.map((field, index) => (
+              {visibleFields.map((field, index) => (
                 <motion.div
                   key={field.name}
                   initial={{ opacity: 0, y: 8 }}
