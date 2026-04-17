@@ -192,50 +192,52 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ publ
             transition={{ delay: 0.2 }}
             className="flex flex-col gap-6"
           >
-            {/* KYC Data */}
-            <div className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm">
-              <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-emerald-500" />
-                Documento de Identidad (KYC)
-              </h3>
-              <div className="grid grid-cols-2 gap-5">
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase">Tipo</p>
-                  <p className="text-sm font-medium text-slate-800 mt-1">{user.kycDocumentType || "—"}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase">Número</p>
-                  <p className="text-sm font-medium text-slate-800 mt-1">{user.kycDocumentNumber || "—"}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase">País</p>
-                  <p className="text-sm font-medium text-slate-800 mt-1">{user.kycCountryCode || "—"}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase">Estado KYC</p>
-                  <div className="mt-1">
-                    {user.kycIsVerified ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
-                        <CheckCircle2 className="w-3 h-3" /> Verificado
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded">
-                        <AlertCircle className="w-3 h-3" /> Pendiente
-                      </span>
-                    )}
+            {/* KYC Data — solo para abogados, ya que los clientes no registran documentos de identidad */}
+            {isLawyer && (
+              <div className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm">
+                <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-emerald-500" />
+                  Documento de Identidad (KYC)
+                </h3>
+                <div className="grid grid-cols-2 gap-5">
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400 uppercase">Tipo</p>
+                    <p className="text-sm font-medium text-slate-800 mt-1">{user.kycDocumentType || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400 uppercase">Número</p>
+                    <p className="text-sm font-medium text-slate-800 mt-1">{user.kycDocumentNumber || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400 uppercase">País</p>
+                    <p className="text-sm font-medium text-slate-800 mt-1">{user.kycCountryCode || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400 uppercase">Estado KYC</p>
+                    <div className="mt-1">
+                      {user.kycIsVerified ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                          <CheckCircle2 className="w-3 h-3" /> Verificado
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded">
+                          <AlertCircle className="w-3 h-3" /> Pendiente
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            
+            )}
+
             {/* General Location */}
             {user.city && user.country && (
               <div className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm flex-1">
                 <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-blue-500" />
-                  Ubicación Principal
+                  Ubicación
                 </h3>
-                 <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-2 gap-5">
                   <div>
                     <p className="text-xs font-semibold text-slate-400 uppercase">Ciudad</p>
                     <p className="text-sm font-medium text-slate-800 mt-1">{user.city}</p>
