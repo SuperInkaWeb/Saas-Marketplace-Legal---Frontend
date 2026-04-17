@@ -98,19 +98,11 @@ export function DocumentQuestionnaire({
   const fetchPreview = useCallback(async (data: Record<string, string>) => {
     setIsPreviewLoading(true);
     try {
-      // Autocompletar campos ocultos con "---" para que la validación del backend no falle
-      const completeData = { ...data };
-      const visibleNames = visibleFields.map(f => f.name);
-      fields.forEach(f => {
-        if (!visibleNames.includes(f.name)) {
-          completeData[f.name] = "---";
-        }
-      });
-
+      // Solo enviar los datos que el usuario ha llenado; el backend maneja la lógica condicional
       const payload: DocumentGeneratorRequest = {
         documentTypeCode,
         jurisdiction: "Perú",
-        userData: completeData,
+        userData: data,
       };
       const result = await documentService.previewDocument(payload);
       setPreviewHtml(result.generatedContent);
@@ -119,7 +111,7 @@ export function DocumentQuestionnaire({
     } finally {
       setIsPreviewLoading(false);
     }
-  }, [documentTypeCode, fields, visibleFields]);
+  }, [documentTypeCode]);
 
   const handleInputChange = (name: string, value: string) => {
     const newData = { ...formData, [name]: value };
@@ -142,20 +134,12 @@ export function DocumentQuestionnaire({
 
     setIsGenerating(true);
     try {
-      // Autocompletar campos ocultos para generación final
-      const completeData = { ...formData };
-      const visibleNames = visibleFields.map(f => f.name);
-      fields.forEach(f => {
-        if (!visibleNames.includes(f.name)) {
-          completeData[f.name] = "---";
-        }
-      });
-
+      // Solo enviar los datos visibles; el backend suprime secciones no aplicables
       const payload: DocumentGeneratorRequest = {
         documentTypeCode,
         caseRequestId,
         jurisdiction: "Perú",
-        userData: completeData,
+        userData: formData,
       };
       const result = await documentService.generateDocument(payload);
       
