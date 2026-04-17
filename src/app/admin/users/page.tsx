@@ -13,6 +13,7 @@ import {
   Users as UsersIcon,
   Filter,
   Trash2,
+  Eye,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -225,33 +226,41 @@ export default function AdminUsersPage() {
                           {format(new Date(user.createdAt), "dd MMM yyyy", { locale: es })}
                         </td>
                         <td className="px-6 py-4 text-right">
-                          {user.role !== "ADMIN" && (
-                            <div className="flex justify-end gap-2">
-                              <button
-                                onClick={() => handleToggleStatus(user.publicId, user.accountStatus)}
-                                disabled={updateStatus.isPending || deleteUser.isPending}
-                                className={cn(
-                                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors",
-                                  user.accountStatus === "ACTIVE"
-                                    ? "bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200"
-                                    : "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200"
-                                )}
-                              >
-                                {user.accountStatus === "ACTIVE" ? (
-                                  <><ShieldBan className="w-3.5 h-3.5" /> Bloquear</>
-                                ) : (
-                                  <><ShieldCheck className="w-3.5 h-3.5" /> Activar</>
-                                )}
-                              </button>
-                              <button
-                                onClick={() => handleDeleteUser(user.publicId, user.email)}
-                                disabled={deleteUser.isPending || updateStatus.isPending}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
-                              >
-                                {deleteUser.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><Trash2 className="w-3.5 h-3.5" /> Eliminar</>}
-                              </button>
-                            </div>
-                          )}
+                          <div className="flex justify-end gap-2">
+                            <a
+                              href={`/admin/users/${user.publicId}`}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-200"
+                            >
+                              <Eye className="w-3.5 h-3.5" /> Detalles
+                            </a>
+                            {user.role !== "ADMIN" && (
+                              <>
+                                <button
+                                  onClick={() => handleToggleStatus(user.publicId, user.accountStatus)}
+                                  disabled={updateStatus.isPending || deleteUser.isPending}
+                                  className={cn(
+                                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors",
+                                    user.accountStatus === "ACTIVE"
+                                      ? "bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200"
+                                      : "bg-green-50 text-green-600 hover:bg-green-100 border border-green-200"
+                                  )}
+                                >
+                                  {user.accountStatus === "ACTIVE" ? (
+                                    <><ShieldBan className="w-3.5 h-3.5" /> Bloquear</>
+                                  ) : (
+                                    <><ShieldCheck className="w-3.5 h-3.5" /> Activar</>
+                                  )}
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteUser(user.publicId, user.email)}
+                                  disabled={deleteUser.isPending || updateStatus.isPending}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                                >
+                                  {deleteUser.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><Trash2 className="w-3.5 h-3.5" /> Eliminar</>}
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
