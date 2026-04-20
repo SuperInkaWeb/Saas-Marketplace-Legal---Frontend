@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordSchema, type ResetPasswordFormData } from "../../../modules/auth/schemas";
@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation";
 import RightHero from "../components/RighHero";
 import AuthHeader from "../components/AuthHeader";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const emailQuery = searchParams.get("email") || "";
 
@@ -230,5 +230,17 @@ export default function ResetPasswordPage() {
       {/* Lado Derecho: Hero */}
       <RightHero />
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

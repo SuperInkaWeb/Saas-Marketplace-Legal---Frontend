@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { verifyOtpSchema, type VerifyOtpFormData } from "../../../modules/auth/schemas";
@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation";
 import RightHero from "../components/RighHero";
 import AuthHeader from "../components/AuthHeader";
 
-export default function VerifyAccountPage() {
+function VerifyAccountContent() {
   const searchParams = useSearchParams();
   const emailQuery = searchParams.get("email") || "";
 
@@ -191,5 +191,17 @@ export default function VerifyAccountPage() {
       {/* Lado Derecho: Hero */}
       <RightHero />
     </div>
+  );
+}
+
+export default function VerifyAccountPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <VerifyAccountContent />
+    </Suspense>
   );
 }
