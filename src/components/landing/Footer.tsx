@@ -56,12 +56,6 @@ export default function Footer() {
             >
               Soporte
             </Link>
-            <Link 
-              href="/careers" 
-              className="font-inter text-sm text-slate-300 hover:text-white transition-colors"
-            >
-              Carreras
-            </Link>
           </div>
         </div>
       </div>

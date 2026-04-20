@@ -95,12 +95,6 @@ function MarketplaceContent() {
                 Cada profesional listado ha superado una auditoría de precisión técnica y ética operativa.
               </p>
             </motion.div>
-            <motion.div variants={itemVariants} className="text-right border-l-2 border-accent pl-10 w-full md:w-auto">
-              <p className="font-inter text-[10px] uppercase tracking-[0.3em] text-secondary/40 font-black mb-2">Total Archivo</p>
-              <p className="text-6xl lg:text-7xl font-black font-manrope tracking-tighter text-primary">
-                {isLoadingLawyers ? "..." : (lawyersData?.totalElements || 0).toLocaleString()}
-              </p>
-            </motion.div>
           </header>
 
           {/* Grid de Resultados */}
