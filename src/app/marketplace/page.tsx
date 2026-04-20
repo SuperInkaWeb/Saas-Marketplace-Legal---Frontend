@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { SearchFilters } from "@/components/marketplace/SearchFilters";
 import { LawyerCard } from "@/components/marketplace/LawyerCard";
 import { useSearchLawyers, useSpecialties } from "@/modules/marketplace/hooks";
@@ -23,10 +24,25 @@ const itemVariants = {
 };
 
 export default function MarketplacePage() {
+  const searchParams = useSearchParams();
   const [params, setParams] = useState<SearchParams>({
     page: 0,
     size: 6,
   });
+
+  // Sync state with URL params on mount
+  useEffect(() => {
+    const specialtyId = searchParams.get("specialtyId");
+    const query = searchParams.get("query");
+
+    if (specialtyId || query) {
+      setParams(prev => ({
+        ...prev,
+        specialtyId: specialtyId ? parseInt(specialtyId) : prev.specialtyId,
+        query: query || prev.query,
+      }));
+    }
+  }, [searchParams]);
 
   const { data: lawyersData, isLoading: isLoadingLawyers, isError: isErrorLawyers } = useSearchLawyers(params);
   const { data: specialties = [] } = useSpecialties();

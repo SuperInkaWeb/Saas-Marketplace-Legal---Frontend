@@ -28,5 +28,10 @@ export const marketplaceService = {
   getPublicLawyerProfile: async (slug: string): Promise<any> => {
     const { data } = await api.get(`/lawyer-profile/public/${slug}`);
     return data;
+  },
+
+  getAllSpecialties: async (): Promise<any[]> => {
+    const { data } = await api.get(`${BASE_URL}/specialties`);
+    return data;
   }
 };
