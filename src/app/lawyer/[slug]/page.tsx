@@ -32,7 +32,7 @@ export default function LawyerPublicProfile() {
         <Navbar />
         <div className="min-h-screen flex items-center justify-center bg-slate-50">
           {loading ? (
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
           ) : (
             <div className="text-center">
               <h1 className="text-4xl font-bold text-slate-900 mb-4">404</h1>

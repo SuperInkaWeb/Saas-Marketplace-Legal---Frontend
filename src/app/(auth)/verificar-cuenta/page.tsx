@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { verifyOtpSchema, type VerifyOtpFormData } from "../../../modules/auth/schemas";
@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation";
 import RightHero from "../components/RighHero";
 import AuthHeader from "../components/AuthHeader";
 
-export default function VerifyAccountPage() {
+function VerifyAccountContent() {
   const searchParams = useSearchParams();
   const emailQuery = searchParams.get("email") || "";
 
@@ -82,7 +82,7 @@ export default function VerifyAccountPage() {
             </h1>
             <p className="text-gray-500 mt-2 text-sm leading-relaxed">
               Ingresa el código OTP de 6 dígitos que te hemos enviado a{" "}
-              <span className="font-semibold text-slate-800">{emailQuery}</span> para activar tu cuenta.
+              <span className="font-semibold text-primary">{emailQuery}</span> para activar tu cuenta.
             </p>
           </div>
 
@@ -121,7 +121,7 @@ export default function VerifyAccountPage() {
                 {...register("code")}
                 className={`w-full px-4 py-3 text-center tracking-widest text-xl rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white ${errors.code
                     ? "border-red-500 focus:ring-2 focus:ring-red-200"
-                    : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
+                    : "border-gray-300 focus:border-accent focus:ring-2 focus:ring-accent/10"
                   }`}
                 type="text"
                 maxLength={6}
@@ -137,7 +137,7 @@ export default function VerifyAccountPage() {
               <button
                 type="submit"
                 disabled={!codeInput || codeInput.length !== 6 || isVerifying}
-                className="w-full mt-6 bg-slate-900 text-white py-3.5 rounded-lg font-semibold text-sm hover:bg-slate-800 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-slate-200 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center shadow-sm"
+                className="w-full mt-6 bg-primary text-white py-3.5 rounded-lg font-semibold text-sm hover:bg-accent transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-accent/20 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center shadow-sm"
               >
                 {isVerifying ? (
                   <>
@@ -160,7 +160,7 @@ export default function VerifyAccountPage() {
               type="button"
               onClick={handleResend}
               disabled={isResending || cooldown > 0}
-              className="group flex items-center justify-center text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group flex items-center justify-center text-sm font-semibold text-primary hover:text-accent transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isResending ? (
                 <>
@@ -180,7 +180,7 @@ export default function VerifyAccountPage() {
 
             <Link
               href="/login"
-              className="text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors"
+              className="text-sm font-semibold text-gray-500 hover:text-primary transition-colors"
             >
               Volver al inicio de sesión
             </Link>
@@ -191,5 +191,17 @@ export default function VerifyAccountPage() {
       {/* Lado Derecho: Hero */}
       <RightHero />
     </div>
+  );
+}
+
+export default function VerifyAccountPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <VerifyAccountContent />
+    </Suspense>
   );
 }

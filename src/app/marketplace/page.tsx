@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { SearchFilters } from "@/components/marketplace/SearchFilters";
 import { LawyerCard } from "@/components/marketplace/LawyerCard";
 import { useSearchLawyers, useSpecialties } from "@/modules/marketplace/hooks";
@@ -22,11 +23,26 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } }
 };
 
-export default function MarketplacePage() {
+function MarketplaceContent() {
+  const searchParams = useSearchParams();
   const [params, setParams] = useState<SearchParams>({
     page: 0,
     size: 6,
   });
+
+  // Sync state with URL params on mount
+  useEffect(() => {
+    const specialtyId = searchParams.get("specialtyId");
+    const query = searchParams.get("query");
+
+    if (specialtyId || query) {
+      setParams(prev => ({
+        ...prev,
+        specialtyId: specialtyId ? parseInt(specialtyId) : prev.specialtyId,
+        query: query || prev.query,
+      }));
+    }
+  }, [searchParams]);
 
   const { data: lawyersData, isLoading: isLoadingLawyers, isError: isErrorLawyers } = useSearchLawyers(params);
   const { data: specialties = [] } = useSpecialties();
@@ -45,7 +61,7 @@ export default function MarketplacePage() {
       <div className="max-w-[1800px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 px-6 lg:px-16 pt-32 pb-24">
         {/* Sidebar Navigation */}
         <motion.aside 
-          initial={{ opacity: 0, y: 20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as const }}
           className="w-full lg:w-72 shrink-0"
@@ -62,7 +78,7 @@ export default function MarketplacePage() {
         {/* Main Content Area */}
         <motion.main 
           variants={containerVariants}
-          initial="hidden"
+          initial={false}
           animate="visible"
           className="flex-1"
         >
@@ -79,16 +95,10 @@ export default function MarketplacePage() {
                 Cada profesional listado ha superado una auditoría de precisión técnica y ética operativa.
               </p>
             </motion.div>
-            <motion.div variants={itemVariants} className="text-right border-l-2 border-accent pl-10 w-full md:w-auto">
-              <p className="font-inter text-[10px] uppercase tracking-[0.3em] text-secondary/40 font-black mb-2">Total Archivo</p>
-              <p className="text-6xl lg:text-7xl font-black font-manrope tracking-tighter text-primary">
-                {isLoadingLawyers ? "..." : (lawyersData?.totalElements || 0).toLocaleString()}
-              </p>
-            </motion.div>
           </header>
 
-          {/* Grid de Resultados */}
-          <motion.div variants={itemVariants} className="grid grid-cols-1 xl:grid-cols-2 gap-12">
+          {/* Grid de Resultados: Ahora una sola columna por fila para mayor exclusividad */}
+          <motion.div variants={itemVariants} className="grid grid-cols-1 gap-12">
             <AnimatePresence mode="popLayout">
               {isLoadingLawyers && params.size === 6 ? (
                 Array.from({ length: 4 }).map((_, i) => (
@@ -152,5 +162,17 @@ export default function MarketplacePage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function MarketplacePage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-surface min-h-screen flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <MarketplaceContent />
+    </Suspense>
   );
 }

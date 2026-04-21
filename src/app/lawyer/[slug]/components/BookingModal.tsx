@@ -98,7 +98,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, sch
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-100">
-          <h2 className="text-xl font-bold text-slate-900">Agendar Consulta</h2>
+          <h2 className="text-xl font-bold text-primary">Agendar Consulta</h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
             <X className="w-6 h-6" />
           </button>
@@ -107,29 +107,29 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, sch
         {/* Content */}
         <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
           {!user ? (
-            <div className="bg-amber-50 text-amber-800 p-4 rounded-lg text-sm mb-4 border border-amber-200">
+            <div className="bg-accent/5 text-primary p-4 rounded-lg text-sm mb-4 border border-accent/20">
               Debes iniciar sesión en tu cuenta para poder agendar una consulta.
             </div>
           ) : null}
 
           <div>
             <div className="flex items-center justify-between mb-3">
-              <label className="text-sm font-semibold text-slate-900">1. Selecciona una Fecha</label>
+              <label className="text-sm font-semibold text-primary">1. Selecciona una Fecha</label>
               <div className="flex gap-1">
                 <button 
                   onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
                   className="p-1 hover:bg-slate-100 rounded-md transition-colors"
                 >
-                  <ChevronLeft className="w-4 h-4 text-slate-500" />
+                  <ChevronLeft className="w-4 h-4 text-accent" />
                 </button>
-                <span className="text-xs font-bold text-slate-600 min-w-[80px] text-center first-letter:uppercase">
+                <span className="text-xs font-bold text-primary min-w-[80px] text-center first-letter:uppercase">
                   {format(currentMonth, 'MMM yyyy', { locale: es })}
                 </span>
                 <button 
                   onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
                   className="p-1 hover:bg-slate-100 rounded-md transition-colors"
                 >
-                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                  <ChevronRight className="w-4 h-4 text-accent" />
                 </button>
               </div>
             </div>
@@ -159,7 +159,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, sch
                       className={cn(
                         "h-9 w-full flex items-center justify-center rounded-lg text-sm transition-all relative",
                         isSelected 
-                          ? "bg-slate-900 text-white font-bold shadow-md shadow-slate-200" 
+                          ? "bg-primary text-white font-bold shadow-md shadow-primary/10" 
                           : isCurrMonth && hasSchedule && !isPast
                             ? "hover:bg-white hover:shadow-sm text-slate-700 font-medium" 
                             : "text-slate-300 cursor-not-allowed opacity-20"
@@ -167,7 +167,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, sch
                     >
                       {format(day, 'd')}
                       {hasSchedule && !isPast && isCurrMonth && !isSelected && (
-                        <div className="absolute bottom-1 w-1 h-1 bg-emerald-500 rounded-full" />
+                        <div className="absolute bottom-1 w-1 h-1 bg-accent rounded-full" />
                       )}
                     </button>
                   );
@@ -182,7 +182,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, sch
               animate={{ opacity: 1, y: 0 }}
               className="space-y-3"
             >
-              <label className="block text-sm font-semibold text-slate-900 mb-3">2. Horario Disponible</label>
+              <label className="block text-sm font-semibold text-primary mb-3">2. Horario Disponible</label>
               <div className="grid grid-cols-2 gap-3">
                 {(() => {
                   const schedule = getDaySchedule(selectedDate);
@@ -194,8 +194,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, sch
                       className={cn(
                         "flex items-center justify-center gap-2 py-3 px-4 rounded-xl border transition-all",
                         selectedTimeSlot?.start === schedule.startTime
-                          ? "bg-emerald-600 border-emerald-600 text-white shadow-lg shadow-emerald-100"
-                          : "bg-white border-slate-200 text-slate-700 hover:border-emerald-400 hover:bg-emerald-50/30"
+                          ? "bg-accent border-accent text-white shadow-lg shadow-accent/20"
+                          : "bg-white border-slate-200 text-slate-700 hover:border-accent/50 hover:bg-accent/5"
                       )}
                     >
                       <Clock className="w-4 h-4" />
@@ -208,12 +208,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, sch
           )}
 
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-3">3. Notas (Opcional)</label>
+            <label className="block text-sm font-semibold text-primary mb-3">3. Notas (Opcional)</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Describe brevemente el motivo de tu consulta..."
-              className="w-full text-sm rounded-xl border border-slate-200 p-4 focus:ring-2 focus:ring-slate-900/20 focus:border-slate-900 outline-none resize-none h-24 bg-slate-50/50"
+              className="w-full text-sm rounded-xl border border-slate-200 p-4 focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none resize-none h-24 bg-slate-50/50"
             />
           </div>
         </div>
@@ -223,7 +223,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, sch
           <button
             disabled={!selectedDate || !selectedTimeSlot || loading || !user}
             onClick={handleBook}
-            className="w-full bg-slate-900 hover:bg-black text-white text-sm font-bold tracking-widest py-4 rounded-xl transition-all shadow-lg active:scale-[0.98] uppercase disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-full bg-primary hover:bg-accent text-white text-sm font-bold tracking-widest py-4 rounded-xl transition-all shadow-lg active:scale-[0.98] uppercase disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
             {loading ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>

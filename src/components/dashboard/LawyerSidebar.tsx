@@ -20,6 +20,7 @@ import {
   MessageSquare,
   Sparkles,
   ChevronDown,
+  Lock,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -36,6 +37,7 @@ interface NavItem {
   show?: boolean;
   external?: boolean;
   badge?: boolean;
+  isPremium?: boolean;
 }
 
 export function LawyerSidebar({ onItemClick, onLogout }: SidebarProps) {
@@ -70,7 +72,7 @@ export function LawyerSidebar({ onItemClick, onLogout }: SidebarProps) {
       title: "Gestión Legal",
       items: [
         { label: "Agenda y Citas", href: "/dashboard/appointments", icon: Calendar },
-        { label: "Expedientes ERP", href: "/dashboard/matters", icon: Briefcase },
+        { label: "Expedientes ERP", href: "/dashboard/matters", icon: Briefcase, isPremium: true },
         { label: "Documentos", href: "/dashboard/documents", icon: FileText },
       ]
     },
@@ -78,7 +80,7 @@ export function LawyerSidebar({ onItemClick, onLogout }: SidebarProps) {
       title: "Comunicación",
       items: [
         { label: "Mensajería", href: "/dashboard/chats", icon: MessageSquare },
-        { label: "IA Legal", href: "/dashboard/ai-assistant", icon: Scale },
+        { label: "IA Legal", href: "/dashboard/ai-assistant", icon: Scale, isPremium: true },
       ]
     },
     {
@@ -178,23 +180,29 @@ export function LawyerSidebar({ onItemClick, onLogout }: SidebarProps) {
                     const Icon = item.icon;
                     const isActive = pathname === item.href;
                     
-                    const NavItem = (
+                    const NavItemComponent = (
                       <motion.div 
                         whileHover={{ x: 4 }}
                         whileTap={{ scale: 0.98 }}
                         className={cn(
-                          "flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-all duration-200 group relative rounded-lg",
+                          "flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-all duration-200 group relative rounded-lg border border-transparent",
                           isActive 
                             ? "bg-brand-primary text-white shadow-lg shadow-brand-primary/20" 
-                            : "text-slate-500 hover:text-brand-primary hover:bg-brand-primary/5"
+                            : "text-slate-500 hover:text-brand-primary hover:bg-brand-primary/5",
+                          item.isPremium && !isActive && "border-amber-400/40 bg-amber-50/20 shadow-sm shadow-amber-100"
                         )}
                       >
                         <Icon className={cn("w-4 h-4 shrink-0 transition-all duration-200", 
-                          isActive ? "text-white" : "text-slate-400 group-hover:text-brand-primary"
+                          isActive ? "text-white" : "text-slate-400 group-hover:text-brand-primary",
+                          item.isPremium && !isActive && "text-amber-600"
                         )} />
-                        <span className="truncate">{item.label}</span>
+                        <span className={cn("truncate", item.isPremium && !isActive && "text-amber-800")}>{item.label}</span>
                         
-                        {"badge" in item && item.badge && !isActive && (
+                        {item.isPremium && (
+                          <Lock className="w-3 h-3 ml-auto text-amber-500/60 group-hover:text-amber-500 transition-colors" />
+                        )}
+
+                        {"badge" in item && item.badge && !isActive && !item.isPremium && (
                           <span className="ml-auto w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
                         )}
                       </motion.div>
@@ -203,14 +211,14 @@ export function LawyerSidebar({ onItemClick, onLogout }: SidebarProps) {
                     if ("external" in item && item.external) {
                       return (
                         <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className="block outline-none">
-                          {NavItem}
+                          {NavItemComponent}
                         </a>
                       );
                     }
 
                     return (
                       <Link key={item.href} href={item.href} onClick={onItemClick} className="block outline-none">
-                        {NavItem}
+                        {NavItemComponent}
                       </Link>
                     );
                   })}

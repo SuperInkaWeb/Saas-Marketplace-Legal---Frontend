@@ -29,7 +29,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ schedules, lawye
       <div className="bg-white p-10 sticky top-32 shadow-[0_20px_60px_rgba(0,0,0,0.04)] border border-slate-50">
         
         <div className="mb-12">
-          <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.3em] border-b-2 border-slate-900 pb-4 inline-block">
+          <h3 className="text-xs font-black text-primary uppercase tracking-[0.3em] border-b-2 border-accent pb-4 inline-block">
             Disponibilidad
           </h3>
         </div>
@@ -41,7 +41,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ schedules, lawye
             <div className="space-y-6">
               {schedules.map((s, idx) => (
                 <div key={idx} className="flex justify-between items-center group">
-                  <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest group-hover:text-amber-600 transition-colors">
+                  <span className="text-[11px] font-black text-primary uppercase tracking-widest group-hover:text-accent transition-colors">
                     {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'][s.dayOfWeek - 1]}
                   </span>
                   <span className="text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1 border border-slate-100 italic">
@@ -60,7 +60,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({ schedules, lawye
         {/* Booking Button */}
         <button 
           onClick={handleBookingClick}
-          className="w-full bg-slate-900 hover:bg-black text-white text-[10px] font-black tracking-[0.3em] py-6 transition-all shadow-xl active:scale-[0.98] uppercase"
+          className="w-full bg-primary hover:bg-accent text-white text-[10px] font-black tracking-[0.3em] py-6 transition-all shadow-xl active:scale-[0.98] uppercase"
         >
           Agendar Consulta
         </button>

@@ -117,14 +117,14 @@ export default function LoginPage() {
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded border-gray-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
+                  className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-accent cursor-pointer"
                 />
-                <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">Recordar sesión</span>
+                <span className="text-sm text-gray-600 group-hover:text-primary transition-colors">Recordar sesión</span>
               </label>
 
               <Link
                 href="/forgot-password"
-                className="text-sm font-semibold text-slate-700 hover:text-black transition-colors"
+                className="text-sm font-semibold text-primary hover:text-accent transition-colors"
               >
                 ¿Olvidaste tu contraseña?
               </Link>
@@ -134,7 +134,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full bg-slate-900 text-white py-3.5 rounded-lg font-semibold text-sm hover:bg-slate-800 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-slate-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center mt-2 shadow-sm"
+              className="w-full bg-primary text-white py-3.5 rounded-lg font-semibold text-sm hover:bg-accent transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-accent/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center mt-2 shadow-sm"
             >
               {isPending ? (
                 <>
@@ -151,7 +151,7 @@ export default function LoginPage() {
           <div className="mt-10 text-center border-t border-gray-100 pt-6">
             <p className="text-sm text-gray-600">
               ¿No tienes una cuenta?{" "}
-              <Link href="/register" className="font-bold text-slate-900 hover:underline">
+              <Link href="/register" className="font-bold text-primary hover:text-accent hover:underline transition-colors">
                 Regístrate aquí
               </Link>
             </p>

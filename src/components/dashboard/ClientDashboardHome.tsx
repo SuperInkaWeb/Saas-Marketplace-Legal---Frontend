@@ -45,7 +45,7 @@ export function ClientDashboardHome({ user }: ClientDashboardHomeProps) {
       
       {/* Welcome Section */}
       <motion.div 
-        initial={{ opacity: 0, y: 10 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         className="mb-12 relative"
       >
@@ -60,7 +60,7 @@ export function ClientDashboardHome({ user }: ClientDashboardHomeProps) {
 
       {/* KPI Cards - Bento Grid Style */}
       <motion.div 
-        initial={{ opacity: 0, y: 15 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
         className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12"
@@ -89,7 +89,7 @@ export function ClientDashboardHome({ user }: ClientDashboardHomeProps) {
 
       {/* Quick Access Block */}
       <motion.div 
-        initial={{ opacity: 0, y: 15 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
         className="bg-white rounded-[2rem] p-6 sm:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100"
@@ -130,7 +130,7 @@ export function ClientDashboardHome({ user }: ClientDashboardHomeProps) {
 
       {/* Info Section */}
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={false}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
         className="mt-12 p-8 rounded-[2rem] bg-slate-900 text-white relative overflow-hidden"

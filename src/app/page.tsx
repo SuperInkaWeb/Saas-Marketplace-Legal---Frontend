@@ -5,6 +5,7 @@ import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import { motion } from "framer-motion";
 import { useRef } from "react";
+import { SmartSearch } from "@/components/landing/SmartSearch";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 40 },
@@ -24,13 +25,13 @@ export default function LandingPage() {
         {/* Hero & Search */}
         <section className="min-h-[85vh] lg:min-h-screen flex flex-col justify-center items-start px-6 lg:px-24 bg-surface-container-lowest relative">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={false}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
             className="max-w-5xl w-full z-10"
           >
             <motion.h1
-              initial={{ opacity: 0, y: 40 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 1.2, ease: [0.16, 1, 0.3, 1] as any }}
               className="text-7xl md:text-8xl lg:text-[10rem] font-black tracking-tighter leading-[0.85] text-primary mb-16 uppercase"
@@ -42,25 +43,9 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="w-full mt-12 relative group"
+              className="w-full mt-12 relative"
             >
-              <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-                <span className="material-symbols-outlined text-on-surface-variant/40 group-focus-within:text-accent transition-colors">search</span>
-              </div>
-              <input
-                className="w-full bg-surface-container-low border-b-2 border-primary py-8 pl-18 pr-8 text-xl font-manrope tracking-tight focus:outline-none focus:border-accent transition-all uppercase placeholder:text-on-surface-variant/30"
-                placeholder="BUSCAR EN LA BASE DE DATOS LEGAL, JURISPRUDENCIA O EXPEDIENTES"
-                type="text"
-              />
-              <div className="absolute inset-y-0 right-6 flex items-center">
-                <motion.div
-                  whileHover={{ x: 5 }}
-                  className="flex items-center gap-2 cursor-pointer group/btn"
-                >
-                  <span className="text-[10px] font-black tracking-[0.3em] text-accent uppercase">Ejecutar Búsqueda</span>
-                  <span className="material-symbols-outlined text-accent text-sm">arrow_forward</span>
-                </motion.div>
-              </div>
+              <SmartSearch />
             </motion.div>
 
             <motion.div
@@ -84,6 +69,7 @@ export default function LandingPage() {
         <section className="grid grid-cols-1 lg:grid-cols-2 min-h-screen border-t border-outline-variant/10">
           <motion.div
             {...fadeInUp}
+            initial={false}
             className="flex flex-col justify-center p-8 lg:p-24 bg-surface order-2 lg:order-1"
           >
             <span className="text-accent font-black tracking-[0.4em] text-[10px] uppercase mb-10">Para Ciudadanos</span>
@@ -130,6 +116,7 @@ export default function LandingPage() {
           </div>
           <motion.div
             {...fadeInUp}
+            initial={false}
             className="flex flex-col justify-center p-8 lg:p-24 bg-surface-container-lowest"
           >
             <span className="text-accent font-black tracking-[0.4em] text-[10px] uppercase mb-10">Para Profesionales Independientes</span>
@@ -154,6 +141,7 @@ export default function LandingPage() {
         <section className="grid grid-cols-1 lg:grid-cols-2 min-h-screen border-t border-outline-variant/10">
           <motion.div
             {...fadeInUp}
+            initial={false}
             className="flex flex-col justify-center p-8 lg:p-24 bg-primary order-2 lg:order-1"
           >
             <span className="text-accent font-black tracking-[0.4em] text-[10px] uppercase mb-10">Para Instituciones Globales</span>

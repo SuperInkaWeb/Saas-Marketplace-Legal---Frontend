@@ -42,13 +42,13 @@ export const FormAlert = ({ message, help, type = "error" }: FormAlertProps) => 
 
       <div className="ml-3">
         {/* Título Principal */}
-        <div className="font-bold text-left text-gray-900">
+        <div className="font-bold text-left text-primary">
           {message}
         </div>
         
         {/* Mensaje de Ayuda */}
         {help && (
-          <div className="w-full text-gray-600 mt-1 leading-relaxed">
+          <div className="w-full text-slate-500 mt-1 leading-relaxed">
             {help}
           </div>
         )}

@@ -16,6 +16,7 @@ export default function DocumentsPage() {
   const router = useRouter();
   const [documents, setDocuments] = useState<DocumentResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   
   const [isTemplateModalOpen, setTemplateModalOpen] = useState(false);
   const [templates, setTemplates] = useState<TemplatePublicResponse[]>([]);
@@ -36,6 +37,42 @@ export default function DocumentsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Optional: add file size/type validation here
+    if (file.size > 20 * 1024 * 1024) { // 20MB limit
+      return toast.error("El archivo es demasiado grande (máximo 20MB)");
+    }
+
+    try {
+      setIsUploading(true);
+      const promise = documentService.uploadDocumentFile(file);
+      
+      toast.promise(promise, {
+        loading: 'Subiendo documento...',
+        success: (data) => {
+          setDocuments(prev => [data, ...prev]);
+          return 'Documento subido con éxito';
+        },
+        error: 'Error al subir el documento'
+      });
+
+      await promise;
+    } catch (error) {
+      console.error("Upload error:", error);
+    } finally {
+      setIsUploading(false);
+      // Clear input
+      event.target.value = '';
+    }
+  };
+
+  const triggerFileInput = () => {
+    document.getElementById('vault-file-upload')?.click();
   };
 
   const openTemplateModal = async () => {
@@ -74,6 +111,14 @@ export default function DocumentsPage() {
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto">
+      <input 
+        id="vault-file-upload"
+        type="file" 
+        className="hidden" 
+        onChange={handleFileUpload}
+        disabled={isUploading}
+      />
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 border-b border-slate-200 pb-4">
@@ -84,12 +129,17 @@ export default function DocumentsPage() {
         <div className="flex items-center gap-3">
           <button 
             onClick={openTemplateModal}
-            className="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-medium transition-colors inline-flex items-center gap-2 text-sm shadow-sm"
+            className="bg-primary text-white px-6 py-3 rounded-sm font-bold uppercase tracking-widest hover:bg-accent transition-all duration-300 inline-flex items-center gap-3 text-[10px] shadow-lg shadow-primary/10"
           >
-            <FileText className="w-4 h-4" /> Generar Documento
+            <Plus className="w-3.5 h-3.5" /> Generar Documento
           </button>
-          <button className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-5 py-2.5 rounded-xl font-medium transition-colors inline-flex items-center gap-2 text-sm">
-            <UploadCloud className="w-4 h-4" /> Subir
+          <button 
+            onClick={triggerFileInput}
+            disabled={isUploading}
+            className="bg-white hover:bg-gray-50 text-primary border border-gray-200 px-6 py-3 rounded-sm font-bold uppercase tracking-widest transition-all duration-300 inline-flex items-center gap-3 text-[10px] disabled:opacity-50"
+          >
+            {isUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UploadCloud className="w-3.5 h-3.5" />}
+            {isUploading ? "Subiendo..." : "Subir Archivo"}
           </button>
         </div>
       </div>
@@ -99,15 +149,19 @@ export default function DocumentsPage() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
         </div>
       ) : documents.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-slate-200 border-dashed shadow-sm">
-          <FileType2 className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900">Sin documentos</h3>
-          <p className="text-slate-500 mt-1 mb-6">Aún no has subido ningún documento a tu bóveda.</p>
+        <div className="text-center py-24 bg-white rounded-sm border border-gray-100 border-dashed shadow-sm">
+          <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <FileType2 className="w-10 h-10 text-gray-300" />
+          </div>
+          <h3 className="text-xl font-bold text-primary font-manrope">Tu bóveda está vacía</h3>
+          <p className="text-gray-500 mt-2 mb-8 text-sm max-w-xs mx-auto leading-relaxed">
+            Aún no has subido documentos legales ni generado contratos con nuestras plantillas.
+          </p>
           <button 
-            onClick={openTemplateModal}
-            className="bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 text-sm mx-auto"
+            onClick={triggerFileInput}
+            className="bg-primary text-white px-8 py-3.5 rounded-sm font-bold uppercase tracking-widest hover:bg-accent transition-all duration-300 inline-flex items-center gap-2 text-[10px]"
           >
-            <Plus className="w-4 h-4" /> Generar con plantilla
+            <UploadCloud className="w-4 h-4" /> Comenzar Ahora
           </button>
         </div>
       ) : (
@@ -119,40 +173,44 @@ export default function DocumentsPage() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col group"
+                className="bg-white rounded-sm p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group relative"
               >
-                <div className="w-12 h-12 rounded-lg bg-emerald-50 flex items-center justify-center mb-4 border border-emerald-100">
-                  <FileText className="w-6 h-6 text-emerald-600" />
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-11 h-11 rounded-sm bg-gray-50 flex items-center justify-center border border-gray-100 group-hover:bg-primary transition-colors duration-300">
+                    <FileText className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+                  </div>
+                  <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-sm border border-gray-100">
+                    <span className="text-[10px] font-bold text-primary">{formatBytes(doc.fileSizeBytes)}</span>
+                  </div>
                 </div>
                 
-                <h3 className="font-semibold text-slate-900 text-sm mb-1 truncate" title={doc.fileName}>
+                <h3 className="font-bold text-primary text-sm mb-1 truncate font-manrope group-hover:text-accent transition-colors" title={doc.fileName}>
                   {doc.fileName}
                 </h3>
                 
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-4">
-                  <span>{formatBytes(doc.fileSizeBytes)}</span>
-                  <span>{format(new Date(doc.createdAt), "MMM d, yyyy", { locale: es })}</span>
-                </div>
+                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-medium mb-5">
+                  {format(new Date(doc.createdAt), "MMM d, yyyy", { locale: es })}
+                </p>
 
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-2 mb-6">
                   {doc.isTemplate && (
-                    <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-violet-100 text-violet-700 rounded-md">
+                    <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-accent/10 text-accent border border-accent/20 rounded-sm">
                       Plantilla
                     </span>
                   )}
                   {doc.isDraft && (
-                    <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 rounded-md">
+                    <span className="px-2 py-0.5 text-[8px] font-black uppercase tracking-widest bg-gray-100 text-gray-500 border border-gray-200 rounded-sm">
                       Borrador
                     </span>
                   )}
                 </div>
                 
-                <div className="flex gap-2 mt-auto border-t border-slate-100 pt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-2 mt-auto pt-5 border-t border-gray-50 transition-all duration-300">
                   <button 
                     onClick={() => router.push(`/dashboard/documents/${doc.publicId}`)}
-                    className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-1.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                    className="flex-1 bg-primary text-white py-2.5 rounded-sm text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-accent transition-all shadow-lg shadow-primary/5"
                   >
-                    <FilePenLine className="w-3.5 h-3.5" /> {doc.isDraft ? "Editar" : "Ver"}
+                    {doc.isDraft ? "Editar" : "Ver"}
                   </button>
                   
                   {doc.fileUrl && (
@@ -160,8 +218,8 @@ export default function DocumentsPage() {
                       href={doc.fileUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors border border-slate-200"
-                      title="Descargar archivo original"
+                      className="p-2.5 rounded-sm text-gray-400 hover:text-primary hover:bg-gray-50 transition-all border border-gray-100"
+                      title="Descargar"
                     >
                       <Download className="w-4 h-4" />
                     </a>
@@ -169,7 +227,7 @@ export default function DocumentsPage() {
 
                   <button 
                     onClick={() => handleArchive(doc.publicId)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors border border-slate-200"
+                    className="p-2.5 rounded-sm text-gray-300 hover:text-red-600 hover:bg-red-50 transition-all border border-gray-100"
                     title="Archivar"
                   >
                     <Trash2 className="w-4 h-4" />
