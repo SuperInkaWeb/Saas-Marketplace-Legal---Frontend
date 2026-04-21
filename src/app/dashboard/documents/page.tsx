@@ -16,6 +16,7 @@ export default function DocumentsPage() {
   const router = useRouter();
   const [documents, setDocuments] = useState<DocumentResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   
   const [isTemplateModalOpen, setTemplateModalOpen] = useState(false);
   const [templates, setTemplates] = useState<TemplatePublicResponse[]>([]);
@@ -36,6 +37,42 @@ export default function DocumentsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Optional: add file size/type validation here
+    if (file.size > 20 * 1024 * 1024) { // 20MB limit
+      return toast.error("El archivo es demasiado grande (máximo 20MB)");
+    }
+
+    try {
+      setIsUploading(true);
+      const promise = documentService.uploadDocumentFile(file);
+      
+      toast.promise(promise, {
+        loading: 'Subiendo documento...',
+        success: (data) => {
+          setDocuments(prev => [data, ...prev]);
+          return 'Documento subido con éxito';
+        },
+        error: 'Error al subir el documento'
+      });
+
+      await promise;
+    } catch (error) {
+      console.error("Upload error:", error);
+    } finally {
+      setIsUploading(false);
+      // Clear input
+      event.target.value = '';
+    }
+  };
+
+  const triggerFileInput = () => {
+    document.getElementById('vault-file-upload')?.click();
   };
 
   const openTemplateModal = async () => {
@@ -74,6 +111,14 @@ export default function DocumentsPage() {
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto">
+      <input 
+        id="vault-file-upload"
+        type="file" 
+        className="hidden" 
+        onChange={handleFileUpload}
+        disabled={isUploading}
+      />
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 border-b border-slate-200 pb-4">
@@ -88,8 +133,13 @@ export default function DocumentsPage() {
           >
             <FileText className="w-4 h-4" /> Generar Documento
           </button>
-          <button className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-5 py-2.5 rounded-xl font-medium transition-colors inline-flex items-center gap-2 text-sm">
-            <UploadCloud className="w-4 h-4" /> Subir
+          <button 
+            onClick={triggerFileInput}
+            disabled={isUploading}
+            className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-5 py-2.5 rounded-xl font-medium transition-colors inline-flex items-center gap-2 text-sm disabled:opacity-50"
+          >
+            {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+            {isUploading ? "Subiendo..." : "Subir"}
           </button>
         </div>
       </div>
@@ -104,10 +154,10 @@ export default function DocumentsPage() {
           <h3 className="text-lg font-medium text-slate-900">Sin documentos</h3>
           <p className="text-slate-500 mt-1 mb-6">Aún no has subido ningún documento a tu bóveda.</p>
           <button 
-            onClick={openTemplateModal}
+            onClick={triggerFileInput}
             className="bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2 text-sm mx-auto"
           >
-            <Plus className="w-4 h-4" /> Generar con plantilla
+            <UploadCloud className="w-4 h-4" /> Subir mi primer archivo
           </button>
         </div>
       ) : (

@@ -67,5 +67,17 @@ export const documentService = {
       }
     });
     return data;
+  },
+  
+  uploadDocumentFile: async (file: File): Promise<DocumentResponse> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const { data } = await api.post(`${BASE_URL}/upload`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+    return data;
   }
 };
