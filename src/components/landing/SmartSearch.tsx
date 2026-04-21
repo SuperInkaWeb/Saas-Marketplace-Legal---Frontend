@@ -148,8 +148,9 @@ export function SmartSearch() {
 
   return (
     <div ref={containerRef} className="w-full relative z-50">
-      <div className="relative group">
-        <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+      <div className="group flex items-center bg-surface-container-low border-b-2 border-primary focus-within:border-accent transition-all pl-6 pr-4 md:pr-6">
+        {/* Search Icon */}
+        <div className="shrink-0 flex items-center justify-center">
           {isLoading ? (
             <Loader2 className="w-5 h-5 text-accent animate-spin" />
           ) : (
@@ -157,29 +158,31 @@ export function SmartSearch() {
           )}
         </div>
         
+        {/* Input Field */}
         <input
           value={query}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={() => query.length >= 2 && setIsOpen(true)}
-          className="w-full bg-surface-container-low border-b-2 border-primary py-8 pl-18 pr-40 text-xl md:text-2xl font-manrope tracking-tight focus:outline-none focus:border-accent transition-all uppercase placeholder:text-on-surface-variant/30 lowercase"
+          className="flex-1 bg-transparent py-8 px-4 md:px-6 text-xl md:text-2xl font-manrope tracking-tight focus:outline-none transition-all uppercase placeholder:text-on-surface-variant/30 lowercase min-w-0"
           placeholder="Busca por especialidad, nombre de abogado o consulta legal..."
           type="text"
           autoComplete="off"
         />
 
-        <div className="absolute inset-y-0 right-6 flex items-center gap-4">
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2 md:gap-4 shrink-0">
           {query && (
             <button 
               onClick={() => { setQuery(""); setSuggestions([]); }}
-              className="p-2 hover:bg-surface-container-high rounded-full transition-colors"
+              className="p-2 hover:bg-surface-container-high rounded-full transition-colors shrink-0"
             >
               <X className="w-4 h-4 text-on-surface-variant/60" />
             </button>
           )}
           <button
             onClick={() => handleAction()}
-            className="flex items-center gap-2 group/btn bg-primary text-on-primary px-6 py-3 rounded-full hover:bg-accent transition-all duration-300"
+            className="flex items-center gap-2 group/btn bg-primary text-on-primary px-4 md:px-6 py-2.5 md:py-3 rounded-full hover:bg-accent transition-all duration-300 shrink-0"
           >
             <span className="hidden md:inline text-[10px] font-black tracking-[0.2em] uppercase">Buscar ahora</span>
             <ArrowRight className="w-4 h-4" />

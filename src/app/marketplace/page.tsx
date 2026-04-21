@@ -61,7 +61,7 @@ function MarketplaceContent() {
       <div className="max-w-[1800px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 px-6 lg:px-16 pt-32 pb-24">
         {/* Sidebar Navigation */}
         <motion.aside 
-          initial={{ opacity: 0, y: 20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as const }}
           className="w-full lg:w-72 shrink-0"
@@ -78,7 +78,7 @@ function MarketplaceContent() {
         {/* Main Content Area */}
         <motion.main 
           variants={containerVariants}
-          initial="hidden"
+          initial={false}
           animate="visible"
           className="flex-1"
         >

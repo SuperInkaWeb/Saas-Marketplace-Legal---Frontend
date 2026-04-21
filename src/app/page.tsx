@@ -25,13 +25,13 @@ export default function LandingPage() {
         {/* Hero & Search */}
         <section className="min-h-[85vh] lg:min-h-screen flex flex-col justify-center items-start px-6 lg:px-24 bg-surface-container-lowest relative">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={false}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
             className="max-w-5xl w-full z-10"
           >
             <motion.h1
-              initial={{ opacity: 0, y: 40 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 1.2, ease: [0.16, 1, 0.3, 1] as any }}
               className="text-7xl md:text-8xl lg:text-[10rem] font-black tracking-tighter leading-[0.85] text-primary mb-16 uppercase"
@@ -69,6 +69,7 @@ export default function LandingPage() {
         <section className="grid grid-cols-1 lg:grid-cols-2 min-h-screen border-t border-outline-variant/10">
           <motion.div
             {...fadeInUp}
+            initial={false}
             className="flex flex-col justify-center p-8 lg:p-24 bg-surface order-2 lg:order-1"
           >
             <span className="text-accent font-black tracking-[0.4em] text-[10px] uppercase mb-10">Para Ciudadanos</span>
@@ -115,6 +116,7 @@ export default function LandingPage() {
           </div>
           <motion.div
             {...fadeInUp}
+            initial={false}
             className="flex flex-col justify-center p-8 lg:p-24 bg-surface-container-lowest"
           >
             <span className="text-accent font-black tracking-[0.4em] text-[10px] uppercase mb-10">Para Profesionales Independientes</span>
@@ -139,6 +141,7 @@ export default function LandingPage() {
         <section className="grid grid-cols-1 lg:grid-cols-2 min-h-screen border-t border-outline-variant/10">
           <motion.div
             {...fadeInUp}
+            initial={false}
             className="flex flex-col justify-center p-8 lg:p-24 bg-primary order-2 lg:order-1"
           >
             <span className="text-accent font-black tracking-[0.4em] text-[10px] uppercase mb-10">Para Instituciones Globales</span>

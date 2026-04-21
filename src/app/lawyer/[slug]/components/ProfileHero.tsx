@@ -19,6 +19,7 @@ export const ProfileHero: React.FC<ProfileHeroProps> = ({ profile }) => {
                 src={profile.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.fullName)}&background=1e293b&color=fff&size=400`}
                 alt={profile.fullName}
                 fill
+                sizes="(max-width: 1024px) 192px, 256px"
                 className="object-cover transition-transform duration-700 hover:scale-105"
                 priority
               />
@@ -37,8 +38,8 @@ export const ProfileHero: React.FC<ProfileHeroProps> = ({ profile }) => {
               <div className="inline-block px-4 py-1.5 mb-8 bg-slate-900 text-white text-[9px] font-black tracking-[0.3em] uppercase">
                 Miembro Verificado
               </div>
-              <div className="border-l-4 border-amber-500 pl-8 inline-block lg:block">
-                <h1 className="text-5xl lg:text-7xl font-black text-slate-900 tracking-tighter mb-4 font-manrope uppercase leading-[0.9]">
+              <div className="border-l-4 border-accent pl-8 inline-block lg:block">
+                <h1 className="text-5xl lg:text-7xl font-black text-primary tracking-tighter mb-4 font-manrope uppercase leading-[0.9]">
                   {profile.fullName}
                 </h1>
                 <p className="text-xs uppercase tracking-[0.4em] text-slate-400 font-bold mt-4">
@@ -50,7 +51,7 @@ export const ProfileHero: React.FC<ProfileHeroProps> = ({ profile }) => {
             <div className="flex flex-wrap justify-center lg:justify-start gap-12 pt-10 border-t border-slate-100">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-slate-400 font-bold mb-2">Tarifa Profesional</p>
-                <div className="text-3xl font-black text-slate-900 font-manrope">
+                <div className="text-3xl font-black text-primary font-manrope">
                   {profile.hourlyRate} 
                   <span className="text-xs font-bold text-slate-400 ml-2 uppercase tracking-widest">{profile.currency} / HORA</span>
                 </div>
@@ -61,17 +62,17 @@ export const ProfileHero: React.FC<ProfileHeroProps> = ({ profile }) => {
               <div>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-slate-400 font-bold mb-2">Prestigio</p>
                 <div className="flex items-center justify-center lg:justify-start gap-3">
-                  <div className="text-3xl font-black text-slate-900 font-manrope">
-                    {profile.reviewCount && profile.reviewCount > 0 ? profile.ratingAvg?.toFixed(1) : "NUEVO"}
-                  </div>
-                  {profile.reviewCount && profile.reviewCount > 0 && (
-                    <div className="flex items-center gap-1 text-amber-500">
-                      <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 pt-1">
-                        ({profile.reviewCount} Reseñas)
-                      </span>
+                    <div className="text-3xl font-black text-primary font-manrope">
+                      {profile.reviewCount && profile.reviewCount > 0 ? profile.ratingAvg?.toFixed(1) : "NUEVO"}
                     </div>
-                  )}
+                    {profile.reviewCount && profile.reviewCount > 0 && (
+                      <div className="flex items-center gap-1 text-accent">
+                        <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 pt-1">
+                          ({profile.reviewCount} Reseñas)
+                        </span>
+                      </div>
+                    )}
                 </div>
               </div>
             </div>
@@ -81,7 +82,7 @@ export const ProfileHero: React.FC<ProfileHeroProps> = ({ profile }) => {
       </div>
 
       {/* Museum-style accent */}
-      <div className="absolute bottom-0 right-0 w-1/3 h-[2px] bg-amber-500/30"></div>
+      <div className="absolute bottom-0 right-0 w-1/3 h-[2px] bg-accent/30"></div>
     </header>
   );
 };

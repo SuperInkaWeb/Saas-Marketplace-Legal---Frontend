@@ -11,18 +11,18 @@ export const ProfileSpecialties: React.FC<ProfileSpecialtiesProps> = ({ specialt
 
   return (
     <section data-purpose="specialties">
-      <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mb-10 flex items-center gap-4">
+      <h2 className="text-xs font-bold text-slate-500 uppercase tracking-[0.3em] mb-10 flex items-center gap-4">
         Áreas de Práctica
-        <span className="h-px flex-1 bg-slate-100"></span>
+        <span className="h-px flex-1 bg-slate-200"></span>
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-100 border border-slate-200 rounded-sm overflow-hidden shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-200 border border-slate-200 rounded-sm overflow-hidden shadow-sm">
         {specialties.map((s, idx) => (
           <div key={idx} className="bg-white p-10 group hover:bg-slate-50 transition-colors">
-            <div className={`w-12 h-12 mb-8 ${idx % 2 === 0 ? 'text-blue-600' : 'text-cyan-600'}`}>
+            <div className="w-12 h-12 mb-8 text-accent">
               <Briefcase className="w-10 h-10" strokeWidth={1.5} />
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-3">{s.name}</h3>
-            <p className="text-slate-500 font-light leading-relaxed text-sm">{s.description}</p>
+            <p className="text-slate-600 font-light leading-relaxed text-sm">{s.description}</p>
           </div>
         ))}
       </div>

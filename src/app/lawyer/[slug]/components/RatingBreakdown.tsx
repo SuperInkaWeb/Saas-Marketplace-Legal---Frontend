@@ -21,7 +21,7 @@ export const RatingBreakdown: React.FC<RatingBreakdownProps> = ({
     <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16 p-8 bg-white rounded-3xl border border-slate-100 shadow-sm mb-12">
       {/* Score Big Display */}
       <div className="flex flex-col items-center text-center">
-        <div className="text-6xl font-black text-slate-900 tracking-tighter">
+        <div className="text-6xl font-black text-primary tracking-tighter">
           {ratingAvg.toFixed(1)}
         </div>
         <div className="flex gap-0.5 my-3">
@@ -30,7 +30,7 @@ export const RatingBreakdown: React.FC<RatingBreakdownProps> = ({
               key={s}
               className={`w-5 h-5 ${
                 s <= Math.round(ratingAvg)
-                  ? "text-amber-400 fill-amber-400"
+                  ? "text-accent fill-accent"
                   : "text-slate-200 fill-slate-200"
               }`}
             />
@@ -60,7 +60,7 @@ export const RatingBreakdown: React.FC<RatingBreakdownProps> = ({
                   animate={{ width: `${percentage}%` }}
                   transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
                   className={`h-full rounded-full ${
-                    star === 5 ? "bg-blue-600" : star === 4 ? "bg-blue-400" : star === 3 ? "bg-blue-200" : "bg-slate-200"
+                    star === 5 ? "bg-accent" : star === 4 ? "bg-accent/80" : star === 3 ? "bg-accent/60" : star === 2 ? "bg-accent/40" : "bg-slate-200"
                   }`}
                 />
               </div>
