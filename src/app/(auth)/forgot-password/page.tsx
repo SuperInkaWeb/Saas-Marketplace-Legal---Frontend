@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
                 {...register("email")}
                 className={`w-full px-4 py-3 rounded-lg border bg-gray-50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm ${errors.email
                   ? "border-red-500 focus:ring-2 focus:ring-red-200"
-                  : "border-gray-300 focus:border-slate-800 focus:ring-2 focus:ring-slate-100"
+                  : "border-gray-300 focus:border-accent focus:ring-2 focus:ring-accent/10"
                   }`}
                 type="email"
                 placeholder="correo@ejemplo.com"
@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full bg-slate-900 text-white py-3.5 rounded-lg font-semibold text-sm hover:bg-slate-800 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-slate-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center shadow-sm"
+              className="w-full bg-primary text-white py-3.5 rounded-lg font-semibold text-sm hover:bg-accent transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-accent/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center shadow-sm"
             >
               {isPending ? (
                 <>
@@ -104,7 +104,7 @@ export default function ForgotPasswordPage() {
           <div className="mt-8 text-center pt-6 border-t border-gray-100">
             <Link
               href="/login"
-              className="group flex items-center justify-center text-sm font-semibold text-slate-700 hover:text-black transition-colors"
+              className="group flex items-center justify-center text-sm font-semibold text-primary hover:text-accent transition-colors"
             >
               <i className="fas fa-arrow-left mr-2 text-xs transition-transform group-hover:-translate-x-1"></i>
               Volver al inicio de sesión

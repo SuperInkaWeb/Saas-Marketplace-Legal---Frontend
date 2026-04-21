@@ -62,7 +62,7 @@ export default function RegisterPage() {
               ¿Ya tienes cuenta?{" "}
               <Link
                 href="/login"
-                className="font-semibold text-slate-700 hover:text-black decoration-slate-300 underline-offset-4 hover:underline transition-all"
+                className="font-semibold text-primary hover:text-accent decoration-accent/30 underline-offset-4 hover:underline transition-all"
               >
                 Inicia sesión
               </Link>
@@ -127,7 +127,7 @@ export default function RegisterPage() {
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5 flex items-center justify-between tracking-tight">
                 Teléfono móvil
-                <span className="text-[10px] text-slate-400 font-black tracking-tighter">Obligatorio</span>
+                <span className="text-[10px] text-accent font-black tracking-tighter uppercase">Obligatorio</span>
               </label>
               <Controller
                 name="phoneNumber"
@@ -138,12 +138,12 @@ export default function RegisterPage() {
                     value={field.value}
                     onChange={field.onChange}
                     className="w-full"
-                    inputClassName={`!w-full !h-[48px] !px-4 !rounded-xl !border !bg-gray-50/50 !text-gray-900 !text-sm !transition-all !duration-200 focus:!bg-white !shadow-sm focus:!ring-4 focus:!ring-slate-50 ${errors.phoneNumber
+                    inputClassName={`!w-full !h-[48px] !px-4 !rounded-xl !border !bg-gray-50/50 !text-gray-900 !text-sm !transition-all !duration-200 focus:!bg-white !shadow-sm focus:!ring-4 focus:!ring-accent/10 ${errors.phoneNumber
                         ? "!border-red-500 focus:!ring-red-100"
-                        : "!border-gray-200 focus:!border-slate-800"
+                        : "!border-gray-200 focus:!border-accent"
                       }`}
                     countrySelectorStyleProps={{
-                      buttonClassName: `!h-[48px] !rounded-xl !border !bg-gray-50/50 !mr-2 !transition-all ${errors.phoneNumber ? "!border-red-500" : "!border-gray-200 hover:!border-slate-300"
+                      buttonClassName: `!h-[48px] !rounded-xl !border !bg-gray-50/50 !mr-2 !transition-all ${errors.phoneNumber ? "!border-red-500" : "!border-gray-200 hover:!border-accent/30"
                         }`,
                       dropdownStyleProps: {
                         className: "!rounded-xl !shadow-xl !border-gray-100",
@@ -163,7 +163,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-sm hover:bg-slate-800 transition-all duration-300 transform active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-slate-200 border border-slate-900 hover:border-slate-800 mt-2"
+              className="w-full bg-primary text-white py-4 rounded-xl font-bold text-sm hover:bg-accent transition-all duration-300 transform active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-accent/5 border border-primary hover:border-accent mt-2"
             >
               {isPending ? (
                 <div className="flex items-center gap-2">
@@ -176,8 +176,8 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <div className="mt-8 p-5 rounded-2xl bg-slate-50/50 border border-slate-100/80 backdrop-blur-sm">
-            <p className="text-[11px] text-slate-500 leading-relaxed text-center font-medium">
+          <div className="mt-8 p-5 rounded-2xl bg-primary/5 border border-primary/10 backdrop-blur-sm">
+            <p className="text-[11px] text-primary/60 leading-relaxed text-center font-medium">
               Al registrarte, podrás elegir tu perfil (Abogado o Cliente) y completar tu información en los siguientes pasos de onboarding.
             </p>
           </div>

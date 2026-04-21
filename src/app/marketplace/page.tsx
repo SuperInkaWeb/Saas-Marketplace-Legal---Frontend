@@ -97,8 +97,8 @@ function MarketplaceContent() {
             </motion.div>
           </header>
 
-          {/* Grid de Resultados */}
-          <motion.div variants={itemVariants} className="grid grid-cols-1 xl:grid-cols-2 gap-12">
+          {/* Grid de Resultados: Ahora una sola columna por fila para mayor exclusividad */}
+          <motion.div variants={itemVariants} className="grid grid-cols-1 gap-12">
             <AnimatePresence mode="popLayout">
               {isLoadingLawyers && params.size === 6 ? (
                 Array.from({ length: 4 }).map((_, i) => (

@@ -42,7 +42,7 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
             className={`w-full px-4 py-3 rounded-xl border bg-gray-50/50 text-gray-900 transition-all duration-200 focus:outline-none focus:bg-white text-sm shadow-sm ${
               error
                 ? "border-red-500 focus:ring-2 focus:ring-red-100"
-                : "border-gray-200 focus:border-slate-800 focus:ring-4 focus:ring-slate-50"
+                : "border-gray-200 focus:border-accent focus:ring-4 focus:ring-accent/10"
             } ${className}`}
             {...props}
           />
