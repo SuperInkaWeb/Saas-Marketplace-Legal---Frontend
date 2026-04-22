@@ -53,12 +53,19 @@ export default function MarketplacePage() {
       setSubmitting(true);
       await marketplaceService.submitProposal(selectedCase.publicId, {
         proposalText,
-        proposedFee: Number(proposedFee)
+        proposedFee: Number(proposedFee),
+        currency: selectedCase.currency || "USD"
       });
       toast.success("Propuesta enviada exitosamente");
       setSelectedCase(null);
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Error al enviar la propuesta");
+      const serverMessage = error.response?.data?.detail || error.response?.data?.message;
+      
+      if (serverMessage) {
+        toast.error(serverMessage);
+      } else {
+        toast.error("Ocurrió un error inesperado al enviar la propuesta");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -121,7 +128,7 @@ export default function MarketplacePage() {
                 <div className="flex flex-col items-end">
                   <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Presupuesto</span>
                   <span className="text-2xl font-black text-slate-900 font-manrope">
-                    {c.budget ? `$${c.budget.toLocaleString('es-ES')}` : "A DEFINIR"}
+                    {c.budget ? `${c.currency || 'USD'} ${c.budget.toLocaleString('es-ES')}` : "A DEFINIR"}
                   </span>
                 </div>
               </div>
@@ -189,30 +196,45 @@ export default function MarketplacePage() {
               <div className="p-10 overflow-y-auto custom-scrollbar space-y-10">
                 <div className="space-y-4">
                   <label className="block text-[10px] font-black text-slate-900 uppercase tracking-[0.3em]">Plan de Ejecución Legal</label>
-                  <textarea
-                    value={proposalText}
-                    onChange={(e) => setProposalText(e.target.value)}
-                    placeholder="Especifique su estrategia técnica y experiencia relevante para este requerimiento..."
-                    className="w-full text-sm font-medium text-slate-700 bg-slate-50 border border-slate-100 p-6 focus:ring-1 focus:ring-amber-500 outline-none resize-none h-48 transition-all"
-                  />
+                  <div className={`transition-all ${
+                    proposalText.length > 0 && proposalText.length < 20 
+                      ? "ring-1 ring-red-500" 
+                      : ""
+                  }`}>
+                    <textarea
+                      value={proposalText}
+                      onChange={(e) => setProposalText(e.target.value)}
+                      placeholder="Especifique su estrategia técnica y experiencia relevante para este requerimiento..."
+                      className="w-full text-sm font-medium text-slate-700 bg-slate-50 border border-slate-100 p-6 focus:ring-1 focus:ring-amber-500 outline-none resize-none h-48 transition-all"
+                    />
+                  </div>
+                  {proposalText.length > 0 && proposalText.length < 20 && (
+                    <p className="text-[10px] text-red-500 font-black uppercase tracking-widest mt-2 animate-pulse">
+                      Mínimo 20 caracteres (faltan {20 - proposalText.length})
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <div className="space-y-4 text-center md:text-left">
-                    <label className="block text-[10px] font-black text-slate-900 uppercase tracking-[0.3em]">Honorarios Requeridos (USD)</label>
+                    <label className="block text-[10px] font-black text-slate-900 uppercase tracking-[0.3em]">
+                      Honorarios Requeridos ({selectedCase.currency || "USD"})
+                    </label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                        <DollarSign className="h-4 w-4 text-amber-600" />
+                      <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-amber-600 font-bold">
+                        {selectedCase.currency || "USD"}
                       </div>
                       <input
                         type="number"
                         value={proposedFee}
                         onChange={(e) => setProposedFee(Number(e.target.value))}
                         placeholder="0.00"
-                        className="w-full pl-12 pr-6 py-5 bg-white border border-slate-100 text-xl font-black text-slate-900 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                        className="w-full pl-20 pr-6 py-5 bg-white border border-slate-100 text-xl font-black text-slate-900 focus:ring-1 focus:ring-amber-500 outline-none transition-all"
                       />
                     </div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2">Presupuesto del cliente: {selectedCase.budget} USD</p>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2">
+                      Presupuesto del cliente: {selectedCase.currency || "USD"} {selectedCase.budget}
+                    </p>
                   </div>
                   
                   <div className="flex flex-col justify-center gap-4 bg-slate-50 p-6 text-center">
@@ -226,7 +248,7 @@ export default function MarketplacePage() {
 
               <div className="p-10 border-t border-slate-50 bg-white">
                 <button
-                  disabled={submitting || !proposalText || !proposedFee}
+                  disabled={submitting || proposalText.length < 20 || !proposedFee}
                   onClick={handleSubmitProposal}
                   className="w-full bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] py-6 transition-all shadow-2xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                 >
