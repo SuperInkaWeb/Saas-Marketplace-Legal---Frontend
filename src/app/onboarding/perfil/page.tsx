@@ -194,7 +194,7 @@ export default function OnboardingProfilePage() {
           )}
 
           <p className="mt-8 text-xs text-gray-400 text-center uppercase tracking-widest font-semibold">
-            Paso 2 de 3
+            Paso 2 de {role === "CLIENT" ? "2" : "3"}
           </p>
         </div>
       </div>

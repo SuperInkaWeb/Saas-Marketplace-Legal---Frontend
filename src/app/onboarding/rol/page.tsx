@@ -149,7 +149,7 @@ export default function SelectRolePage() {
           </form>
 
           <p className="mt-8 text-xs text-gray-400 text-center uppercase tracking-widest font-semibold">
-            Paso 1 de 3
+            Paso 1 de {selectedRole === "CLIENT" ? "2" : "3"}
           </p>
         </div>
       </div>
