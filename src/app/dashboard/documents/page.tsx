@@ -15,6 +15,7 @@ import { DocumentPreviewModal } from "@/modules/document/components/DocumentPrev
 export default function DocumentsPage() {
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
+  const isLawyer = user?.role === "LAWYER";
   const [documents, setDocuments] = useState<DocumentResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [isTemplateModalOpen, setTemplateModalOpen] = useState(false);
@@ -77,11 +78,11 @@ export default function DocumentsPage() {
   };
 
   const handleAction = (doc: DocumentResponse) => {
-    // If it's a draft OR an HTML document without a file URL, go to editor
-    if (doc.isDraft || (doc.fileType?.includes("html") && !doc.fileUrl)) {
+    // Only lawyers can edit drafts
+    if (isLawyer && (doc.isDraft || (doc.fileType?.includes("html") && !doc.fileUrl))) {
       router.push(`/dashboard/documents/${doc.publicId}`);
     } else {
-      // Otherwise, show preview modal (PDFs, Images, and generated HTML with proxy)
+      // Clients always preview; lawyers preview finalized docs
       setSelectedDocument(doc);
       setIsPreviewOpen(true);
     }
@@ -94,16 +95,22 @@ export default function DocumentsPage() {
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 border-b border-slate-200 pb-4">
             Mis Documentos
           </h1>
-          <p className="mt-2 text-slate-500 text-sm">Gestiona tus archivos, contratos y plantillas legales.</p>
+          <p className="mt-2 text-slate-500 text-sm">
+            {isLawyer 
+              ? "Gestiona tus archivos, contratos y plantillas legales." 
+              : "Visualiza y descarga los documentos asociados a tus servicios legales."}
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={openTemplateModal}
-            className="bg-primary text-white px-6 py-3 rounded-sm font-bold uppercase tracking-widest hover:bg-accent transition-all duration-300 inline-flex items-center gap-3 text-[10px] shadow-lg shadow-primary/10"
-          >
-            <Plus className="w-3.5 h-3.5" /> Generar Documento
-          </button>
-        </div>
+        {isLawyer && (
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={openTemplateModal}
+              className="bg-primary text-white px-6 py-3 rounded-sm font-bold uppercase tracking-widest hover:bg-accent transition-all duration-300 inline-flex items-center gap-3 text-[10px] shadow-lg shadow-primary/10"
+            >
+              <Plus className="w-3.5 h-3.5" /> Generar Documento
+            </button>
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -115,16 +122,22 @@ export default function DocumentsPage() {
           <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
             <FileType2 className="w-10 h-10 text-gray-300" />
           </div>
-          <h3 className="text-xl font-bold text-primary font-manrope">Tu bóveda está vacía</h3>
+          <h3 className="text-xl font-bold text-primary font-manrope">
+            {isLawyer ? "Tu bóveda está vacía" : "Sin documentos aún"}
+          </h3>
           <p className="text-gray-500 mt-2 mb-8 text-sm max-w-xs mx-auto leading-relaxed">
-            Aún no has subido documentos legales ni generado contratos con nuestras plantillas.
+            {isLawyer 
+              ? "Genera tu primer contrato legal utilizando nuestras plantillas profesionales."
+              : "Aquí aparecerán los documentos que tu abogado comparta contigo."}
           </p>
-          <button 
-            onClick={openTemplateModal}
-            className="bg-primary text-white px-8 py-3.5 rounded-sm font-bold uppercase tracking-widest hover:bg-accent transition-all duration-300 inline-flex items-center gap-2 text-[10px]"
-          >
-            <Plus className="w-4 h-4" /> Comenzar Ahora
-          </button>
+          {isLawyer && (
+            <button 
+              onClick={openTemplateModal}
+              className="bg-primary text-white px-8 py-3.5 rounded-sm font-bold uppercase tracking-widest hover:bg-accent transition-all duration-300 inline-flex items-center gap-2 text-[10px]"
+            >
+              <Plus className="w-4 h-4" /> Comenzar Ahora
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -172,7 +185,7 @@ export default function DocumentsPage() {
                     onClick={() => handleAction(doc)}
                     className="flex-1 bg-primary text-white py-2.5 rounded-sm text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-accent transition-all shadow-lg shadow-primary/5"
                   >
-                    {doc.isDraft ? "Editar" : "Ver"}
+                    {isLawyer && doc.isDraft ? "Editar" : "Ver"}
                   </button>
                   
                   {doc.fileUrl && (
@@ -187,13 +200,15 @@ export default function DocumentsPage() {
                     </a>
                   )}
 
-                  <button 
-                    onClick={() => handleArchive(doc.publicId)}
-                    className="p-2.5 rounded-sm text-gray-300 hover:text-red-600 hover:bg-red-50 transition-all border border-gray-100"
-                    title="Archivar"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {isLawyer && (
+                    <button 
+                      onClick={() => handleArchive(doc.publicId)}
+                      className="p-2.5 rounded-sm text-gray-300 hover:text-red-600 hover:bg-red-50 transition-all border border-gray-100"
+                      title="Archivar"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </motion.div>
             ))}
