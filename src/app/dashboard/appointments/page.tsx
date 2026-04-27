@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "@/modules/auth/store";
 import { appointmentService } from "@/modules/appointment/services/appointmentService";
 import { AppointmentResponse } from "@/modules/appointment/types";
-import { format, isSameDay } from "date-fns";
+import { format, isSameDay, startOfDay } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar, Clock, Video, CheckCircle, XCircle, User, Info, ArrowRight, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,6 +19,7 @@ export default function AppointmentsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [reviewModal, setReviewModal] = useState<{ isOpen: boolean; appointment?: AppointmentResponse }>({ isOpen: false });
+  const [view, setView] = useState<"calendar" | "list">("calendar");
 
   useEffect(() => {
     fetchAppointments();
@@ -53,6 +54,10 @@ export default function AppointmentsPage() {
     isSameDay(new Date(apt.scheduledStart), selectedDate)
   );
 
+  const upcomingAppointments = appointments
+    .filter(apt => new Date(apt.scheduledStart) >= startOfDay(new Date()))
+    .sort((a, b) => new Date(a.scheduledStart).getTime() - new Date(b.scheduledStart).getTime());
+
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { label: string, classes: string }> = {
       PENDING: { label: "Pendiente", classes: "bg-amber-100 text-amber-800 border-amber-200" },
@@ -68,6 +73,76 @@ export default function AppointmentsPage() {
       </span>
     );
   };
+
+  const AppointmentCard = ({ apt }: { apt: AppointmentResponse }) => (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all group"
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+           <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+            <User className="w-4 h-4 text-slate-500 group-hover:text-emerald-600" />
+           </div>
+           <span className="font-bold text-slate-900">{user?.role === "LAWYER" ? apt.clientName : apt.lawyerName}</span>
+        </div>
+        {getStatusBadge(apt.status)}
+      </div>
+
+      <div className="space-y-3 mb-5">
+        <div className="flex items-center gap-3 text-slate-600 text-sm border-l-2 border-emerald-500 pl-3">
+           <Clock className="w-4 h-4" />
+           <span className="font-semibold">{format(new Date(apt.scheduledStart), "HH:mm")} - {format(new Date(apt.scheduledEnd), "HH:mm")}</span>
+        </div>
+        {apt.notes && (
+          <div className="bg-slate-50 p-3 rounded-lg flex gap-2">
+            <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+            <p className="text-[11px] text-slate-500 leading-relaxed italic">{apt.notes}</p>
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-2">
+        {apt.meetingLink && apt.status === 'CONFIRMED' && (
+          <a 
+            href={apt.meetingLink} 
+            target="_blank" 
+            rel="noreferrer"
+            className="flex-1 inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100"
+          >
+            <Video className="w-4 h-4" /> Unirse
+          </a>
+        )}
+
+        {user?.role === "CLIENT" && apt.status === "COMPLETED" && (
+          <button
+            onClick={() => setReviewModal({ isOpen: true, appointment: apt })}
+            className="flex-1 bg-amber-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-amber-600 transition-colors shadow-lg shadow-amber-100 flex items-center justify-center gap-2"
+          >
+            <Star className="w-4 h-4 fill-white" /> Valorar Servicio
+          </button>
+        )}
+
+        {user?.role === "LAWYER" && apt.status === "PENDING" && (
+          <>
+            <button
+              onClick={() => handleStatusChange(apt.publicId, "CONFIRMED")}
+              className="flex-1 bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-100"
+            >
+              Aceptar
+            </button>
+            <button
+              onClick={() => handleStatusChange(apt.publicId, "CANCELLED")}
+              className="flex-1 bg-white border border-slate-200 text-slate-600 px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors"
+            >
+              Rechazar
+            </button>
+          </>
+        )}
+      </div>
+    </motion.div>
+  );
 
   return (
     <div className="p-6 md:p-8 max-w-[1600px] mx-auto min-h-screen">
@@ -87,12 +162,18 @@ export default function AppointmentsPage() {
           <p className="mt-2 text-slate-500 font-medium">Gestiona tu agenda legal con precisión y estilo.</p>
         </div>
         <div className="flex items-center gap-2 bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
-           <div className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold shadow-md shadow-emerald-100">
-              Vista Mensual
-           </div>
-           <div className="px-4 py-2 text-slate-400 text-sm font-bold cursor-not-allowed">
-              Próximamente: Lista
-           </div>
+           <button 
+            onClick={() => setView("calendar")}
+            className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all", view === "calendar" ? "bg-slate-900 text-white shadow-md" : "text-slate-400 hover:text-slate-600")}
+           >
+              Calendario
+           </button>
+           <button 
+            onClick={() => setView("list")}
+            className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all", view === "list" ? "bg-slate-900 text-white shadow-md" : "text-slate-400 hover:text-slate-600")}
+           >
+              Lista de Próximas
+           </button>
         </div>
       </div>
 
@@ -130,101 +211,47 @@ export default function AppointmentsPage() {
                  <div key="loading" className="flex justify-center py-20">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
                  </div>
-              ) : selectedDayAppointments.length === 0 ? (
-                <motion.div 
-                  key="empty"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-xl p-10 border-2 border-dashed border-slate-200 text-center flex flex-col items-center justify-center gap-3"
-                >
-                  <div className="bg-slate-50 p-4 rounded-full">
-                    <Calendar className="w-8 h-8 text-slate-300" />
+              ) : (view === "calendar" ? (
+                selectedDayAppointments.length === 0 ? (
+                  <motion.div 
+                    key="empty-day"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white rounded-xl p-10 border-2 border-dashed border-slate-200 text-center flex flex-col items-center justify-center gap-3"
+                  >
+                    <div className="bg-slate-50 p-4 rounded-full">
+                      <Calendar className="w-8 h-8 text-slate-300" />
+                    </div>
+                    <p className="text-slate-500 text-sm font-medium">No hay citas para este día.</p>
+                  </motion.div>
+                ) : (
+                  <div key="list-day" className="space-y-4">
+                    {selectedDayAppointments.map((apt) => (
+                      <AppointmentCard key={apt.publicId} apt={apt} />
+                    ))}
                   </div>
-                  <p className="text-slate-500 text-sm font-medium">No hay citas para este día.</p>
-                </motion.div>
+                )
               ) : (
-                <div key="list" className="space-y-4">
-                  {selectedDayAppointments.map((apt) => (
-                    <motion.div
-                      key={apt.publicId}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all group"
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2">
-                           <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
-                            <User className="w-4 h-4 text-slate-500 group-hover:text-emerald-600" />
-                           </div>
-                           <span className="font-bold text-slate-900">{user?.role === "LAWYER" ? apt.clientName : apt.lawyerName}</span>
-                        </div>
-                        {getStatusBadge(apt.status)}
-                      </div>
-
-                      <div className="space-y-3 mb-5">
-                        <div className="flex items-center gap-3 text-slate-600 text-sm border-l-2 border-emerald-500 pl-3">
-                           <Clock className="w-4 h-4" />
-                           <span className="font-semibold">{format(new Date(apt.scheduledStart), "HH:mm")} - {format(new Date(apt.scheduledEnd), "HH:mm")}</span>
-                        </div>
-                        {apt.notes && (
-                          <div className="bg-slate-50 p-3 rounded-lg flex gap-2">
-                            <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                            <p className="text-[11px] text-slate-500 leading-relaxed italic">{apt.notes}</p>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex gap-2">
-                        {apt.meetingLink && apt.status === 'CONFIRMED' && (
-                          <a 
-                            href={apt.meetingLink} 
-                            target="_blank" 
-                            rel="noreferrer"
-                            className="flex-1 inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-100"
-                          >
-                            <Video className="w-4 h-4" /> Unirse
-                          </a>
-                        )}
-
-                        {user?.role === "CLIENT" && apt.status === "COMPLETED" && (
-                          <button
-                            onClick={() => setReviewModal({ isOpen: true, appointment: apt })}
-                            className="flex-1 bg-amber-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-amber-600 transition-colors shadow-lg shadow-amber-100 flex items-center justify-center gap-2"
-                          >
-                            <Star className="w-4 h-4 fill-white" /> Valorar Servicio
-                          </button>
-                        )}
-
-                        {user?.role === "LAWYER" && apt.status === "PENDING" && (
-                          <>
-                            <button
-                              onClick={() => handleStatusChange(apt.publicId, "CONFIRMED")}
-                              className="flex-1 bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-100"
-                            >
-                              Confirmar
-                            </button>
-                            <button
-                              onClick={() => handleStatusChange(apt.publicId, "CANCELLED")}
-                              className="p-2.5 bg-white text-slate-400 hover:text-red-600 hover:bg-red-50 border border-slate-200 rounded-xl transition-colors"
-                            >
-                              <XCircle className="w-5 h-5" />
-                            </button>
-                          </>
-                        )}
-
-                        {user?.role === "LAWYER" && apt.status === "CONFIRMED" && (
-                          <button
-                            onClick={() => handleStatusChange(apt.publicId, "COMPLETED")}
-                            className="flex-1 bg-slate-900 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-black transition-colors shadow-lg"
-                          >
-                            Completada
-                          </button>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
+                upcomingAppointments.length === 0 ? (
+                  <motion.div 
+                    key="empty-upcoming"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white rounded-xl p-10 border-2 border-dashed border-slate-200 text-center flex flex-col items-center justify-center gap-3"
+                  >
+                    <div className="bg-slate-50 p-4 rounded-full">
+                      <Info className="w-8 h-8 text-slate-300" />
+                    </div>
+                    <p className="text-slate-500 text-sm font-medium">No tienes citas próximas agendadas.</p>
+                  </motion.div>
+                ) : (
+                  <div key="list-upcoming" className="space-y-4">
+                    {upcomingAppointments.map((apt) => (
+                      <AppointmentCard key={apt.publicId} apt={apt} />
+                    ))}
+                  </div>
+                )
+              ))}
             </AnimatePresence>
           </div>
         </div>
