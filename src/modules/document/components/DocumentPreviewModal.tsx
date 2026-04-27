@@ -31,7 +31,8 @@ export const DocumentPreviewModal = ({ isOpen, onClose, document }: DocumentPrev
                   /\.(jpg|jpeg|png|gif|webp)$/i.test(document.fileUrl);
   const isPdf = document.fileType?.includes("pdf") || 
                 /\.pdf$/i.test(document.fileUrl);
-  const isHtml = document.fileType?.includes("html") || document.content;
+  const isHtml = document.fileType?.toLowerCase().includes("html") || 
+                 (document.content !== null && document.content !== undefined && document.content.length > 0);
 
   const handleOpenFull = async () => {
     if (!document) return;

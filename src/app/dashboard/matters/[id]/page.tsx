@@ -17,7 +17,8 @@ import {
   ArrowLeft, Briefcase, Calendar, ChevronRight, Clock, 
   FileText, MessagesSquare, Scale, UserCircle, CheckCircle2,
   AlertCircle, Plus, LayoutDashboard, History, Settings2, Trash2,
-  Paperclip, ExternalLink, Users, Gavel, Building2, Eye, Phone, Mail, X
+  Paperclip, ExternalLink, Users, Gavel, Building2, Eye, Phone, Mail, X,
+  ChevronDown
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -51,6 +52,9 @@ export default function MatterDetailPage() {
   const [selectedDocument, setSelectedDocument] = useState<DocumentResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+
+  const STATUSES: MatterStatus[] = ['OPEN', 'IN_PROGRESS', 'PENDING_CLIENT', 'IN_LITIGATION', 'SETTLED', 'CLOSED'];
 
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -203,6 +207,17 @@ export default function MatterDetailPage() {
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
+  
+  const handleUpdateStatus = async (newStatus: MatterStatus) => {
+    try {
+      await matterService.updateMatterStatus(publicId, newStatus);
+      toast.success("Estado del expediente actualizado");
+      setIsStatusDropdownOpen(false);
+      fetchMatter(); // Recargar datos
+    } catch (error) {
+      toast.error("Error al actualizar el estado");
+    }
+  };
 
   const handlePreview = (doc: DocumentResponse) => {
     setSelectedDocument(doc);
@@ -308,19 +323,64 @@ export default function MatterDetailPage() {
       </div>
 
       {/* Header Banner */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 mb-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-8 opacity-5">
-          <Scale className="w-64 h-64 -translate-y-1/4 translate-x-1/4" />
+      <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 mb-8 relative">
+        <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
+          <div className="absolute top-0 right-0 p-8 opacity-5">
+            <Scale className="w-64 h-64 -translate-y-1/4 translate-x-1/4" />
+          </div>
         </div>
         
         <div className="relative z-10">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-3">
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider border ${statusConfig.color}`}>
-                  {statusConfig.icon}
-                  {statusConfig.text}
-                </span>
+                {/* Status Selector Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider border transition-all hover:shadow-sm active:scale-95 ${statusConfig.color}`}
+                  >
+                    {statusConfig.icon}
+                    {statusConfig.text}
+                    <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isStatusDropdownOpen ? "rotate-180" : ""}`} />
+                  </button>
+
+                  <AnimatePresence>
+                    {isStatusDropdownOpen && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-10" 
+                          onClick={() => setIsStatusDropdownOpen(false)} 
+                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          className="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-20 overflow-hidden"
+                        >
+                          <div className="px-3 py-1 mb-1 border-b border-slate-50">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cambiar Estado</span>
+                          </div>
+                          {STATUSES.map((s) => {
+                            const cfg = getStatusConfig(s);
+                            return (
+                              <button
+                                key={s}
+                                onClick={() => handleUpdateStatus(s)}
+                                className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-bold transition-colors hover:bg-slate-50 ${matter.status === s ? "text-indigo-600 bg-indigo-50/50" : "text-slate-600"}`}
+                              >
+                                <div className={`w-2 h-2 rounded-full ${s === 'OPEN' ? 'bg-emerald-500' : s === 'IN_PROGRESS' ? 'bg-blue-500' : s === 'PENDING_CLIENT' ? 'bg-amber-500' : s === 'IN_LITIGATION' ? 'bg-rose-500' : s === 'SETTLED' ? 'bg-violet-500' : 'bg-slate-500'}`} />
+                                {cfg.text}
+                                {matter.status === s && <CheckCircle2 className="w-3 h-3 ml-auto" />}
+                              </button>
+                            );
+                          })}
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+                </div>
+
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200">
                   <Scale className="w-3.5 h-3.5" />
                   {matter.jurisdiction || "Sin Jurisdicción"}

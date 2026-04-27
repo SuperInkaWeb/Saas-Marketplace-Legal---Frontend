@@ -22,5 +22,10 @@ export const appointmentService = {
   updateStatus: async (appointmentId: string, status: string): Promise<AppointmentResponse> => {
     const { data } = await api.patch(`${BASE_URL}/${appointmentId}/status?status=${status}`);
     return data;
+  },
+  
+  getBusySlots: async (lawyerPublicId: string): Promise<{start: string, end: string}[]> => {
+    const { data } = await api.get(`${BASE_URL}/lawyer/${lawyerPublicId}/busy`);
+    return data;
   }
 };

@@ -10,17 +10,21 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useRouter } from "next/navigation";
+import { DocumentPreviewModal } from "@/modules/document/components/DocumentPreviewModal";
 
 export default function DocumentsPage() {
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
+  const isLawyer = user?.role === "LAWYER";
   const [documents, setDocuments] = useState<DocumentResponse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isUploading, setIsUploading] = useState(false);
-  
   const [isTemplateModalOpen, setTemplateModalOpen] = useState(false);
   const [templates, setTemplates] = useState<TemplatePublicResponse[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
+
+  // Preview Modal State
+  const [selectedDocument, setSelectedDocument] = useState<DocumentResponse | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     fetchDocuments();
@@ -37,42 +41,6 @@ export default function DocumentsPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Optional: add file size/type validation here
-    if (file.size > 20 * 1024 * 1024) { // 20MB limit
-      return toast.error("El archivo es demasiado grande (máximo 20MB)");
-    }
-
-    try {
-      setIsUploading(true);
-      const promise = documentService.uploadDocumentFile(file);
-      
-      toast.promise(promise, {
-        loading: 'Subiendo documento...',
-        success: (data) => {
-          setDocuments(prev => [data, ...prev]);
-          return 'Documento subido con éxito';
-        },
-        error: 'Error al subir el documento'
-      });
-
-      await promise;
-    } catch (error) {
-      console.error("Upload error:", error);
-    } finally {
-      setIsUploading(false);
-      // Clear input
-      event.target.value = '';
-    }
-  };
-
-  const triggerFileInput = () => {
-    document.getElementById('vault-file-upload')?.click();
   };
 
   const openTemplateModal = async () => {
@@ -109,39 +77,40 @@ export default function DocumentsPage() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
+  const handleAction = (doc: DocumentResponse) => {
+    // Only lawyers can edit drafts
+    if (isLawyer && (doc.isDraft || (doc.fileType?.includes("html") && !doc.fileUrl))) {
+      router.push(`/dashboard/documents/${doc.publicId}`);
+    } else {
+      // Clients always preview; lawyers preview finalized docs
+      setSelectedDocument(doc);
+      setIsPreviewOpen(true);
+    }
+  };
+
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto">
-      <input 
-        id="vault-file-upload"
-        type="file" 
-        className="hidden" 
-        onChange={handleFileUpload}
-        disabled={isUploading}
-      />
-
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 border-b border-slate-200 pb-4">
             Mis Documentos
           </h1>
-          <p className="mt-2 text-slate-500 text-sm">Gestiona tus archivos, contratos y plantillas legales.</p>
+          <p className="mt-2 text-slate-500 text-sm">
+            {isLawyer 
+              ? "Gestiona tus archivos, contratos y plantillas legales." 
+              : "Visualiza y descarga los documentos asociados a tus servicios legales."}
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={openTemplateModal}
-            className="bg-primary text-white px-6 py-3 rounded-sm font-bold uppercase tracking-widest hover:bg-accent transition-all duration-300 inline-flex items-center gap-3 text-[10px] shadow-lg shadow-primary/10"
-          >
-            <Plus className="w-3.5 h-3.5" /> Generar Documento
-          </button>
-          <button 
-            onClick={triggerFileInput}
-            disabled={isUploading}
-            className="bg-white hover:bg-gray-50 text-primary border border-gray-200 px-6 py-3 rounded-sm font-bold uppercase tracking-widest transition-all duration-300 inline-flex items-center gap-3 text-[10px] disabled:opacity-50"
-          >
-            {isUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UploadCloud className="w-3.5 h-3.5" />}
-            {isUploading ? "Subiendo..." : "Subir Archivo"}
-          </button>
-        </div>
+        {isLawyer && (
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={openTemplateModal}
+              className="bg-primary text-white px-6 py-3 rounded-sm font-bold uppercase tracking-widest hover:bg-accent transition-all duration-300 inline-flex items-center gap-3 text-[10px] shadow-lg shadow-primary/10"
+            >
+              <Plus className="w-3.5 h-3.5" /> Generar Documento
+            </button>
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -153,16 +122,22 @@ export default function DocumentsPage() {
           <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
             <FileType2 className="w-10 h-10 text-gray-300" />
           </div>
-          <h3 className="text-xl font-bold text-primary font-manrope">Tu bóveda está vacía</h3>
+          <h3 className="text-xl font-bold text-primary font-manrope">
+            {isLawyer ? "Tu bóveda está vacía" : "Sin documentos aún"}
+          </h3>
           <p className="text-gray-500 mt-2 mb-8 text-sm max-w-xs mx-auto leading-relaxed">
-            Aún no has subido documentos legales ni generado contratos con nuestras plantillas.
+            {isLawyer 
+              ? "Genera tu primer contrato legal utilizando nuestras plantillas profesionales."
+              : "Aquí aparecerán los documentos que tu abogado comparta contigo."}
           </p>
-          <button 
-            onClick={triggerFileInput}
-            className="bg-primary text-white px-8 py-3.5 rounded-sm font-bold uppercase tracking-widest hover:bg-accent transition-all duration-300 inline-flex items-center gap-2 text-[10px]"
-          >
-            <UploadCloud className="w-4 h-4" /> Comenzar Ahora
-          </button>
+          {isLawyer && (
+            <button 
+              onClick={openTemplateModal}
+              className="bg-primary text-white px-8 py-3.5 rounded-sm font-bold uppercase tracking-widest hover:bg-accent transition-all duration-300 inline-flex items-center gap-2 text-[10px]"
+            >
+              <Plus className="w-4 h-4" /> Comenzar Ahora
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -207,10 +182,10 @@ export default function DocumentsPage() {
                 
                 <div className="flex gap-2 mt-auto pt-5 border-t border-gray-50 transition-all duration-300">
                   <button 
-                    onClick={() => router.push(`/dashboard/documents/${doc.publicId}`)}
+                    onClick={() => handleAction(doc)}
                     className="flex-1 bg-primary text-white py-2.5 rounded-sm text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-accent transition-all shadow-lg shadow-primary/5"
                   >
-                    {doc.isDraft ? "Editar" : "Ver"}
+                    {isLawyer && doc.isDraft ? "Editar" : "Ver"}
                   </button>
                   
                   {doc.fileUrl && (
@@ -225,13 +200,15 @@ export default function DocumentsPage() {
                     </a>
                   )}
 
-                  <button 
-                    onClick={() => handleArchive(doc.publicId)}
-                    className="p-2.5 rounded-sm text-gray-300 hover:text-red-600 hover:bg-red-50 transition-all border border-gray-100"
-                    title="Archivar"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {isLawyer && (
+                    <button 
+                      onClick={() => handleArchive(doc.publicId)}
+                      className="p-2.5 rounded-sm text-gray-300 hover:text-red-600 hover:bg-red-50 transition-all border border-gray-100"
+                      title="Archivar"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </motion.div>
             ))}
@@ -325,6 +302,13 @@ export default function DocumentsPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Document Preview Modal */}
+      <DocumentPreviewModal 
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        document={selectedDocument}
+      />
     </div>
   );
 }

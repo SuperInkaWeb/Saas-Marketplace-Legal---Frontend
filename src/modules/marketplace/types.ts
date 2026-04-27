@@ -78,6 +78,7 @@ export interface CaseRequestResponse {
   title: string;
   description: string;
   budget?: number;
+  currency?: string;
   specialtyName?: string;
   clientName: string;
   clientAvatarUrl?: string;
@@ -87,6 +88,7 @@ export interface CaseRequestResponse {
 export interface CreateProposalRequest {
   proposalText: string;
   proposedFee: number;
+  currency?: string;
 }
 
 export interface LawyerProposalResponse {
@@ -97,6 +99,7 @@ export interface LawyerProposalResponse {
   lawyerSlug: string;
   proposalText: string;
   proposedFee: number;
+  currency?: string;
   status: string;
   lawyerAvatarUrl?: string;
   createdAt: string;
@@ -129,6 +132,7 @@ export interface CreateCaseRequest {
   description: string;
   specialtyId?: number;
   budget?: number;
+  currency?: string;
 }
 
 export interface ClientProposalResponse {
@@ -138,6 +142,7 @@ export interface ClientProposalResponse {
   lawyerSlug: string;
   proposalText: string;
   proposedFee: number;
+  currency?: string;
   status: ProposalStatus;
   lawyerAvatarUrl?: string;
   createdAt: string;
@@ -148,6 +153,7 @@ export interface CaseWithProposalsResponse {
   title: string;
   description: string;
   budget?: number;
+  currency?: string;
   specialtyName?: string;
   clientName: string;
   clientAvatarUrl?: string;

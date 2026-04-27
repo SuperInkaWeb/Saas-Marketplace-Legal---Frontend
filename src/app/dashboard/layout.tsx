@@ -42,8 +42,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       return;
     }
 
-    const role = user.role?.toUpperCase().trim();
-    const isAdmin = role === "ADMIN" || role === "ROLE_ADMIN";
+    const role = user.role?.toUpperCase()?.trim();
+    const isAdmin = role === "ADMIN";
 
     if (isAdmin) {
       router.replace("/admin");
@@ -70,8 +70,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     );
   }
 
-  const role = user.role?.toUpperCase().trim();
-  const isLawyer = role === "LAWYER" || role === "ROLE_LAWYER";
+  const role = user.role?.toUpperCase()?.trim();
+  const isLawyer = role === "LAWYER";
 
   const SidebarContent = () => (
     <>

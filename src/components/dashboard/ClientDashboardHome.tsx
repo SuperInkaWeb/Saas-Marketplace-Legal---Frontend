@@ -17,9 +17,10 @@ import Link from "next/link";
 
 interface ClientDashboardHomeProps {
   user: any;
+  appointmentCount?: number;
 }
 
-export function ClientDashboardHome({ user }: ClientDashboardHomeProps) {
+export function ClientDashboardHome({ user, appointmentCount = 0 }: ClientDashboardHomeProps) {
   const hour = new Date().getHours();
   let greeting = "Hola";
   if (hour < 12) greeting = "Buenos días";
@@ -28,7 +29,7 @@ export function ClientDashboardHome({ user }: ClientDashboardHomeProps) {
 
   const stats = [
     { label: "Casos activos", value: "Gestionar", icon: Briefcase, color: "text-blue-600", bg: "bg-blue-50", href: "/dashboard/my-cases" },
-    { label: "Próximas citas", value: "Revisar", icon: Calendar, color: "text-purple-600", bg: "bg-purple-50", href: "/dashboard/appointments" },
+    { label: "Próximas citas", value: appointmentCount > 0 ? `${appointmentCount} Pendiente${appointmentCount > 1 ? 's' : ''}` : "Revisar", icon: Calendar, color: "text-purple-600", bg: "bg-purple-50", href: "/dashboard/appointments" },
     { label: "Documentos", value: "Acceder", icon: FileText, color: "text-emerald-600", bg: "bg-emerald-50", href: "/dashboard/documents" },
     { label: "Mensajes", value: "Chat", icon: MessageSquare, color: "text-amber-600", bg: "bg-amber-50", href: "/dashboard/chats" },
   ];

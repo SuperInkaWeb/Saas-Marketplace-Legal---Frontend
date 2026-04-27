@@ -109,11 +109,13 @@ function ProposalCard({
   caseStatus,
   onAccept,
   accepting,
+  caseCurrency,
 }: {
   proposal: ClientProposalResponse;
   caseStatus: CaseRequestStatus;
   onAccept: (proposalId: number) => void;
   accepting: boolean;
+  caseCurrency?: string;
 }) {
   const canAccept =
     caseStatus === CaseRequestStatus.OPEN &&
@@ -169,8 +171,8 @@ function ProposalCard({
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
             Honorarios
           </span>
-          <div className="flex items-center justify-center md:justify-end gap-0.5 mt-1 text-emerald-700 font-bold text-lg">
-            <DollarSign className="w-4 h-4" />
+          <div className="flex items-center justify-center md:justify-end gap-1.5 mt-1 text-emerald-700 font-bold text-lg">
+            <span className="text-sm">{proposal.currency || caseCurrency || "USD"}</span>
             {proposal.proposedFee.toLocaleString("es-ES")}
           </div>
         </div>
@@ -209,6 +211,7 @@ function CaseCard({
     proposalId: number
   ) => Promise<void>;
   onClose: (casePublicId: string) => Promise<void>;
+  caseCurrency?: string;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [accepting, setAccepting] = useState(false);
@@ -255,8 +258,8 @@ function CaseCard({
             {caseData.specialtyName || "General"}
           </span>
           {caseData.budget != null && (
-            <span className="ml-auto text-emerald-600 font-bold flex items-center bg-emerald-50 px-3 py-1 rounded-full text-sm">
-              <DollarSign className="w-4 h-4" />
+            <span className="ml-auto text-emerald-600 font-bold flex items-center gap-1.5 bg-emerald-50 px-3 py-1 rounded-full text-sm">
+              <span className="text-xs uppercase">{caseData.currency || "USD"}</span>
               {caseData.budget.toLocaleString("es-ES")}
             </span>
           )}
@@ -329,6 +332,7 @@ function CaseCard({
                   caseStatus={caseData.status}
                   onAccept={handleAccept}
                   accepting={accepting}
+                  caseCurrency={caseData.currency}
                 />
               ))}
             </div>
@@ -369,6 +373,7 @@ function CreateCaseModal({
   const [description, setDescription] = useState("");
   const [specialtyId, setSpecialtyId] = useState<number | undefined>(undefined);
   const [budget, setBudget] = useState<number | "">("" );
+  const [currency, setCurrency] = useState("USD");
   const [submitting, setSubmitting] = useState(false);
 
   const [specialties, setSpecialties] = useState<SpecialtyResponse[]>([]);
@@ -384,6 +389,7 @@ function CreateCaseModal({
     setDescription("");
     setSpecialtyId(undefined);
     setBudget("");
+    setCurrency("USD");
   };
 
   const handleSubmit = async () => {
@@ -401,6 +407,7 @@ function CreateCaseModal({
       description: description.trim(),
       specialtyId: specialtyId || undefined,
       budget: budget ? Number(budget) : undefined,
+      currency: currency
     };
 
     try {
@@ -412,7 +419,7 @@ function CreateCaseModal({
       onClose();
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Error al publicar el caso"
+        error.response?.data?.detail || error.response?.data?.message || "Error al publicar el caso"
       );
     } finally {
       setSubmitting(false);
@@ -469,7 +476,11 @@ function CreateCaseModal({
                 <label className="block text-sm font-semibold text-slate-900 mb-2">
                   Descripción *
                 </label>
-                <div className="flex-1 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-slate-900/20 focus-within:border-slate-900 overflow-hidden">
+                <div className={`flex-1 rounded-xl border overflow-hidden transition-colors ${
+                  description.trim().length > 0 && description.trim().length < 20 
+                    ? "border-red-500 ring-1 ring-red-500" 
+                    : "border-slate-200 focus-within:ring-2 focus-within:ring-slate-900/20 focus-within:border-slate-900"
+                }`}>
                   <RichTextEditor
                     value={description}
                     onChange={setDescription}
@@ -477,6 +488,12 @@ function CreateCaseModal({
                     className="h-[250px] border-none shadow-none"
                   />
                 </div>
+                {description.trim().length > 0 && description.trim().length < 20 && (
+                  <p className="text-[11px] text-red-500 font-bold mt-1.5 flex items-center gap-1 animate-pulse">
+                    <AlertTriangle className="w-3 h-3" />
+                    Mínimo 20 caracteres (faltan {20 - description.trim().length})
+                  </p>
+                )}
               </div>
 
               {/* Specialty */}
@@ -502,25 +519,45 @@ function CreateCaseModal({
                 </select>
               </div>
 
-              {/* Budget */}
-              <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">
-                  Presupuesto Estimado (USD)
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <DollarSign className="h-5 w-5 text-slate-400" />
+              {/* Budget & Currency */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-2">
+                  <label className="block text-sm font-semibold text-slate-900 mb-2">
+                    Presupuesto Estimado
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <DollarSign className="h-5 w-5 text-slate-400" />
+                    </div>
+                    <input
+                      type="number"
+                      value={budget}
+                      onChange={(e) =>
+                        setBudget(e.target.value ? Number(e.target.value) : "")
+                      }
+                      placeholder="Opcional"
+                      min={0}
+                      className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900/20 focus:border-slate-900 outline-none font-medium"
+                    />
                   </div>
-                  <input
-                    type="number"
-                    value={budget}
-                    onChange={(e) =>
-                      setBudget(e.target.value ? Number(e.target.value) : "")
-                    }
-                    placeholder="Opcional"
-                    min={0}
-                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900/20 focus:border-slate-900 outline-none font-medium"
-                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-900 mb-2">
+                    Moneda
+                  </label>
+                  <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    className="w-full text-sm rounded-xl border border-slate-200 p-3 focus:ring-2 focus:ring-slate-900/20 focus:border-slate-900 outline-none bg-white font-bold"
+                  >
+                    <option value="USD">USD ($)</option>
+                    <option value="MXN">MXN ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="COP">COP ($)</option>
+                    <option value="PEN">PEN (S/)</option>
+                    <option value="ARS">ARS ($)</option>
+                    <option value="CLP">CLP ($)</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -571,7 +608,8 @@ export default function MyCasesPage() {
   }, []);
 
   useEffect(() => {
-    if (user?.role === "CLIENT") {
+    const role = user?.role?.toUpperCase()?.trim();
+    if (role === "CLIENT") {
       fetchCases();
     } else {
       setLoading(false);
@@ -588,7 +626,7 @@ export default function MyCasesPage() {
       fetchCases();
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Error al aceptar la propuesta"
+        error.response?.data?.detail || error.response?.data?.message || "Error al aceptar la propuesta"
       );
     }
   };
@@ -600,7 +638,7 @@ export default function MyCasesPage() {
       fetchCases();
     } catch (error: any) {
       toast.error(
-        error.response?.data?.message || "Error al cerrar el caso"
+        error.response?.data?.detail || error.response?.data?.message || "Error al cerrar el caso"
       );
     }
   };
@@ -614,8 +652,8 @@ export default function MyCasesPage() {
     );
   }
 
-  const role = user?.role?.toUpperCase().trim();
-  const isClient = role === "CLIENT" || role === "ROLE_CLIENT";
+  const role = user?.role?.toUpperCase()?.trim();
+  const isClient = role === "CLIENT";
   if (!isClient) {
     return (
       <div className="p-8 max-w-5xl mx-auto flex justify-center py-32">

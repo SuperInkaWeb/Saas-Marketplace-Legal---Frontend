@@ -14,6 +14,7 @@ import type {
   CreateLawyerProfileRequest,
   UploadIdentityDocumentRequest
 } from "./types";
+import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { ApiErrorResponse } from "@/utils/types";
 
@@ -91,6 +92,7 @@ export function useSelectRole() {
     mutationFn: (data: SelectRoleRequest) => authApi.selectRole(data),
     onSuccess: (updatedUser) => {
       updateUser(updatedUser);
+      toast.success("¡Rol seleccionado correctamente!");
       queryClient.invalidateQueries({ queryKey: ["auth-me"] });
       router.push("/onboarding/perfil");
     },
@@ -106,6 +108,7 @@ export function useCreateClientProfile() {
     mutationFn: (data: CreateClientProfileRequest) => authApi.createClientProfile(data),
     onSuccess: (updatedUser) => {
       updateUser(updatedUser);
+      toast.success("¡Perfil completado exitosamente!");
       queryClient.invalidateQueries({ queryKey: ["auth-me"] });
       router.push("/dashboard");
     },
@@ -121,6 +124,7 @@ export function useCreateLawyerProfile() {
     mutationFn: (data: CreateLawyerProfileRequest) => authApi.createLawyerProfile(data),
     onSuccess: (updatedUser) => {
       updateUser(updatedUser);
+      toast.success("¡Perfil guardado! Ahora sube tu documentación.");
       queryClient.invalidateQueries({ queryKey: ["auth-me"] });
       router.push("/onboarding/verificacion");
     },
@@ -137,6 +141,7 @@ export function useUploadKyc() {
     mutationFn: (data: UploadIdentityDocumentRequest) => authApi.uploadKycDocument(data),
     onSuccess: (updatedUser) => {
       updateUser(updatedUser);
+      toast.success("¡Documentación subida con éxito! Revisaremos tu perfil pronto.");
       queryClient.invalidateQueries({ queryKey: ["auth-me"] });
       queryClient.invalidateQueries({ queryKey: ["kyc-status"] });
     },
@@ -177,7 +182,7 @@ export function handleOnboardingRedirect(
       break;
     case "COMPLETED": {
       const safeRole = role ? role.toUpperCase().trim() : "";
-      const isAdmin = safeRole === "ADMIN" || safeRole === "ROLE_ADMIN";
+      const isAdmin = safeRole === "ADMIN";
       router.push(isAdmin ? "/admin" : "/dashboard");
       break;
     }

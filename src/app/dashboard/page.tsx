@@ -17,6 +17,7 @@ export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Hola");
   const [stats, setStats] = useState<DashboardStatsResponse | null>(null);
   const [loadingStats, setLoadingStats] = useState(false);
+  const [appointmentCount, setAppointmentCount] = useState(0);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -35,10 +36,22 @@ export default function DashboardPage() {
     else setGreeting("Buenas noches");
 
     const role = user.role?.toUpperCase().trim();
-    if (role === "LAWYER" || role === "ROLE_LAWYER") {
+    if (role === "LAWYER") {
       loadStats();
+    } else {
+      loadClientStats();
     }
   }, [user, router, hydrated]);
+
+  const loadClientStats = async () => {
+    try {
+      const { appointmentService } = await import("@/modules/appointment/services/appointmentService");
+      const appointments = await appointmentService.getClientAppointments();
+      setAppointmentCount(appointments.filter(a => a.status === 'PENDING' || a.status === 'CONFIRMED').length);
+    } catch (e) {
+      console.error("Error loading client stats", e);
+    }
+  };
 
   const loadStats = async () => {
     try {
@@ -64,7 +77,7 @@ export default function DashboardPage() {
   }
 
   const role = user.role?.toUpperCase().trim();
-  const isLawyer = role === "LAWYER" || role === "ROLE_LAWYER";
+  const isLawyer = role === "LAWYER";
 
   return (
     <>
@@ -76,7 +89,7 @@ export default function DashboardPage() {
           greeting={greeting} 
         />
       ) : (
-        <ClientDashboardHome user={user} />
+        <ClientDashboardHome user={user} appointmentCount={appointmentCount} />
       )}
     </>
   );
