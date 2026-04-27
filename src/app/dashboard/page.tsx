@@ -35,7 +35,7 @@ export default function DashboardPage() {
     else setGreeting("Buenas noches");
 
     const role = user.role?.toUpperCase().trim();
-    if (role === "LAWYER" || role === "ROLE_LAWYER") {
+    if (role === "LAWYER") {
       loadStats();
     }
   }, [user, router, hydrated]);
@@ -64,7 +64,7 @@ export default function DashboardPage() {
   }
 
   const role = user.role?.toUpperCase().trim();
-  const isLawyer = role === "LAWYER" || role === "ROLE_LAWYER";
+  const isLawyer = role === "LAWYER";
 
   return (
     <>

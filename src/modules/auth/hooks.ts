@@ -177,7 +177,7 @@ export function handleOnboardingRedirect(
       break;
     case "COMPLETED": {
       const safeRole = role ? role.toUpperCase().trim() : "";
-      const isAdmin = safeRole === "ADMIN" || safeRole === "ROLE_ADMIN";
+      const isAdmin = safeRole === "ADMIN";
       router.push(isAdmin ? "/admin" : "/dashboard");
       break;
     }

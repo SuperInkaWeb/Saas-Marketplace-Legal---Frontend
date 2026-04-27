@@ -30,7 +30,7 @@ export default function ProfileSettingsPage() {
     );
   }
 
-  const isLawyer = user.role === "LAWYER" || user.role === "ROLE_LAWYER";
+  const isLawyer = user.role === "LAWYER";
   
   // Clientes solo tienen acceso a "Información General"
   const availableTabs = isLawyer ? TABS : [TABS[0]];

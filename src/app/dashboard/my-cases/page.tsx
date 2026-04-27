@@ -608,7 +608,8 @@ export default function MyCasesPage() {
   }, []);
 
   useEffect(() => {
-    if (user?.role === "CLIENT") {
+    const role = user?.role?.toUpperCase()?.trim();
+    if (role === "CLIENT") {
       fetchCases();
     } else {
       setLoading(false);
@@ -651,8 +652,8 @@ export default function MyCasesPage() {
     );
   }
 
-  const role = user?.role?.toUpperCase().trim();
-  const isClient = role === "CLIENT" || role === "ROLE_CLIENT";
+  const role = user?.role?.toUpperCase()?.trim();
+  const isClient = role === "CLIENT";
   if (!isClient) {
     return (
       <div className="p-8 max-w-5xl mx-auto flex justify-center py-32">

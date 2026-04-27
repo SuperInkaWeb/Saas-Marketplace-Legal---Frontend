@@ -3,9 +3,19 @@ import { persist } from "zustand/middleware";
 import type { AuthResponse } from "./types";
 
 const normalizeRole = (role: string | null | undefined): string | null => {
-  if (!role) return null;
-  const upperRole = role.toUpperCase().trim();
-  return upperRole.startsWith("ROLE_") ? upperRole.substring(5) : upperRole;
+  if (!role) return "CLIENT";
+  let upperRole = role.toUpperCase().trim();
+  
+  // Remove ROLE_ prefix if present
+  if (upperRole.startsWith("ROLE_")) {
+    upperRole = upperRole.substring(5);
+  }
+
+  // Map Spanish names to English standards
+  if (upperRole === "CLIENTE") return "CLIENT";
+  if (upperRole === "ABOGADO") return "LAWYER";
+  
+  return upperRole;
 };
 
 interface AuthState {
